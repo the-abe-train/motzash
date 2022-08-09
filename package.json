@@ -18,7 +18,10 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
+    "@hebcal/core": "^3.42.1",
     "@solidjs/router": "^0.4.2",
-    "solid-js": "^1.4.7"
+    "dayjs": "^1.11.4",
+    "solid-js": "^1.4.7",
+    "tiny-invariant": "^1.2.0"
   }
 }
