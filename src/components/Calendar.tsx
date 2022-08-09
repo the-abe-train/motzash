@@ -25,7 +25,6 @@ export default function Calendar() {
   // const days = [...Array(7)];
   // Not sure why this is always a day short but need to add 1
   const firstDayOfMonth = dayjs("2022-08-06").date(0).weekday() + 1;
-  console.log(firstDayOfMonth);
   let i = 0;
   const weeks = [...Array(5)].map((_) => {
     return [...Array(7)].map((_, dayOfWeek) => {

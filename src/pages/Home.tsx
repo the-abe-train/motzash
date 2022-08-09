@@ -47,10 +47,10 @@ const Home: Component = () => {
     <>
       <div class="flex flex-col h-full">
         <main class="grid grid-cols-12 gap-4 h-full">
-          <aside class="col-span-3 border-r flex flex-col space-y-5">
+          <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
             <h1 class="text-xl">Candle Lighting</h1>
             <p>Get ready! Shabbos starts in {countdown}</p>
-            <div class="flex justify-around p-2">
+            <div class="flex justify-around">
               <div class="flex flex-col items-center">
                 <span>Candle Lighting</span>
                 <span>{nextCandleLighting.eventTimeStr}</span>
