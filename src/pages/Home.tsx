@@ -3,14 +3,19 @@ import {
   HebrewCalendar,
   HDate,
   Location,
-  Event,
   CalOptions,
-  flags,
   TimedEvent,
 } from "@hebcal/core";
 import invariant from "tiny-invariant";
 import { parseFutureDate } from "../util/datetime";
 import Calendar from "../components/Calendar";
+import dayjs from "dayjs";
+import calendarPlugin from "dayjs/plugin/calendar";
+import weekdayPlugin from "dayjs/plugin/weekday";
+dayjs.extend(calendarPlugin);
+dayjs.extend(weekdayPlugin);
+
+console.log(import.meta.env.VITE_TEST_VAR);
 
 function findNextEvent(cal: TimedEvent[], type: string, prev = new HDate()) {
   const nextEvent = cal.find((event) => {
@@ -43,6 +48,8 @@ const Home: Component = () => {
   );
   const countdown = parseFutureDate(nextCandleLighting.eventTime);
 
+  // console.log();
+
   return (
     <>
       <div class="flex flex-col h-full">
@@ -50,6 +57,7 @@ const Home: Component = () => {
           <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
             <h1 class="text-xl">Candle Lighting</h1>
             <p>Get ready! Shabbos starts in {countdown}</p>
+            <p>{dayjs(nextCandleLighting.eventTime).calendar()}</p>
             <div class="flex justify-around">
               <div class="flex flex-col items-center">
                 <span>Candle Lighting</span>

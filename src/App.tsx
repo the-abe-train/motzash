@@ -8,8 +8,8 @@ const App: Component = () => {
   return (
     <>
       <div class="flex flex-col h-full">
-        <header class="w-full px-4 bg-gray-100 h-14">
-          <nav class="flex w-full justify-between h-full items-center">
+        <header class="w-full px-4 bg-gray-100 h-fit">
+          <nav class="flex w-full justify-between items-center h-14">
             <span>Motzash</span>
             <div class="flex space-x-4">
               <Link href="/">Dashboard</Link>
@@ -23,7 +23,9 @@ const App: Component = () => {
           <Route path="/friends" component={Friends}></Route>
           <Route path="/profile" component={Profile}></Route>
         </Routes>
-        <footer class="bg-gray-100 h-20 w-full">footer</footer>
+        <footer class="bg-gray-100 h-fit w-full">
+          <div class="h-20">footer</div>
+        </footer>
       </div>
     </>
   );

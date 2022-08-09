@@ -40,6 +40,15 @@ export default function Calendar() {
 
   return (
     <table class="w-full p-2">
+      <colgroup>
+        <col class="text-yellow-300 bg-orange-400" />
+        <col class="border" />
+        <col class="border" />
+        <col class="border" />
+        <col class="border" />
+        <col class="border" />
+        <col class="border" />
+      </colgroup>
       <tbody>
         <tr>
           <For each={dayHeaders}>
@@ -51,7 +60,7 @@ export default function Calendar() {
         <For each={weeks}>
           {(week) => {
             return (
-              <tr>
+              <tr class="border">
                 <For each={week}>
                   {(day) => {
                     return (
@@ -59,6 +68,7 @@ export default function Calendar() {
                         style={{
                           color: day === dayjs().date() ? "red" : "black",
                         }}
+                        class="text-center"
                       >
                         {day}
                       </td>
