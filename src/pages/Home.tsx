@@ -12,10 +12,10 @@ import Calendar from "../components/Calendar";
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
+import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
-
-console.log(import.meta.env.VITE_TEST_VAR);
+dayjs.extend(relativeTime);
 
 function findNextEvent(cal: TimedEvent[], type: string, prev = new HDate()) {
   const nextEvent = cal.find((event) => {
@@ -24,7 +24,7 @@ function findNextEvent(cal: TimedEvent[], type: string, prev = new HDate()) {
   });
   invariant(nextEvent, "Next event not found on calendar");
   // console.log(nextEvent.eventTime);
-  return nextEvent;
+  return dayjs(nextEvent.eventTime);
 }
 
 const Home: Component = () => {
@@ -46,9 +46,6 @@ const Home: Component = () => {
     "Havdalah"
     // nextCandleLighting?.getDate()
   );
-  const countdown = parseFutureDate(nextCandleLighting.eventTime);
-
-  // console.log();
 
   return (
     <>
@@ -56,16 +53,15 @@ const Home: Component = () => {
         <main class="grid grid-cols-12 gap-4 h-full">
           <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
             <h1 class="text-xl">Candle Lighting</h1>
-            <p>Get ready! Shabbos starts in {countdown}</p>
-            <p>{dayjs(nextCandleLighting.eventTime).calendar()}</p>
+            <p>Get ready! Shabbos starts {nextCandleLighting.calendar()}</p>
             <div class="flex justify-around">
               <div class="flex flex-col items-center">
                 <span>Candle Lighting</span>
-                <span>{nextCandleLighting.eventTimeStr}</span>
+                <span>{nextCandleLighting.format("h:mm a")}</span>
               </div>
               <div class="flex flex-col items-center">
                 <span>Motzash</span>
-                <span>{nextHavdalah.eventTimeStr}</span>
+                <span>{nextHavdalah.format("h:mm a")}</span>
               </div>
             </div>
             <Calendar />
