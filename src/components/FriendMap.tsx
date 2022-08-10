@@ -30,7 +30,7 @@ const FriendMap: Component<Props> = ({ statuses }) => {
     });
   });
 
-  return <div ref={mapContainer!} class="col-span-7 m-4"></div>;
+  return <div ref={mapContainer!} class="col-span-8 m-4"></div>;
 };
 
 export default FriendMap;

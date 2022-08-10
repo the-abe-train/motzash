@@ -15,4 +15,8 @@ declare global {
     date: Dayjs;
     holiday?: TimedEvent;
   };
+
+  type WidgetData = {
+    name: string;
+  };
 }

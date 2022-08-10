@@ -75,7 +75,7 @@ export default function Calendar() {
   function chooseBgColour(day: CalendarDay) {
     const regex = /^[^:]*/;
     const holiday = day?.holiday?.desc.match(regex);
-    if (!holiday) return "inherit";
+    if (!holiday) return "white";
     switch (holiday[0]) {
       case "Candle lighting":
         return "orange";
@@ -88,7 +88,7 @@ export default function Calendar() {
       case "Chanukah":
         return "pink";
       default:
-        return "inherit";
+        return "white";
     }
   }
 
@@ -97,7 +97,7 @@ export default function Calendar() {
   }
 
   return (
-    <>
+    <div class="p-2 bg-slate-100 flex flex-col space-y-3">
       <h1 class="text-xl">Calendar</h1>
       <div class="flex w-full justify-around">
         <button
@@ -110,7 +110,7 @@ export default function Calendar() {
           &#8594;
         </button>
       </div>
-      <table class="w-full p-2">
+      <table class="w-full p-2 border-2 border-gray-400">
         <colgroup>
           <col class="border" />
           <col class="border" />
@@ -124,7 +124,7 @@ export default function Calendar() {
           <tr>
             <For each={dayHeaders}>
               {(day) => {
-                return <th>{day}</th>;
+                return <th class="bg-gray-50">{day}</th>;
               }}
             </For>
           </tr>
@@ -163,10 +163,11 @@ export default function Calendar() {
       <p>Havdalah: {nextHavdalah().date.format("h:mm A")}</p>
       <button
         onClick={() => setDisplayDay(dayjs())}
-        class="p-2 border bg-slate-100 w-fit"
+        class="p-2 border w-fit
+        bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
       >
         Back to today
       </button>
-    </>
+    </div>
   );
 }
