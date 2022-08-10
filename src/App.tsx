@@ -14,6 +14,7 @@ const App: Component = () => {
             <div class="flex space-x-10">
               <Link href="/">Dashboard</Link>
               <Link href="/friends">Friends</Link>
+              <Link href="/about">About</Link>
               <Link href="/profile">Profile</Link>
             </div>
           </nav>
@@ -23,7 +24,7 @@ const App: Component = () => {
           <Route path="/friends" component={Friends}></Route>
           <Route path="/profile" component={Profile}></Route>
         </Routes>
-        <footer class="bg-gray-100 h-fit w-full">
+        <footer class="bg-gray-200 h-fit w-full">
           <div class="h-20">footer</div>
         </footer>
       </div>

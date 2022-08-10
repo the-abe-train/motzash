@@ -1,17 +1,17 @@
+import { HDate, TimedEvent } from "@hebcal/core";
 import dayjs from "dayjs";
+import invariant from "tiny-invariant";
 
-export function parseFutureDate(surveyClose: Date) {
-  const MINUTES_PER_DAY = 1440;
-  const MINUTES_PER_HOUR = 60;
-  const totalMinutes = dayjs(surveyClose).diff(dayjs(), "minutes");
-  if (totalMinutes < MINUTES_PER_DAY) {
-    const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
-    const minutes = totalMinutes % MINUTES_PER_HOUR;
-    return `${hours}h ${minutes}m`;
-  }
-  const days = Math.floor(totalMinutes / MINUTES_PER_DAY);
-  const leftoverMinutes = totalMinutes % MINUTES_PER_DAY;
-  const hours = Math.floor(leftoverMinutes / MINUTES_PER_HOUR);
-  const minutes = leftoverMinutes % MINUTES_PER_HOUR;
-  return `${days}d ${hours}h ${minutes}m`;
+export function findNextEvent(
+  cal: TimedEvent[],
+  type: string,
+  prev = new HDate()
+): CalendarDay {
+  const nextEvent = cal.find((event) => {
+    const eventHDate = event.getDate();
+    return eventHDate.abs() >= prev.abs() && event.desc === type;
+  });
+  if (!nextEvent) return { date: dayjs(prev.getDate()) };
+  console.log(nextEvent);
+  return { date: dayjs(nextEvent.eventTime), holiday: nextEvent };
 }

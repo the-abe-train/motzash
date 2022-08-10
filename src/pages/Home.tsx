@@ -1,30 +1,14 @@
 import type { Component } from "solid-js";
-import {
-  HebrewCalendar,
-  HDate,
-  Location,
-  CalOptions,
-  TimedEvent,
-} from "@hebcal/core";
-import invariant from "tiny-invariant";
+import { HebrewCalendar, Location, CalOptions, TimedEvent } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { findNextEvent } from "../util/datetime";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
-
-function findNextEvent(cal: TimedEvent[], type: string, prev = new HDate()) {
-  const nextEvent = cal.find((event) => {
-    const eventHDate = event.getDate();
-    return eventHDate.abs() > prev.abs() && event.desc === type;
-  });
-  invariant(nextEvent, "Next event not found on calendar");
-  // console.log(nextEvent.eventTime);
-  return dayjs(nextEvent.eventTime);
-}
 
 const Home: Component = () => {
   const calOptions: CalOptions = {
@@ -48,25 +32,23 @@ const Home: Component = () => {
 
   return (
     <>
-      <div class="flex flex-col h-full">
-        <main class="grid grid-cols-12 gap-4 h-full">
-          <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
-            <h1 class="text-xl">Candle Lighting</h1>
-            <p>Get ready! Shabbos starts {nextCandleLighting.calendar()}</p>
-            <div class="flex justify-around">
-              <div class="flex flex-col items-center">
-                <span>Candle Lighting</span>
-                <span>{nextCandleLighting.format("h:mm a")}</span>
-              </div>
-              <div class="flex flex-col items-center">
-                <span>Motzash</span>
-                <span>{nextHavdalah.format("h:mm a")}</span>
-              </div>
+      <main class="grid grid-cols-12 gap-4">
+        <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
+          <h1 class="text-xl">Candle Lighting</h1>
+          <p>Get ready! Shabbos starts {nextCandleLighting.date.calendar()}</p>
+          <div class="flex justify-around">
+            <div class="flex flex-col items-center">
+              <span>Candle Lighting</span>
+              <span>{nextCandleLighting.date.format("h:mm a")}</span>
             </div>
-            <Calendar />
-          </aside>
-        </main>
-      </div>
+            <div class="flex flex-col items-center">
+              <span>Motzash</span>
+              <span>{nextHavdalah.date.format("h:mm a")}</span>
+            </div>
+          </div>
+          <Calendar />
+        </aside>
+      </main>
     </>
   );
 };

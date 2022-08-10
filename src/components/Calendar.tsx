@@ -1,35 +1,28 @@
-import { createEffect, createSignal, For } from "solid-js";
-import { CalOptions, Location, HebrewCalendar, TimedEvent } from "@hebcal/core";
-import dayjs, { Dayjs } from "dayjs";
+import { createSignal, For } from "solid-js";
+import {
+  CalOptions,
+  Location,
+  HebrewCalendar,
+  TimedEvent,
+  HDate,
+} from "@hebcal/core";
+import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import objectSupport from "dayjs/plugin/objectSupport";
+import { findNextEvent } from "../util/datetime";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(objectSupport);
 
-type CalendarDay = {
-  date: Dayjs;
-  holiday?: TimedEvent;
-};
-
 export default function Calendar() {
-  // Setup
+  // Create signal
   const [displayDay, setDisplayDay] = createSignal(dayjs());
 
-  createEffect(() => {
-    console.log(displayDay());
-  });
-
-  const dayHeaders = ["S", "M", "T", "W", "T", "F", "S"];
-
-  // Let's make 'weeks' into a derived signal
-  const weeks = () => {
+  // Derived signals
+  const cal = () => {
     const year = displayDay().year();
     const month = displayDay().month();
-    const firstDayOfMonth = displayDay().date(0).weekday() + 1;
-    const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
-
     const calOptions: CalOptions = {
       year,
       month: month + 1,
@@ -37,22 +30,43 @@ export default function Calendar() {
       candlelighting: true,
       location: Location.lookup("Toronto"),
     };
+    return HebrewCalendar.calendar(calOptions) as TimedEvent[];
+  };
 
-    const cal = HebrewCalendar.calendar(calOptions) as TimedEvent[];
-
+  const weeks = () => {
+    const firstDayOfMonth = displayDay().date(0).weekday() + 1;
+    const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
     let markerDay = displayDay().date(0).subtract(firstDayOfMonth, "days");
-    // console.log(markerDay.toString());
     return [...Array(numWeeks)].map((_) => {
       return [...Array(7)].map((_) => {
         markerDay = markerDay.add(1, "day");
         const date = markerDay;
-        const holiday = cal.find((d) =>
+        const holiday = cal().find((d) =>
           dayjs(d.eventTime).isSame(date, "date")
         );
         return { date, holiday } as CalendarDay;
       });
     });
   };
+
+  const nextCandleLighting = () => {
+    const next = findNextEvent(
+      cal(),
+      "Candle lighting",
+      new HDate(displayDay().toDate())
+    );
+    console.log(next);
+    return next;
+  };
+  const nextHavdalah = () =>
+    findNextEvent(
+      cal(),
+      "Havdalah",
+      new HDate(nextCandleLighting().date.toDate())
+    );
+
+  // Calendar styling
+  const dayHeaders = ["S", "M", "T", "W", "T", "F", "S"];
 
   function chooseWeight(day: CalendarDay) {
     return day.date.isSame(displayDay(), "date") ? "bold" : "normal";
@@ -84,7 +98,18 @@ export default function Calendar() {
 
   return (
     <>
-      <h2 class="text-center">{displayDay().format("MMMM YYYY")}</h2>
+      <h1 class="text-xl">Calendar</h1>
+      <div class="flex w-full justify-around">
+        <button
+          onClick={() => setDisplayDay((prev) => prev.subtract(1, "month"))}
+        >
+          &#8592;
+        </button>
+        <h2 class="text-center">{displayDay().format("MMMM YYYY")}</h2>
+        <button onClick={() => setDisplayDay((prev) => prev.add(1, "month"))}>
+          &#8594;
+        </button>
+      </div>
       <table class="w-full p-2">
         <colgroup>
           <col class="border" />
@@ -130,6 +155,18 @@ export default function Calendar() {
           </For>
         </tbody>
       </table>
+      <p>
+        {nextCandleLighting().holiday?.linkedEvent?.desc || "Shabbat"}{" "}
+        {nextCandleLighting().date.format("DD/MM/YYYY")}
+      </p>
+      <p>Candle lighting: {nextCandleLighting().date.format("h:mm A")}</p>
+      <p>Havdalah: {nextHavdalah().date.format("h:mm A")}</p>
+      <button
+        onClick={() => setDisplayDay(dayjs())}
+        class="p-2 border bg-slate-100 w-fit"
+      >
+        Back to today
+      </button>
     </>
   );
 }
