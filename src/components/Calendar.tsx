@@ -1,11 +1,5 @@
-import { For } from "solid-js";
-import {
-  CalOptions,
-  Location,
-  flags,
-  HebrewCalendar,
-  TimedEvent,
-} from "@hebcal/core";
+import { createEffect, createSignal, For } from "solid-js";
+import { CalOptions, Location, HebrewCalendar, TimedEvent } from "@hebcal/core";
 import dayjs, { Dayjs } from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
@@ -21,45 +15,54 @@ type CalendarDay = {
 
 export default function Calendar() {
   // Setup
-  const displayDay = dayjs();
-  const year = displayDay.year();
-  const month = displayDay.month();
-  const firstDayOfMonth = displayDay.date(0).weekday() + 1;
-  const daysInMonth = displayDay.daysInMonth();
+  const [displayDay, setDisplayDay] = createSignal(dayjs());
+
+  createEffect(() => {
+    console.log(displayDay());
+  });
 
   const dayHeaders = ["S", "M", "T", "W", "T", "F", "S"];
-  const calOptions: CalOptions = {
-    year,
-    month: month + 1,
-    isHebrewYear: false,
-    candlelighting: true,
-    location: Location.lookup("Toronto"),
-    // mask: flags.LIGHT_CANDLES,
+
+  // Let's make 'weeks' into a derived signal
+  const weeks = () => {
+    const year = displayDay().year();
+    const month = displayDay().month();
+    const firstDayOfMonth = displayDay().date(0).weekday() + 1;
+    const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
+
+    const calOptions: CalOptions = {
+      year,
+      month: month + 1,
+      isHebrewYear: false,
+      candlelighting: true,
+      location: Location.lookup("Toronto"),
+    };
+
+    const cal = HebrewCalendar.calendar(calOptions) as TimedEvent[];
+
+    let markerDay = displayDay().date(0).subtract(firstDayOfMonth, "days");
+    // console.log(markerDay.toString());
+    return [...Array(numWeeks)].map((_) => {
+      return [...Array(7)].map((_) => {
+        markerDay = markerDay.add(1, "day");
+        const date = markerDay;
+        const holiday = cal.find((d) =>
+          dayjs(d.eventTime).isSame(date, "date")
+        );
+        return { date, holiday } as CalendarDay;
+      });
+    });
   };
 
-  const cal = HebrewCalendar.calendar(calOptions) as TimedEvent[];
-  console.log(cal);
-
-  // Not sure why this is always a day short but need to add 1
-  let day = 0;
-  const weeks = [...Array(6)].map((_) => {
-    return [...Array(7)].map((_, dayOfWeek) => {
-      if (day === 0 && dayOfWeek < firstDayOfMonth) return "";
-      if (day >= daysInMonth) return "";
-      day++;
-      const date = dayjs({ year, month, day });
-      const holiday = cal.find((d) => dayjs(d.eventTime).isSame(date, "date"));
-      return { date, holiday } as CalendarDay;
-    });
-  });
-  console.log(weeks);
-
   function chooseWeight(day: CalendarDay) {
-    return day.date.isSame(dayjs(), "date") ? "bold" : "normal";
+    return day.date.isSame(displayDay(), "date") ? "bold" : "normal";
   }
 
   function chooseBgColour(day: CalendarDay) {
-    switch (day?.holiday?.desc) {
+    const regex = /^[^:]*/;
+    const holiday = day?.holiday?.desc.match(regex);
+    if (!holiday) return "inherit";
+    switch (holiday[0]) {
       case "Candle lighting":
         return "orange";
       case "Havdalah":
@@ -68,58 +71,65 @@ export default function Calendar() {
         return "lightgreen";
       case "Fast ends":
         return "lightblue";
+      case "Chanukah":
+        return "pink";
       default:
         return "inherit";
     }
   }
 
-  // TODO days from prev and next month in a lighter weight
-  // TODO 6th row only when needed
+  function chooseTextColour(day: CalendarDay) {
+    return day.date.month() === displayDay().month() ? "inherit" : "gray";
+  }
 
   return (
-    <table class="w-full p-2">
-      <colgroup>
-        <col class="border" />
-        <col class="border" />
-        <col class="border" />
-        <col class="border" />
-        <col class="border" />
-        <col class="border" />
-        <col class="border" />
-      </colgroup>
-      <tbody>
-        <tr>
-          <For each={dayHeaders}>
-            {(day) => {
-              return <th>{day}</th>;
+    <>
+      <h2 class="text-center">{displayDay().format("MMMM YYYY")}</h2>
+      <table class="w-full p-2">
+        <colgroup>
+          <col class="border" />
+          <col class="border" />
+          <col class="border" />
+          <col class="border" />
+          <col class="border" />
+          <col class="border" />
+          <col class="border" />
+        </colgroup>
+        <tbody>
+          <tr>
+            <For each={dayHeaders}>
+              {(day) => {
+                return <th>{day}</th>;
+              }}
+            </For>
+          </tr>
+          <For each={weeks()}>
+            {(week) => {
+              return (
+                <tr class="border">
+                  <For each={week}>
+                    {(day) => {
+                      return (
+                        <td
+                          style={{
+                            "font-weight": chooseWeight(day),
+                            "background-color": chooseBgColour(day),
+                            color: chooseTextColour(day),
+                          }}
+                          class="text-center cursor-pointer"
+                          onClick={() => setDisplayDay(day.date)}
+                        >
+                          {day.date.date()}
+                        </td>
+                      );
+                    }}
+                  </For>
+                </tr>
+              );
             }}
           </For>
-        </tr>
-        <For each={weeks}>
-          {(week) => {
-            return (
-              <tr class="border">
-                <For each={week}>
-                  {(day) => {
-                    if (day === "") return <td></td>;
-                    return (
-                      <td
-                        style={{
-                          "font-weight": chooseWeight(day),
-                          "background-color": chooseBgColour(day),
-                        }}
-                        class="text-center"
-                      >
-                        {day.date.date()}
-                      </td>
-                    );
-                  }}
-                </For>
-              </tr>
-            );
-          }}
-        </For>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </>
   );
 }

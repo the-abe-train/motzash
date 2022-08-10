@@ -11,7 +11,7 @@ const App: Component = () => {
         <header class="w-full px-4 bg-gray-100 h-fit">
           <nav class="flex w-full justify-between items-center h-14">
             <span>Motzash</span>
-            <div class="flex space-x-4">
+            <div class="flex space-x-10">
               <Link href="/">Dashboard</Link>
               <Link href="/friends">Friends</Link>
               <Link href="/profile">Profile</Link>

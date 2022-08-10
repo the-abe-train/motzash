@@ -7,7 +7,6 @@ import {
   TimedEvent,
 } from "@hebcal/core";
 import invariant from "tiny-invariant";
-import { parseFutureDate } from "../util/datetime";
 import Calendar from "../components/Calendar";
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";

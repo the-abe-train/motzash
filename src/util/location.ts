@@ -1,13 +1,11 @@
 function getLocation() {
   return new Promise((res, rej) => {
     if ("geolocation" in navigator) {
-      console.log("Geolocation is available");
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         res({ latitude, longitude });
       });
     } else {
-      console.log("Geolocation is not available");
       rej();
     }
   });
@@ -35,7 +33,6 @@ async function getShabbosTimes(geonameId: string) {
   };
   url.search = new URLSearchParams(queryParams).toString();
   const shabbosData = await fetch(url).then((data) => data.json());
-  console.log(shabbosData);
   const candleLighting = shabbosData.items.find(
     (item: any) => item.title_orig === "Candle lighting"
   ).title;
