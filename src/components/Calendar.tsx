@@ -156,7 +156,7 @@ export default function Calendar() {
         </tbody>
       </table>
       <p>
-        {nextCandleLighting().holiday?.linkedEvent?.desc || "Shabbat"}{" "}
+        {nextCandleLighting().holiday?.linkedEvent?.desc || "Shabbat"} starts{" "}
         {nextCandleLighting().date.format("DD/MM/YYYY")}
       </p>
       <p>Candle lighting: {nextCandleLighting().date.format("h:mm A")}</p>
