@@ -55,7 +55,6 @@ export default function Calendar() {
       "Candle lighting",
       new HDate(displayDay().toDate())
     );
-    console.log(next);
     return next;
   };
   const nextHavdalah = () =>

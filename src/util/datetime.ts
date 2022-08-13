@@ -12,6 +12,5 @@ export function findNextEvent(
     return eventHDate.abs() >= prev.abs() && event.desc === type;
   });
   if (!nextEvent) return { date: dayjs(prev.getDate()) };
-  console.log(nextEvent);
   return { date: dayjs(nextEvent.eventTime), holiday: nextEvent };
 }

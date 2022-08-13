@@ -9,7 +9,7 @@ import {
 import { HebrewCalendar, Location, CalOptions, TimedEvent } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 
-import widgetData from "../data/widgets.json";
+// import widgetData from "../data/widgets.json";
 
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
@@ -18,6 +18,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { findNextEvent } from "../util/datetime";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
+import Todo from "../widgets/Todo";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
@@ -38,9 +39,11 @@ const Home: Component = () => {
   // Widget grid
   const [activeWidget, setActiveWidget] = createSignal<WidgetData | null>(null);
 
-  createEffect(() => {
-    console.log(activeWidget());
-  });
+  const widgetData = [
+    { name: "Cookbook", component: Todo },
+    { name: "Todos", component: Todo },
+    { name: "Polls", component: Todo },
+  ];
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -76,7 +79,9 @@ const Home: Component = () => {
         </Match>
         <Match when={activeWidget()}>
           <div class="bg-green-100 col-span-9 p-4">
-            <Widget widget={activeWidget()} setActiveWidget={setActiveWidget} />
+            <Widget setActiveWidget={setActiveWidget}>
+              {activeWidget()?.component({})}
+            </Widget>
           </div>
         </Match>
       </Switch>

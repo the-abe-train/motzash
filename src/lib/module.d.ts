@@ -1,5 +1,6 @@
 import { TimedEvent } from "@hebcal/core";
 import { Dayjs } from "dayjs";
+import { Component, VoidComponent } from "solid-js";
 
 export {};
 
@@ -18,5 +19,6 @@ declare global {
 
   type WidgetData = {
     name: string;
+    component: Component;
   };
 }
