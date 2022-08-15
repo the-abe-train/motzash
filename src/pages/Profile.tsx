@@ -1,22 +1,19 @@
-import { Session } from "@supabase/supabase-js";
 import {
-  createSignal,
-  createEffect,
   Component,
   createResource,
   Switch,
   Match,
   useContext,
+  createSignal,
+  createEffect,
 } from "solid-js";
 import { AuthContext } from "../context/auth";
 import { supabase } from "../util/supabase";
-import Auth from "./Auth";
 
 type Profile = {
   id: string;
   updated_at: string;
   username: string;
-  avatar_url: string;
   website: string;
 };
 
@@ -25,9 +22,9 @@ const loadProfile = async () => {
 
   let { data, error, status } = await supabase
     .from<Profile>("profiles")
-    .select(`username, website, avatar_url`)
-    .eq("id", user?.id || "");
-  // .single();
+    .select(`username, website`)
+    .eq("id", user?.id || "")
+    .single();
 
   if (error && status !== 406) {
     console.log(error);
@@ -39,84 +36,50 @@ const loadProfile = async () => {
     throw error;
   }
 
-  if (data?.length > 1) throw error;
-
-  return data[0];
+  return data;
 };
 
 const Profile: Component = () => {
-  // console.log(session);
-
-  // const [loading, setLoading] = createSignal(true);
-  // const [username, setUsername] = createSignal<string | null>(null);
-  // const [website, setWebsite] = createSignal<string | null>(null);
-  // const [avatar_url, setAvatarUrl] = createSignal<string | null>(null);
-
-  // createEffect(() => {
-  //   // props.session
-  //   getProfile();
-  // });
-
-  // const getProfile = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const user = supabase.auth.user();
-
-  //     let { data, error, status } = await supabase
-  //       .from("profiles")
-  //       .select(`username, website, avatar_url`)
-  //       .eq("id", user?.id || "")
-  //       .single();
-
-  //     if (error && status !== 406) {
-  //       throw error;
-  //     }
-
-  //     if (data) {
-  //       setUsername(data.username);
-  //       setWebsite(data.website);
-  //       setAvatarUrl(data.avatar_url);
-  //     }
-  //   } catch (error: any) {
-  //     alert(error.message || "Database error.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const [data, { mutate, refetch }] = createResource(loadProfile);
 
-  // const updateProfile = async (e: Event) => {
-  //   e.preventDefault();
+  const [loading, setLoading] = createSignal(true);
+  const [username, setUsername] = createSignal<string | null>(null);
+  const [website, setWebsite] = createSignal<string | null>(null);
 
-  //   try {
-  //     setLoading(true);
-  //     const user = supabase.auth.user();
+  createEffect(() => {
+    // props.session
+    console.log(data());
+  });
 
-  //     const updates = {
-  //       id: user?.id || "",
-  //       username: username(),
-  //       website: website(),
-  //       avatar_url: avatar_url(),
-  //       updated_at: new Date(),
-  //     };
+  const updateProfile = async (e: Event) => {
+    e.preventDefault();
 
-  //     let { error } = await supabase.from("profiles").upsert(updates, {
-  //       returning: "minimal", // Don't return the value after inserting
-  //     });
+    try {
+      setLoading(true);
+      const user = supabase.auth.user();
 
-  //     if (error) {
-  //       throw error;
-  //     }
-  //   } catch (error: any) {
-  //     alert(error.message || "Database error.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      const updates = {
+        id: user?.id || "",
+        username: username(),
+        website: website(),
+        updated_at: new Date(),
+      };
+
+      let { error } = await supabase.from("profiles").upsert(updates, {
+        returning: "minimal", // Don't return the value after inserting
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      alert(error.message || "Database error.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const session = useContext(AuthContext);
-  console.log(session);
 
   return (
     <main class="flex-grow p-4">
@@ -125,47 +88,49 @@ const Profile: Component = () => {
           <p>Loading...</p>
         </Match>
         <Match when={!data.loading}>
-          <form onSubmit={(e) => e.preventDefault()} class="form-widget">
-            {/* <div>Email: {session().user?.email || "no email set"}</div> */}
-            <div>
+          <form onSubmit={updateProfile} class="flex flex-col space-y-3">
+            <div>Email: {session()?.user?.email || "no email set"}</div>
+            <div class="space-x-2">
               <label for="username">Name</label>
               <input
                 id="username"
+                class="border p-1"
                 type="text"
                 value={data()?.username}
-                // onChange={(e) => setUsername(e.currentTarget.value)}
+                onChange={(e) => setUsername(e.currentTarget.value)}
               />
             </div>
-            <div>
+            <div class="space-x-2">
               <label for="website">Website</label>
               <input
                 id="website"
+                class="border p-1"
                 type="url"
                 value={data()?.website}
-                // onChange={(e) => setWebsite(e.currentTarget.value)}
+                onChange={(e) => setWebsite(e.currentTarget.value)}
               />
             </div>
             <div>
               <button
                 type="submit"
-                class="button block primary"
+                class=" rounded p-2
+              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
                 // disabled={loading()}
               >
                 Update profile
               </button>
             </div>
           </form>
+          <button
+            type="button"
+            class=" rounded p-2 my-2
+        bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+            onClick={() => supabase.auth.signOut()}
+          >
+            Sign Out
+          </button>
         </Match>
       </Switch>
-
-      <button
-        type="button"
-        class="button block"
-        onClick={() => supabase.auth.signOut()}
-      >
-        Sign Out
-      </button>
-      <Auth />
     </main>
   );
 };

@@ -1,10 +1,20 @@
-import { children, ParentComponent, ParentProps, Setter } from "solid-js";
+import {
+  children,
+  ParentComponent,
+  ParentProps,
+  Setter,
+  Show,
+  useContext,
+} from "solid-js";
+import { AuthContext } from "../context/auth";
+import Auth from "../pages/Auth";
 
 type Props = {
   setActiveWidget: Setter<WidgetData | null>;
 };
 
 const Widget: ParentComponent<Props> = (props) => {
+  const session = useContext(AuthContext);
   const c = children(() => props.children);
   return (
     <div class="bg-blue-100 h-full relative">
@@ -14,7 +24,9 @@ const Widget: ParentComponent<Props> = (props) => {
       >
         X
       </button>
-      {c()}
+      <Show when={session()} fallback={<Auth />}>
+        {c()}
+      </Show>
     </div>
   );
 };

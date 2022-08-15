@@ -1,11 +1,4 @@
-import {
-  Component,
-  createEffect,
-  createSignal,
-  For,
-  Match,
-  Switch,
-} from "solid-js";
+import { Component, createSignal, For, Match, Switch } from "solid-js";
 import { HebrewCalendar, Location, CalOptions, TimedEvent } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 
@@ -23,7 +16,7 @@ dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
 
-const Home: Component = () => {
+const Dashboard: Component = () => {
   const calOptions: CalOptions = {
     isHebrewYear: false,
     numYears: 1,
@@ -89,4 +82,4 @@ const Home: Component = () => {
   );
 };
 
-export default Home;
+export default Dashboard;

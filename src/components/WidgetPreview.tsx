@@ -8,7 +8,10 @@ type Props = {
 const WidgetPreview: Component<Props> = ({ widget, setActiveWidget }) => {
   if (!widget) return <></>;
   return (
-    <div class="bg-blue-100 h-full" onClick={() => setActiveWidget(widget)}>
+    <div
+      class="bg-blue-100 h-full cursor-pointer"
+      onClick={() => setActiveWidget(widget)}
+    >
       {widget.name} preview
     </div>
   );

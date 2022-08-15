@@ -10,8 +10,10 @@ import {
   onCleanup,
   onMount,
   Switch,
+  useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import { AuthContext } from "../context/auth";
 import { supabase } from "../util/supabase";
 
 type Todo = {
@@ -33,8 +35,8 @@ const loadTodos = async () => {
 };
 
 const Todo: Component = () => {
+  const session = useContext(AuthContext);
   const [data, { mutate, refetch }] = createResource(loadTodos);
-
   const [todos, setTodos] = createStore<Todo[]>([]);
 
   let subscription: RealtimeSubscription | null;
@@ -48,6 +50,7 @@ const Todo: Component = () => {
     subscription = supabase
       .from<Todo>("todos")
       .on("*", (payload) => {
+        console.log("Running subscription", payload);
         switch (payload.eventType) {
           case "INSERT":
             setTodos((prev) => [...prev, payload.new]);
@@ -76,7 +79,7 @@ const Todo: Component = () => {
     const { data, error } = await supabase.from<Todo>("todos").insert({
       task: inputTodo(),
       is_complete: false,
-      // user_id:
+      user_id: session()?.user?.id,
     });
     if (error) {
       console.error(error.message);
@@ -85,35 +88,33 @@ const Todo: Component = () => {
   }
 
   return (
-    <>
-      <ErrorBoundary
-        fallback={
+    <ErrorBoundary
+      fallback={
+        <div>
+          <p>Something went terribly wrong</p>
+          <p>{data.error}</p>
+        </div>
+      }
+    >
+      <Switch>
+        <Match when={data.loading}>
+          <p>Loading...</p>
+        </Match>
+        <Match when={!data.loading}>
           <div>
-            <p>Something went terribly wrong</p>
-            <p>{data.error}</p>
+            <For each={todos}>{(item) => <div>{item.task}</div>}</For>
           </div>
-        }
-      >
-        <Switch>
-          <Match when={data.loading}>
-            <p>Loading...</p>
-          </Match>
-          <Match when={!data.loading}>
-            <div>
-              <For each={todos}>{(item) => <div>{item.task}</div>}</For>
-            </div>
-          </Match>
-        </Switch>
-        <input
-          class="border"
-          type="text"
-          name="todo"
-          value={inputTodo()}
-          onInput={(e) => setInputTodo(e.currentTarget.value)}
-        />
-        <button onClick={submitted}>Submit</button>
-      </ErrorBoundary>
-    </>
+        </Match>
+      </Switch>
+      <input
+        class="border"
+        type="text"
+        name="todo"
+        value={inputTodo()}
+        onInput={(e) => setInputTodo(e.currentTarget.value)}
+      />
+      <button onClick={submitted}>Submit</button>
+    </ErrorBoundary>
   );
 };
 

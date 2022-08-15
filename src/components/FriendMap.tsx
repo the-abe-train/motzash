@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl"; // or "const mapboxgl = require('mapbox-gl');"
+import mapboxgl from "mapbox-gl";
 import { Component, onMount } from "solid-js";
 
 type Props = {
