@@ -19,6 +19,7 @@ type Todo = {
   task: string;
   inserted_at: string;
   is_complete: boolean;
+  user_id: string;
 };
 
 const loadTodos = async () => {
@@ -75,7 +76,11 @@ const Todo: Component = () => {
     const { data, error } = await supabase.from<Todo>("todos").insert({
       task: inputTodo(),
       is_complete: false,
+      // user_id:
     });
+    if (error) {
+      console.error(error.message);
+    }
     setInputTodo("");
   }
 
