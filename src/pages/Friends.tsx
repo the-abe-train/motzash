@@ -1,21 +1,21 @@
 import { Component, createSignal, For, Match, Switch } from "solid-js";
 import statuses from "../data/statuses.json";
 import FriendMap from "../components/FriendMap";
+import Status from "../components/Status";
+import { supabase } from "../util/supabase";
 
-const Status: Component<Status> = ({ name, text, tags }) => {
-  return (
-    <div class="bg-gray-100 p-2 mx-2 rounded flex flex-col space-y-3">
-      <p>{name}</p>
-      <p>{text}</p>
-      <ul class="flex flex-wrap gap-3">
-        <For each={tags}>
-          {(tag) => {
-            return <li class="border rounded p-1 bg-slate-200">{tag}</li>;
-          }}
-        </For>
-      </ul>
-    </div>
-  );
+const loadMyStatus = async () => {
+  const user = supabase.auth.user();
+  const { data, error } = await supabase
+    .from<Status>("statuses")
+    .select("*")
+    .eq("user_id", user?.id || "")
+    .single();
+  if (error) {
+    console.log(error);
+    return null;
+  }
+  return data;
 };
 
 const Friends: Component = () => {

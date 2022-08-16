@@ -11,8 +11,10 @@ import {
   Accessor,
   ContextProviderComponent,
 } from "solid-js/types/reactive/signal";
-
 import { supabase } from "../util/supabase";
+
+// The benefit of using a context here is that it's a *reactive* context.
+// Thus when users sign in/out the app updates immediately.
 
 export const AuthContext = createContext<Accessor<Session | null>>(() => null);
 

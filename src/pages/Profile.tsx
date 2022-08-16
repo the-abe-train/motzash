@@ -1,20 +1,23 @@
+import { RealtimeSubscription } from "@supabase/supabase-js";
 import {
   Component,
-  createResource,
   Switch,
   Match,
   useContext,
   createSignal,
-  createEffect,
+  onMount,
+  onCleanup,
 } from "solid-js";
+import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
+import { createSync } from "../util/realtime";
 import { supabase } from "../util/supabase";
 
 type Profile = {
   id: string;
   updated_at: string;
   username: string;
-  website: string;
+  handle: string;
 };
 
 const loadProfile = async () => {
@@ -22,50 +25,62 @@ const loadProfile = async () => {
 
   let { data, error, status } = await supabase
     .from<Profile>("profiles")
-    .select(`username, website`)
+    .select(`username, handle`)
     .eq("id", user?.id || "")
     .single();
-
   if (error && status !== 406) {
     console.log(error);
     throw error;
   }
-
   if (!data || error) {
     console.log(error);
     throw error;
   }
-
+  console.log("load data", data);
   return data;
 };
 
 const Profile: Component = () => {
-  const [data, { mutate, refetch }] = createResource(loadProfile);
+  const [msg, setMsg] = createSignal("");
+  const [profile, setProfile] = createStore<Profile>({
+    id: "",
+    updated_at: "",
+    username: "",
+    handle: "",
+  });
 
-  const [loading, setLoading] = createSignal(true);
-  const [username, setUsername] = createSignal<string | null>(null);
-  const [website, setWebsite] = createSignal<string | null>(null);
+  let subscription: RealtimeSubscription | null;
 
-  createEffect(() => {
-    // props.session
-    console.log(data());
+  const sync = createSync(setProfile, loadProfile);
+
+  onMount(() => {
+    subscription = supabase
+      .from<Profile>("profiles")
+      .on("UPDATE", (payload) => {
+        setMsg("Profile updated!");
+      })
+      .subscribe();
+  });
+
+  onCleanup(() => {
+    console.log("clean up");
+    subscription?.unsubscribe();
   });
 
   const updateProfile = async (e: Event) => {
     e.preventDefault();
 
     try {
-      setLoading(true);
       const user = supabase.auth.user();
 
       const updates = {
         id: user?.id || "",
-        username: username(),
-        website: website(),
+        username: profile.username || "",
+        handle: profile.handle || "",
         updated_at: new Date(),
       };
 
-      let { error } = await supabase.from("profiles").upsert(updates, {
+      let { error } = await supabase.from("profiles").update(updates, {
         returning: "minimal", // Don't return the value after inserting
       });
 
@@ -74,8 +89,6 @@ const Profile: Component = () => {
       }
     } catch (error: any) {
       alert(error.message || "Database error.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -84,30 +97,40 @@ const Profile: Component = () => {
   return (
     <main class="flex-grow p-4">
       <Switch>
-        <Match when={data.loading}>
+        <Match when={sync.loading}>
           <p>Loading...</p>
         </Match>
-        <Match when={!data.loading}>
+        <Match when={!sync.loading}>
           <form onSubmit={updateProfile} class="flex flex-col space-y-3">
             <div>Email: {session()?.user?.email || "no email set"}</div>
             <div class="space-x-2">
               <label for="username">Name</label>
               <input
                 id="username"
-                class="border p-1"
+                class="border py-1 px-2"
                 type="text"
-                value={data()?.username}
-                onChange={(e) => setUsername(e.currentTarget.value)}
+                value={profile.username}
+                onChange={(e) =>
+                  setProfile((prev) => ({
+                    ...prev,
+                    username: e.currentTarget.value,
+                  }))
+                }
               />
             </div>
             <div class="space-x-2">
-              <label for="website">Website</label>
+              <label for="handle">Handle</label>
               <input
-                id="website"
-                class="border p-1"
-                type="url"
-                value={data()?.website}
-                onChange={(e) => setWebsite(e.currentTarget.value)}
+                id="handle"
+                class="border py-1 px-2"
+                type="text"
+                value={profile.handle}
+                onChange={(e) =>
+                  setProfile((prev) => ({
+                    ...prev,
+                    username: e.currentTarget.value,
+                  }))
+                }
               />
             </div>
             <div>
@@ -115,12 +138,13 @@ const Profile: Component = () => {
                 type="submit"
                 class=" rounded p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                // disabled={loading()}
+                disabled={sync.loading}
               >
                 Update profile
               </button>
             </div>
           </form>
+          <p>{msg()}</p>
           <button
             type="button"
             class=" rounded p-2 my-2

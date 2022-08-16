@@ -1,20 +1,29 @@
 [
   {
+    "id": "123",
+    "user_id": "123",
     "name": "Mindy Chapman",
     "text": "So excited for this week's Parsha!",
     "tags": ["Boardgames", "Shacharit"],
-    "location": { "lat": 43.71, "lng": -79.41 }
+    "lat": 43.71,
+    "lng": -79.41
   },
   {
+    "id": "123",
+    "user_id": "123",
     "name": "Aryeh Fortinsky",
     "text": "See you all at the BAYT!",
     "tags": ["Basketball", "Shaleshudes"],
-    "location": { "lat": 43.81, "lng": -79.44 }
+    "lat": 43.81,
+    "lng": -79.44
   },
   {
+    "id": "123",
+    "user_id": "123",
     "name": "Aliza Weiss",
     "text": "I can't wait to try this week's chulent!",
     "tags": ["Chulent", "More chulent"],
-    "location": { "lat": 43.76, "lng": -79.46 }
+    "lat": 43.76,
+    "lng": -79.46
   }
 ]

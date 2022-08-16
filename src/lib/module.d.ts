@@ -6,10 +6,13 @@ export {};
 
 declare global {
   type Status = {
+    id: string;
+    user_id: string;
     name: string;
     text: string;
     tags: string[];
-    location: { lat: number; lng: number };
+    lat: number;
+    lng: number;
   };
 
   type CalendarDay = {

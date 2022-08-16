@@ -14,6 +14,7 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
+import { createSync } from "../util/realtime";
 import { supabase } from "../util/supabase";
 
 type Todo = {
@@ -30,21 +31,21 @@ const loadTodos = async () => {
     console.log(error);
     throw error;
   }
-
   return data;
 };
 
 const Todo: Component = () => {
   const session = useContext(AuthContext);
-  const [data, { mutate, refetch }] = createResource(loadTodos);
   const [todos, setTodos] = createStore<Todo[]>([]);
 
-  let subscription: RealtimeSubscription | null;
+  // const [data, { mutate, refetch }] = createResource(loadTodos);
+  // createEffect(() => {
+  //   const returnedValue = data();
+  //   if (returnedValue) setTodos(returnedValue);
+  // });
+  const data = createSync(setTodos, loadTodos);
 
-  createEffect(() => {
-    const returnedValue = data();
-    if (returnedValue) setTodos(returnedValue);
-  });
+  let subscription: RealtimeSubscription | null;
 
   onMount(() => {
     subscription = supabase
