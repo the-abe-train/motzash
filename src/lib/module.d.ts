@@ -6,13 +6,20 @@ export {};
 
 declare global {
   type Status = {
-    id: string;
-    user_id: string;
-    name: string;
+    id?: string;
+    user_id?: string;
+    created_at?: string;
     text: string;
     tags: string[];
-    lat: number;
-    lng: number;
+    lat: number | null;
+    lng: number | null;
+  };
+
+  type Profile = {
+    id: string;
+    updated_at: string;
+    username: string;
+    handle: string;
   };
 
   type CalendarDay = {

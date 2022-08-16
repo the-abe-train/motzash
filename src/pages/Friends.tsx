@@ -3,6 +3,8 @@ import statuses from "../data/statuses.json";
 import FriendMap from "../components/FriendMap";
 import Status from "../components/Status";
 import { supabase } from "../util/supabase";
+import { createStore } from "solid-js/store";
+import { createSync } from "../util/createSync";
 
 const loadMyStatus = async () => {
   const user = supabase.auth.user();
@@ -12,17 +14,45 @@ const loadMyStatus = async () => {
     .eq("user_id", user?.id || "")
     .single();
   if (error) {
-    console.log(error);
+    if (error.code === "PGRST116") return null;
+    console.error(error);
     return null;
   }
   return data;
 };
 
 const Friends: Component = () => {
-  const [showForm, setShowForm] = createSignal(false);
-  function toggleShowForm() {
-    setShowForm((prev) => !prev);
-  }
+  const [showForm, setShowForm] = createSignal(true);
+  const [myStatus, setMyStatus] = createStore<Status>({
+    text: "",
+    tags: [""],
+    lat: null,
+    lng: null,
+  });
+
+  const upsertStatus = async (e: Event) => {
+    e.preventDefault();
+    const user = supabase.auth.user();
+    console.log("User", user);
+    const updates = {
+      ...myStatus,
+      user_id: user?.id,
+    };
+    console.log(updates);
+    // console.log(myStatus);
+    let { error } = await supabase.from<Status>("statuses").upsert(updates, {
+      returning: "minimal", // Don't return the value after inserting
+      onConflict: "user_id",
+    });
+    if (error) {
+      // alert(error.message || "Database error.");
+      console.error(error);
+    }
+  };
+
+  const sync = createSync(setMyStatus, loadMyStatus);
+  const toggleShowForm = () => setShowForm((prev) => !prev);
+
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
       <aside
@@ -50,7 +80,7 @@ const Friends: Component = () => {
       <Switch fallback={<div>Loading...</div>}>
         <Match when={showForm()}>
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={upsertStatus}
             class="col-span-7 flex flex-col space-y-4 p-4 relative"
           >
             <button
@@ -63,17 +93,33 @@ const Friends: Component = () => {
             </button>
             <div class="flex flex-col space-y-2">
               <label for="text">What are you up to on Shabbos?</label>
-              <input type="text" name="text" class="border w-1/2" />
+              <input
+                type="text"
+                name="text"
+                class="border w-1/2"
+                value={myStatus.text}
+                onChange={(e) =>
+                  setMyStatus((prev) => ({
+                    ...prev,
+                    text: e.currentTarget.value,
+                  }))
+                }
+              />
             </div>
             <div class="flex flex-col space-y-2">
-              <label for="location">Where are you gonna be?</label>
-              <input type="text" name="location" class="border w-1/2" />
+              <label for="cars">Choose up to 4 tags:</label>
+              <select multiple name="cars" class="w-96 border">
+                <option value="board games">Board games</option>
+                <option value="basketball">Basketball</option>
+                <option value="Shaleshudes">Shaleshudes</option>
+                <option value="chulent">Chulent</option>
+              </select>
             </div>
             <button
               type="submit"
               class="w-fit p-2  border rounded
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-              onClick={toggleShowForm}
+              // onClick={toggleShowForm}
             >
               Update status
             </button>

@@ -19,12 +19,13 @@ const FriendMap: Component<Props> = ({ statuses }) => {
 
     // Set marker options.
     // TODO bind markers to focused friend
-    statuses.forEach(({ name, location }) => {
+    statuses.forEach(({ user_id, lat, lng }) => {
+      if (!lat || !lng) return;
       new mapboxgl.Marker({
         color: "blue",
         draggable: false,
       })
-        .setLngLat([location.lng, location.lat])
+        .setLngLat([lng, lat])
         .setPopup(new mapboxgl.Popup().setHTML(`<p>${name}!</p>`))
         .addTo(map);
     });

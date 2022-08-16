@@ -14,7 +14,7 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
-import { createSync } from "../util/realtime";
+import { createSync } from "../util/createSync";
 import { supabase } from "../util/supabase";
 
 type Todo = {

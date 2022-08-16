@@ -10,15 +10,8 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
-import { createSync } from "../util/realtime";
+import { createSync } from "../util/createSync";
 import { supabase } from "../util/supabase";
-
-type Profile = {
-  id: string;
-  updated_at: string;
-  username: string;
-  handle: string;
-};
 
 const loadProfile = async () => {
   const user = supabase.auth.user();

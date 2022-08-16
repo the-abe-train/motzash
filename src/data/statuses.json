@@ -6,7 +6,8 @@
     "text": "So excited for this week's Parsha!",
     "tags": ["Boardgames", "Shacharit"],
     "lat": 43.71,
-    "lng": -79.41
+    "lng": -79.41,
+    "created_at": "noon"
   },
   {
     "id": "123",
@@ -15,7 +16,8 @@
     "text": "See you all at the BAYT!",
     "tags": ["Basketball", "Shaleshudes"],
     "lat": 43.81,
-    "lng": -79.44
+    "lng": -79.44,
+    "created_at": "noon"
   },
   {
     "id": "123",
@@ -24,6 +26,7 @@
     "text": "I can't wait to try this week's chulent!",
     "tags": ["Chulent", "More chulent"],
     "lat": 43.76,
-    "lng": -79.46
+    "lng": -79.46,
+    "created_at": "noon"
   }
 ]
