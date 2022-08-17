@@ -172,7 +172,6 @@ const Friends: Component = () => {
                 name="cars"
                 class="w-96 border"
                 onChange={selectTags}
-                // onChange={(e) => console.log(e.currentTarget.selectedOptions)}
               >
                 <option value="board games">Board games</option>
                 <option value="basketball">Basketball</option>
