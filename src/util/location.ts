@@ -1,9 +1,9 @@
-function getLocation() {
+export function getLocation(): Promise<{ lat: number; lng: number }> {
   return new Promise((res, rej) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        res({ latitude, longitude });
+        const { latitude: lat, longitude: lng } = position.coords;
+        res({ lat, lng });
       });
     } else {
       rej();
@@ -11,18 +11,20 @@ function getLocation() {
   });
 }
 
-async function getGeoNameId({ lat, lng }: { lat: string; lng: string }) {
+// cities1000 means all cities with a population of over 1000
+// 500, 1000, 5000, 15000 are all options
+export async function getGeoNameId(lat: number, lng: number) {
   const url = new URL("http://api.geonames.org/findNearbyPlaceNameJSON");
   const queryParams = {
-    lat,
-    lng,
-    cities: "cities5000", // Pulls nearest city with pop over 5000
+    lat: lat.toString(),
+    lng: lng.toString(),
+    cities: "cities15000",
     username: "theabetrain",
   };
   url.search = new URLSearchParams(queryParams).toString();
   const geoData = await fetch(url).then((data) => data.json());
-  const { geonameId } = geoData.geonames[0];
-  return geonameId;
+  const { name, adminName1, countryName } = geoData.geonames[0];
+  return `${name}, ${adminName1}, ${countryName}`;
 }
 
 async function getShabbosTimes(geonameId: string) {

@@ -2,10 +2,10 @@ import mapboxgl from "mapbox-gl";
 import { Component, onMount } from "solid-js";
 
 type Props = {
-  statuses: Status[];
+  statuses: ProfileStatus[];
 };
 
-const FriendMap: Component<Props> = ({ statuses }) => {
+const FriendMap: Component<Props> = (props) => {
   let mapContainer: HTMLDivElement;
 
   onMount(() => {
@@ -19,14 +19,14 @@ const FriendMap: Component<Props> = ({ statuses }) => {
 
     // Set marker options.
     // TODO bind markers to focused friend
-    statuses.forEach(({ user_id, lat, lng }) => {
+    props.statuses.forEach(({ lat, lng, profiles }) => {
       if (!lat || !lng) return;
       new mapboxgl.Marker({
         color: "blue",
         draggable: false,
       })
         .setLngLat([lng, lat])
-        .setPopup(new mapboxgl.Popup().setHTML(`<p>${name}!</p>`))
+        .setPopup(new mapboxgl.Popup().setHTML(`<p>${profiles.username}!</p>`))
         .addTo(map);
     });
   });

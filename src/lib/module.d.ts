@@ -1,6 +1,6 @@
 import { TimedEvent } from "@hebcal/core";
 import { Dayjs } from "dayjs";
-import { Component, VoidComponent } from "solid-js";
+import { Component } from "solid-js";
 
 export {};
 
@@ -14,6 +14,7 @@ declare global {
     tags: string[];
     lat: number | null;
     lng: number | null;
+    city: string;
   };
 
   type Profile = {
@@ -22,6 +23,26 @@ declare global {
     username: string;
     handle: string;
   };
+
+  // type ProfileStatus = {
+  //   id: string;
+  //   updated_at: string;
+  //   username: string;
+  //   handle: string;
+  //   created_at?: string;
+  //   user_id: string;
+  //   text: string;
+  //   tags: string[];
+  //   lat: number | null;
+  //   lng: number | null;
+  //   city: string;
+  // };
+
+  interface ProfileStatus extends Status {
+    profiles: {
+      username: string;
+    };
+  }
 
   // Other types
   type CalendarDay = {

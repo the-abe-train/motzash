@@ -7,6 +7,7 @@ import {
   Match,
   onCleanup,
   onMount,
+  Show,
   Switch,
 } from "solid-js";
 import statuses from "../data/statuses.json";
@@ -15,21 +16,21 @@ import Status from "../components/Status";
 import { supabase } from "../util/supabase";
 import { createStore } from "solid-js/store";
 import { RealtimeSubscription } from "@supabase/supabase-js";
+import { getGeoNameId, getLocation } from "../util/location";
+import { loadMyStatus } from "../util/queries";
 
-const loadMyStatus = async () => {
+const loadFriendStatuses = async () => {
   console.log("Loading data from database");
   const user = supabase.auth.user();
   const { data, error } = await supabase
-    .from<Status>("statuses")
-    .select("*")
-    .eq("user_id", user?.id || "")
-    .single();
+    .from<ProfileStatus>("statuses")
+    .select("*, profiles (username)");
   if (error) {
     if (error.code === "PGRST116") return null;
     console.error(error);
     return null;
   }
-  // console.log("new data", data);
+  console.log("new data", data);
   return data;
 };
 
@@ -41,11 +42,21 @@ const Friends: Component = () => {
     lat: null,
     lng: null,
     user_id: supabase.auth.user()?.id || "",
+    city: "",
   });
 
-  const [data, { mutate, refetch }] = createResource(loadMyStatus);
+  // Get data from Supabase
+  const [myStatus, { refetch }] = createResource(loadMyStatus);
+  const [friendStatuses] = createResource(loadFriendStatuses);
+
+  // Start off with defaults
   createEffect(() => {
-    console.log("New data", data());
+    const returnedValue = myStatus();
+    if (returnedValue)
+      setNewStatus(() => {
+        const { id, created_at, profiles, ...newStatus } = returnedValue;
+        return newStatus;
+      });
   });
 
   // Subscription
@@ -53,18 +64,7 @@ const Friends: Component = () => {
   onMount(() => {
     subscription = supabase
       .from<Status>("statuses")
-      .on("INSERT", (payload) => {
-        console.log("Status inserted!");
-        refetch();
-      })
-      .on("UPDATE", (payload) => {
-        console.log("Status updated!");
-        refetch();
-      })
-      .on("DELETE", (payload) => {
-        console.log("Status deleted!");
-        refetch();
-      })
+      .on("*", () => refetch())
       .subscribe();
   });
   onCleanup(() => {
@@ -106,6 +106,14 @@ const Friends: Component = () => {
     setNewStatus("tags", values);
   };
 
+  async function updateLocation() {
+    const { lat, lng } = await getLocation();
+    const city = await getGeoNameId(lat, lng);
+    setNewStatus("lat", lat);
+    setNewStatus("lng", lng);
+    setNewStatus("city", city);
+  }
+
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
       <aside
@@ -114,7 +122,7 @@ const Friends: Component = () => {
       >
         <h2>Your Status</h2>
         <Switch fallback={<button>Add status</button>}>
-          <Match when={!data()}>
+          <Match when={!myStatus()}>
             <button
               class="w-full h-20 rounded
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
@@ -124,19 +132,28 @@ const Friends: Component = () => {
               Add status
             </button>
           </Match>
-          <Match when={!data.loading}>
+          <Match when={!myStatus.loading}>
             {/* @ts-ignore */}
-            <Status status={data()} name={"me"} />
+            <Status status={myStatus()} />
+            <Show when={!showForm()}>
+              <button
+                class="rounded w-fit p-2
+              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+                onClick={toggleShowForm}
+              >
+                Edit status
+              </button>
+            </Show>
           </Match>
-          <Match when={data.loading}>
+          <Match when={myStatus.loading}>
             <p>Loading...</p>
           </Match>
         </Switch>
         <h2>Your Friends</h2>
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
-          <For each={statuses}>
+          <For each={friendStatuses()}>
             {(status) => {
-              return <Status {...status} />;
+              return <Status status={status} />;
             }}
           </For>
         </div>
@@ -160,7 +177,7 @@ const Friends: Component = () => {
               <input
                 type="text"
                 name="text"
-                class="border w-1/2"
+                class="border w-1/2 px-2"
                 value={newStatus.text}
                 onChange={(e) => setNewStatus("text", e.currentTarget.value)}
               />
@@ -179,24 +196,42 @@ const Friends: Component = () => {
                 <option value="chulent">Chulent</option>
               </select>
             </div>
-            <button
-              type="submit"
-              class="w-fit p-2  border rounded
+            <div class="flex space-x-4">
+              <button
+                class="w-fit p-2  border rounded
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-            >
-              Update status
-            </button>
-            <button
-              class="w-fit p-2  border rounded
+                onClick={updateLocation}
+                type="button"
+              >
+                Get location
+              </button>
+              <input
+                class="border px-2"
+                type="text"
+                value={newStatus.city}
+                onChange={(e) => setNewStatus("city", e.currentTarget.value)}
+              />
+            </div>
+            <div class="flex space-x-4">
+              <button
+                type="submit"
+                class="w-fit p-2  border rounded
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-              onClick={deleteStatus}
-            >
-              Delete status
-            </button>
+              >
+                Update status
+              </button>
+              <button
+                class="w-fit p-2  border rounded
+               hover:bg-slate-300 active:bg-slate-400"
+                onClick={deleteStatus}
+              >
+                Delete status
+              </button>
+            </div>
           </form>
         </Match>
         <Match when={!showForm()}>
-          <FriendMap statuses={statuses} />
+          <FriendMap statuses={friendStatuses() || []} />
         </Match>
       </Switch>
     </main>
