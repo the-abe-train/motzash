@@ -5,10 +5,11 @@ import { Component, VoidComponent } from "solid-js";
 export {};
 
 declare global {
+  // Database schemas
   type Status = {
     id?: string;
-    user_id?: string;
     created_at?: string;
+    user_id: string;
     text: string;
     tags: string[];
     lat: number | null;
@@ -22,6 +23,7 @@ declare global {
     handle: string;
   };
 
+  // Other types
   type CalendarDay = {
     date: Dayjs;
     holiday?: TimedEvent;
@@ -30,5 +32,13 @@ declare global {
   type WidgetData = {
     name: string;
     component: Component;
+  };
+
+  type ShowStatus = {
+    name: string;
+    text: string;
+    tags: string[];
+    lat?: number;
+    lng?: number;
   };
 }
