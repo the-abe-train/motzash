@@ -21,7 +21,7 @@
   "dependencies": {
     "@hebcal/core": "^3.42.1",
     "@solidjs/router": "^0.4.2",
-    "@supabase/supabase-js": "^1.35.6",
+    "@supabase/supabase-js": "^2.0.0-rc.1",
     "dayjs": "^1.11.4",
     "mapbox-gl": "^2.9.2",
     "solid-js": "^1.4.7",

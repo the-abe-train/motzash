@@ -10,7 +10,6 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import statuses from "../data/statuses.json";
 import FriendMap from "../components/FriendMap";
 import Status from "../components/Status";
 import { supabase } from "../util/supabase";
@@ -20,8 +19,6 @@ import { getGeoNameId, getLocation } from "../util/location";
 import { loadMyStatus } from "../util/queries";
 
 const loadFriendStatuses = async () => {
-  console.log("Loading data from database");
-  const user = supabase.auth.user();
   const { data, error } = await supabase
     .from<ProfileStatus>("statuses")
     .select("*, profiles (username)");

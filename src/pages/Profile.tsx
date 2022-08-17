@@ -7,10 +7,11 @@ import {
   createSignal,
   onMount,
   onCleanup,
+  createResource,
+  createEffect,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
-import { createSync } from "../util/createSync";
 import { supabase } from "../util/supabase";
 
 const loadProfile = async () => {
@@ -35,7 +36,7 @@ const loadProfile = async () => {
 
 const Profile: Component = () => {
   const [msg, setMsg] = createSignal("");
-  const [profile, setProfile] = createStore<Profile>({
+  const [newProfile, setNewProfile] = createStore<Profile>({
     id: "",
     updated_at: "",
     username: "",
@@ -44,12 +45,19 @@ const Profile: Component = () => {
 
   let subscription: RealtimeSubscription | null;
 
-  const sync = createSync(setProfile, loadProfile);
+  // const sync = createSync(setNewProfile, loadProfile);
+  const [profile, { refetch }] = createResource(loadProfile);
+
+  // Start off with defaults
+  createEffect(() => {
+    const returnedValue = profile();
+    if (returnedValue) setNewProfile(() => returnedValue);
+  });
 
   onMount(() => {
     subscription = supabase
       .from<Profile>("profiles")
-      .on("UPDATE", (payload) => {
+      .on("UPDATE", () => {
         setMsg("Profile updated!");
       })
       .subscribe();
@@ -68,8 +76,8 @@ const Profile: Component = () => {
 
       const updates = {
         id: user?.id || "",
-        username: profile.username || "",
-        handle: profile.handle || "",
+        username: newProfile.username || "",
+        handle: newProfile.handle || "",
         updated_at: new Date(),
       };
 
@@ -90,10 +98,10 @@ const Profile: Component = () => {
   return (
     <main class="flex-grow p-4">
       <Switch>
-        <Match when={sync.loading}>
+        <Match when={profile.loading}>
           <p>Loading...</p>
         </Match>
-        <Match when={!sync.loading}>
+        <Match when={!profile.loading}>
           <form onSubmit={updateProfile} class="flex flex-col space-y-3">
             <div>Email: {session()?.user?.email || "no email set"}</div>
             <div class="space-x-2">
@@ -102,12 +110,9 @@ const Profile: Component = () => {
                 id="username"
                 class="border py-1 px-2"
                 type="text"
-                value={profile.username}
+                value={newProfile.username}
                 onChange={(e) =>
-                  setProfile((prev) => ({
-                    ...prev,
-                    username: e.currentTarget.value,
-                  }))
+                  setNewProfile("username", e.currentTarget.value)
                 }
               />
             </div>
@@ -117,13 +122,8 @@ const Profile: Component = () => {
                 id="handle"
                 class="border py-1 px-2"
                 type="text"
-                value={profile.handle}
-                onChange={(e) =>
-                  setProfile((prev) => ({
-                    ...prev,
-                    username: e.currentTarget.value,
-                  }))
-                }
+                value={newProfile.handle}
+                onChange={(e) => setNewProfile("handle", e.currentTarget.value)}
               />
             </div>
             <div>
@@ -131,7 +131,7 @@ const Profile: Component = () => {
                 type="submit"
                 class=" rounded p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                disabled={sync.loading}
+                disabled={profile.loading}
               >
                 Update profile
               </button>
