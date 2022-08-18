@@ -9,6 +9,55 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      friendships: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          updated_at: string | null;
+          requester_id: string | null;
+          friend_id: string | null;
+          accepted: boolean;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          updated_at?: string | null;
+          requester_id?: string | null;
+          friend_id?: string | null;
+          accepted?: boolean;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          updated_at?: string | null;
+          requester_id?: string | null;
+          friend_id?: string | null;
+          accepted?: boolean;
+        };
+      };
+      todos: {
+        Row: {
+          is_complete: boolean | null;
+          inserted_at: string;
+          id: number;
+          user_id: string;
+          task: string | null;
+        };
+        Insert: {
+          is_complete?: boolean | null;
+          inserted_at?: string;
+          id?: number;
+          user_id: string;
+          task?: string | null;
+        };
+        Update: {
+          is_complete?: boolean | null;
+          inserted_at?: string;
+          id?: number;
+          user_id?: string;
+          task?: string | null;
+        };
+      };
       profiles: {
         Row: {
           id: string;
@@ -31,57 +80,34 @@ export interface Database {
       };
       statuses: {
         Row: {
-          user_id: string;
-          lat: number | null;
-          lng: number | null;
-          tags: string[] | null;
           city: string | null;
+          id: number;
+          tags: string[] | null;
           created_at: string | null;
           text: string | null;
-          id: number;
+          lat: number | null;
+          lng: number | null;
+          user_id: string;
         };
         Insert: {
-          user_id: string;
-          lat?: number | null;
-          lng?: number | null;
-          tags?: string[] | null;
           city?: string | null;
+          id?: number;
+          tags?: string[] | null;
           created_at?: string | null;
           text?: string | null;
-          id?: number;
-        };
-        Update: {
-          user_id?: string;
           lat?: number | null;
           lng?: number | null;
-          tags?: string[] | null;
-          city?: string | null;
-          created_at?: string | null;
-          text?: string | null;
-          id?: number;
-        };
-      };
-      todos: {
-        Row: {
           user_id: string;
-          task: string | null;
-          is_complete: boolean | null;
-          inserted_at: string;
-          id: number;
-        };
-        Insert: {
-          user_id: string;
-          task?: string | null;
-          is_complete?: boolean | null;
-          inserted_at?: string;
-          id?: number;
         };
         Update: {
-          user_id?: string;
-          task?: string | null;
-          is_complete?: boolean | null;
-          inserted_at?: string;
+          city?: string | null;
           id?: number;
+          tags?: string[] | null;
+          created_at?: string | null;
+          text?: string | null;
+          lat?: number | null;
+          lng?: number | null;
+          user_id?: string;
         };
       };
     };

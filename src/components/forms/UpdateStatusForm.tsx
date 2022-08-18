@@ -1,6 +1,5 @@
 import { Component, createEffect, Resource, Setter } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Properties } from "solid-js/web";
 import { getGeoNameId, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 

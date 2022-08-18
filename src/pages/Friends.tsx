@@ -4,6 +4,7 @@ import {
   createSignal,
   For,
   Match,
+  Show,
   Switch,
 } from "solid-js";
 import FriendMap from "../components/FriendMap";
@@ -74,8 +75,11 @@ const Friends: Component = () => {
       </aside>
       <Switch>
         <Match when={showScreen() === "Map"}>
-          {/* @ts-ignore */}
-          <FriendMap statuses={friendStatuses() || []} />
+          <Show when={friendStatuses()}>
+            {/* Don't show map until friend Statuses have loaded */}
+            {/* @ts-ignore */}
+            <FriendMap statuses={friendStatuses() || []} />
+          </Show>
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>
           <UpdateStatusForm
