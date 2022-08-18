@@ -32,8 +32,8 @@ const App: Component = () => {
       <Routes>
         <Route path="/" component={Dashboard} />
         <Route path="" component={Protected}>
-          <Route path="/friends" component={Friends}></Route>
-          <Route path="/profile" component={Profile}></Route>
+          <Route path="/friends" component={Friends} />
+          <Route path="/profile" component={Profile} />
         </Route>
       </Routes>
       <footer class="bg-gray-200 h-fit w-full">

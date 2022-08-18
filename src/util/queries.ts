@@ -17,9 +17,12 @@ export const loadMyStatus = async () => {
 };
 
 export const loadFriendStatuses = async () => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
   const { data, error } = await supabase
     .from("statuses")
-    .select("*, profiles (username)");
+    .select("*, profiles (username)")
+    .neq("user_id", user_id);
   if (error) {
     if (error.code === "PGRST116") return null;
     console.error(error);

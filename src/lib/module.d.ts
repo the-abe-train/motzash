@@ -24,6 +24,8 @@ declare global {
     handle: string;
   };
 
+  type ScreenName = "UpdateStatus" | "AddFriend" | "Map" | null;
+
   // type ProfileStatus = {
   //   id: string;
   //   updated_at: string;
