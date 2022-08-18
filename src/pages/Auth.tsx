@@ -1,4 +1,4 @@
-import { ApiError } from "@supabase/supabase-js";
+// import { ApiError } from "@supabase/supabase-js";
 import { Component, createSignal } from "solid-js";
 import { supabase } from "../util/supabase";
 
@@ -11,7 +11,7 @@ const Auth: Component = () => {
 
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signIn({ email: email() });
+      const { error } = await supabase.auth.signInWithOtp({ email: email() });
       if (error) throw error;
       alert("Check your email for the login link!");
     } catch (error: any) {

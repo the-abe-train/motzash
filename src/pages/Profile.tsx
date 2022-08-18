@@ -1,4 +1,3 @@
-import { RealtimeSubscription } from "@supabase/supabase-js";
 import {
   Component,
   Switch,
@@ -12,15 +11,16 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
+import { Database } from "../lib/database.types";
 import { supabase } from "../util/supabase";
 
 const loadProfile = async () => {
-  const user = supabase.auth.user();
+  const user = await supabase.auth.getUser();
 
   let { data, error, status } = await supabase
-    .from<Profile>("profiles")
+    .from("profiles")
     .select(`username, handle`)
-    .eq("id", user?.id || "")
+    .eq("id", user.data.user?.id || "")
     .single();
   if (error && status !== 406) {
     console.log(error);
@@ -36,14 +36,14 @@ const loadProfile = async () => {
 
 const Profile: Component = () => {
   const [msg, setMsg] = createSignal("");
-  const [newProfile, setNewProfile] = createStore<Profile>({
+  const [newProfile, setNewProfile] = createStore<
+    Database["public"]["Tables"]["profiles"]["Row"]
+  >({
     id: "",
     updated_at: "",
     username: "",
     handle: "",
   });
-
-  let subscription: RealtimeSubscription | null;
 
   // const sync = createSync(setNewProfile, loadProfile);
   const [profile, { refetch }] = createResource(loadProfile);
@@ -55,35 +55,39 @@ const Profile: Component = () => {
   });
 
   onMount(() => {
-    subscription = supabase
-      .from<Profile>("profiles")
-      .on("UPDATE", () => {
-        setMsg("Profile updated!");
-      })
+    supabase
+      .channel("public:profiles")
+      // .channel("*")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "profiles" },
+        () => {
+          console.log("Subscription activated");
+          setMsg("Profile updated!");
+          refetch();
+        }
+      )
       .subscribe();
   });
 
-  onCleanup(() => {
-    console.log("clean up");
-    subscription?.unsubscribe();
-  });
+  // onCleanup(() => {
+  //   supabase.removeAllChannels();
+  // });
 
   const updateProfile = async (e: Event) => {
     e.preventDefault();
 
     try {
-      const user = supabase.auth.user();
+      const user = await supabase.auth.getUser();
 
-      const updates = {
-        id: user?.id || "",
-        username: newProfile.username || "",
-        handle: newProfile.handle || "",
-        updated_at: new Date(),
-      };
+      const updates: Record<string, any> = { updated_at: new Date() };
+      if (newProfile.username) updates["username"] = newProfile.username;
+      if (newProfile.handle) updates["handle"] = newProfile.handle;
 
-      let { error } = await supabase.from("profiles").update(updates, {
-        returning: "minimal", // Don't return the value after inserting
-      });
+      let { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .match({ id: user.data.user?.id });
 
       if (error) {
         throw error;
@@ -110,7 +114,7 @@ const Profile: Component = () => {
                 id="username"
                 class="border py-1 px-2"
                 type="text"
-                value={newProfile.username}
+                value={newProfile.username || ""}
                 onChange={(e) =>
                   setNewProfile("username", e.currentTarget.value)
                 }
@@ -122,7 +126,7 @@ const Profile: Component = () => {
                 id="handle"
                 class="border py-1 px-2"
                 type="text"
-                value={newProfile.handle}
+                value={newProfile.handle || ""}
                 onChange={(e) => setNewProfile("handle", e.currentTarget.value)}
               />
             </div>

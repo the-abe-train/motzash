@@ -19,7 +19,8 @@ import { supabase } from "../util/supabase";
 export const AuthContext = createContext<Accessor<Session | null>>(() => null);
 
 const loadSession = async () => {
-  const session = supabase.auth.session();
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
   if (!session) return null;
   return session;
 };
@@ -45,7 +46,7 @@ export const AuthProvider: ContextProviderComponent<Session | null> = (
   onMount(() => {
     listener = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-    }).data;
+    }).subscription;
   });
 
   onCleanup(() => {

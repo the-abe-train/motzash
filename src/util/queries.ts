@@ -1,18 +1,29 @@
 import { supabase } from "./supabase";
 
 export const loadMyStatus = async () => {
-  // console.log("Loading data from database");
-  const user = supabase.auth.user();
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
   const { data, error } = await supabase
-    .from<ProfileStatus>("statuses")
+    .from("statuses")
     .select("*, profiles (username)")
-    .eq("user_id", user?.id || "")
+    .eq("user_id", user_id)
     .single();
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  return data;
+};
+
+export const loadFriendStatuses = async () => {
+  const { data, error } = await supabase
+    .from("statuses")
+    .select("*, profiles (username)");
   if (error) {
     if (error.code === "PGRST116") return null;
     console.error(error);
     return null;
   }
-  // console.log("new data", data);
   return data;
 };

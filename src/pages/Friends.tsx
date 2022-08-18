@@ -14,21 +14,15 @@ import FriendMap from "../components/FriendMap";
 import Status from "../components/Status";
 import { supabase } from "../util/supabase";
 import { createStore } from "solid-js/store";
-import { RealtimeSubscription } from "@supabase/supabase-js";
 import { getGeoNameId, getLocation } from "../util/location";
-import { loadMyStatus } from "../util/queries";
+import { loadFriendStatuses, loadMyStatus } from "../util/queries";
 
-const loadFriendStatuses = async () => {
-  const { data, error } = await supabase
-    .from<ProfileStatus>("statuses")
-    .select("*, profiles (username)");
-  if (error) {
-    if (error.code === "PGRST116") return null;
-    console.error(error);
-    return null;
-  }
-  console.log("new data", data);
-  return data;
+type Status = {
+  text: string | null;
+  tags: string[] | null;
+  lat: number | null;
+  lng: number | null;
+  city: string | null;
 };
 
 const Friends: Component = () => {
@@ -38,7 +32,6 @@ const Friends: Component = () => {
     tags: [""],
     lat: null,
     lng: null,
-    user_id: supabase.auth.user()?.id || "",
     city: "",
   });
 
@@ -49,32 +42,39 @@ const Friends: Component = () => {
   // Start off with defaults
   createEffect(() => {
     const returnedValue = myStatus();
-    if (returnedValue)
-      setNewStatus(() => {
-        const { id, created_at, profiles, ...newStatus } = returnedValue;
-        return newStatus;
-      });
+    if (returnedValue) {
+      const { id, profiles, ...newStatus } = returnedValue;
+      setNewStatus(newStatus);
+    }
   });
 
   // Subscription
-  let subscription: RealtimeSubscription | null;
   onMount(() => {
-    subscription = supabase
-      .from<Status>("statuses")
-      .on("*", () => refetch())
+    supabase
+      .channel("public:statuses")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "statuses" },
+        (payload: any) => {
+          console.log(payload);
+          refetch();
+        }
+      )
       .subscribe();
   });
-  onCleanup(() => {
-    console.log("clean up");
-    subscription?.unsubscribe();
-  });
+  // onCleanup(() => {
+  //   supabase.removeAllChannels();
+  // });
 
   const toggleShowForm = () => setShowForm((prev) => !prev);
 
   // This works, do not change!
   const upsertStatus = async (e: Event) => {
     e.preventDefault();
-    await supabase.from<Status>("statuses").upsert(newStatus, {
+    const user = await supabase.auth.getUser();
+    const user_id = user.data.user?.id || "";
+    const updates = { ...newStatus, user_id };
+    await supabase.from("statuses").upsert(updates, {
       onConflict: "user_id",
     });
   };
@@ -82,12 +82,13 @@ const Friends: Component = () => {
   const deleteStatus = async (e: Event) => {
     e.preventDefault();
     console.log("Deleting status");
-    const user = supabase.auth.user();
-    console.log(user?.id);
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+    console.log(userId);
     const { count, error } = await supabase
-      .from<Status>("statuses")
+      .from("statuses")
       .delete()
-      .eq("user_id", user?.id || "");
+      .eq("user_id", userId || "");
     console.log(count, "rows deleted.");
     if (error) console.error(error);
   };
@@ -150,6 +151,9 @@ const Friends: Component = () => {
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
           <For each={friendStatuses()}>
             {(status) => {
+              // It's very silly that Supabase couldn't figure out the column
+              // type of the joined table
+              // @ts-ignore
               return <Status status={status} />;
             }}
           </For>
@@ -175,7 +179,7 @@ const Friends: Component = () => {
                 type="text"
                 name="text"
                 class="border w-1/2 px-2"
-                value={newStatus.text}
+                value={newStatus.text || ""}
                 onChange={(e) => setNewStatus("text", e.currentTarget.value)}
               />
             </div>
@@ -205,7 +209,7 @@ const Friends: Component = () => {
               <input
                 class="border px-2"
                 type="text"
-                value={newStatus.city}
+                value={newStatus.city || ""}
                 onChange={(e) => setNewStatus("city", e.currentTarget.value)}
               />
             </div>
@@ -228,6 +232,7 @@ const Friends: Component = () => {
           </form>
         </Match>
         <Match when={!showForm()}>
+          {/* @ts-ignore */}
           <FriendMap statuses={friendStatuses() || []} />
         </Match>
       </Switch>

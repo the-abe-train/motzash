@@ -5,7 +5,18 @@ import { Component, For } from "solid-js";
 // }
 
 type Props = {
-  status?: ProfileStatus;
+  status: {
+    user_id: string;
+    lat: number | null;
+    lng: number | null;
+    tags: string[] | null;
+    city: string | null;
+    created_at: string | null;
+    text: string | null;
+    id: number;
+  } & {
+    profiles: { username: string };
+  };
 };
 
 // Cannot destructure props because that would kill reactivity
