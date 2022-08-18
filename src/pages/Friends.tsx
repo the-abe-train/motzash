@@ -1,54 +1,24 @@
 import {
   Component,
-  createEffect,
   createResource,
   createSignal,
   For,
   Match,
-  onCleanup,
-  onMount,
-  Show,
   Switch,
 } from "solid-js";
 import FriendMap from "../components/FriendMap";
 import Status from "../components/Status";
-import { supabase } from "../util/supabase";
-import { createStore } from "solid-js/store";
 
 import { loadFriendStatuses, loadMyStatus } from "../util/queries";
 import UpdateStatusForm from "../components/forms/UpdateStatusForm";
+import AddFriendForm from "../components/forms/AddFriendForm";
 
 const Friends: Component = () => {
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
-  const [myStatus, { refetch }] = createResource(loadMyStatus);
+  const [myStatus, { refetch: myStatusRefetch }] = createResource(loadMyStatus);
   const [friendStatuses] = createResource(loadFriendStatuses);
-
-  // Subscription
-  onMount(async () => {
-    console.log("Mounting Friends");
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
-    const filter = `user_id=eq.${user_id}`;
-    supabase
-      .channel(`public:statuses:${filter}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "statuses", filter },
-        (payload: any) => {
-          console.log(payload);
-          refetch();
-        }
-      )
-      .subscribe();
-  });
-  onCleanup(() => {
-    // supabase.removeAllChannels();
-    console.log("Cleanup Friends");
-  });
-
-  // This works, do not change!
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -71,7 +41,6 @@ const Friends: Component = () => {
           <Match when={!myStatus.loading}>
             {/* @ts-ignore */}
             <Status status={myStatus()} />
-
             <button
               class="rounded w-fit p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
@@ -95,6 +64,13 @@ const Friends: Component = () => {
             }}
           </For>
         </div>
+        <button
+          class="w-full h-20 rounded
+              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          onClick={() => setShowScreen("AddFriend")}
+        >
+          Add friend
+        </button>
       </aside>
       <Switch>
         <Match when={showScreen() === "Map"}>
@@ -102,7 +78,14 @@ const Friends: Component = () => {
           <FriendMap statuses={friendStatuses() || []} />
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>
-          <UpdateStatusForm myStatus={myStatus} setShowScreen={setShowScreen} />
+          <UpdateStatusForm
+            myStatus={myStatus}
+            setShowScreen={setShowScreen}
+            myStatusRefetch={myStatusRefetch}
+          />
+        </Match>
+        <Match when={showScreen() === "AddFriend"}>
+          <AddFriendForm myStatus={myStatus} setShowScreen={setShowScreen} />
         </Match>
       </Switch>
     </main>
@@ -110,8 +93,3 @@ const Friends: Component = () => {
 };
 
 export default Friends;
-
-// for (let index = 0; index < array.length; index++) {
-//   const element = array[index];
-
-// }

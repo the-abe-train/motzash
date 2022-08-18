@@ -4,8 +4,6 @@ import {
   Match,
   useContext,
   createSignal,
-  onMount,
-  onCleanup,
   createResource,
   createEffect,
 } from "solid-js";
@@ -54,26 +52,6 @@ const Profile: Component = () => {
     if (returnedValue) setNewProfile(() => returnedValue);
   });
 
-  onMount(() => {
-    supabase
-      .channel("public:profiles")
-      // .channel("*")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "profiles" },
-        () => {
-          console.log("Subscription activated");
-          setMsg("Profile updated!");
-          refetch();
-        }
-      )
-      .subscribe();
-  });
-
-  // onCleanup(() => {
-  //   supabase.removeAllChannels();
-  // });
-
   const updateProfile = async (e: Event) => {
     e.preventDefault();
 
@@ -92,6 +70,7 @@ const Profile: Component = () => {
       if (error) {
         throw error;
       }
+      setMsg("Profile updated!");
     } catch (error: any) {
       alert(error.message || "Database error.");
     }

@@ -15,6 +15,7 @@ type Status = {
 type Props = {
   myStatus: Resource<any>;
   setShowScreen: Setter<ScreenName>;
+  myStatusRefetch: () => any | Promise<any> | undefined | null;
 };
 
 const UpdateStatusForm: Component<Props> = (props) => {
@@ -40,9 +41,14 @@ const UpdateStatusForm: Component<Props> = (props) => {
     const user = await supabase.auth.getUser();
     const user_id = user.data.user?.id || "";
     const updates = { ...newStatus, user_id };
-    await supabase.from("statuses").upsert(updates, {
+    const { data, error } = await supabase.from("statuses").upsert(updates, {
       onConflict: "user_id",
     });
+    if (error) {
+      console.error(error);
+      return;
+    }
+    props.myStatusRefetch();
   };
 
   const deleteStatus = async (e: Event) => {
