@@ -28,7 +28,7 @@ const Friends: Component = () => {
           border-r flex flex-col space-y-5 p-4 "
       >
         <h2>Your Status</h2>
-        <Switch fallback={<button>Add status</button>}>
+        <Switch fallback={<p>Loading...</p>}>
           <Match when={!myStatus()}>
             <button
               class="w-full h-20 rounded

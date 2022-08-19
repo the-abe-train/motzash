@@ -63,19 +63,16 @@ export interface Database {
           id: string;
           updated_at: string | null;
           username: string | null;
-          handle: string | null;
         };
         Insert: {
           id: string;
           updated_at?: string | null;
           username?: string | null;
-          handle?: string | null;
         };
         Update: {
           id?: string;
           updated_at?: string | null;
           username?: string | null;
-          handle?: string | null;
         };
       };
       statuses: {

@@ -17,7 +17,7 @@ const App: Component = () => {
   };
 
   return (
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col h-full justify-between">
       <header class="w-full px-4 bg-gray-100 h-fit">
         <nav class="flex w-full justify-between items-center h-14">
           <span>Motzash</span>

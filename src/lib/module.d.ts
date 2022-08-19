@@ -21,24 +21,9 @@ declare global {
     id: string;
     updated_at: string;
     username: string;
-    handle: string;
   };
 
   type ScreenName = "UpdateStatus" | "AddFriend" | "Map" | null;
-
-  // type ProfileStatus = {
-  //   id: string;
-  //   updated_at: string;
-  //   username: string;
-  //   handle: string;
-  //   created_at?: string;
-  //   user_id: string;
-  //   text: string;
-  //   tags: string[];
-  //   lat: number | null;
-  //   lng: number | null;
-  //   city: string;
-  // };
 
   interface ProfileStatus extends Status {
     profiles: {

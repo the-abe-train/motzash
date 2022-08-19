@@ -17,7 +17,7 @@ const loadProfile = async () => {
 
   let { data, error, status } = await supabase
     .from("profiles")
-    .select(`username, handle`)
+    .select(`username`)
     .eq("id", user.data.user?.id || "")
     .single();
   if (error && status !== 406) {
@@ -40,7 +40,6 @@ const Profile: Component = () => {
     id: "",
     updated_at: "",
     username: "",
-    handle: "",
   });
 
   // const sync = createSync(setNewProfile, loadProfile);
@@ -60,7 +59,6 @@ const Profile: Component = () => {
 
       const updates: Record<string, any> = { updated_at: new Date() };
       if (newProfile.username) updates["username"] = newProfile.username;
-      if (newProfile.handle) updates["handle"] = newProfile.handle;
 
       let { error } = await supabase
         .from("profiles")
@@ -97,16 +95,6 @@ const Profile: Component = () => {
                 onChange={(e) =>
                   setNewProfile("username", e.currentTarget.value)
                 }
-              />
-            </div>
-            <div class="space-x-2">
-              <label for="handle">Handle</label>
-              <input
-                id="handle"
-                class="border py-1 px-2"
-                type="text"
-                value={newProfile.handle || ""}
-                onChange={(e) => setNewProfile("handle", e.currentTarget.value)}
               />
             </div>
             <div>

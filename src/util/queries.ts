@@ -17,6 +17,7 @@ export const loadMyStatus = async () => {
 };
 
 export const loadFriendStatuses = async () => {
+  // TODO should only pull in friends's statuses, not all statuses
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
   const { data, error } = await supabase
@@ -35,14 +36,13 @@ export const loadFriendStatuses = async () => {
 export const loadRequestsToMe = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
-  console.log(user_id);
   const { data, error } = await supabase
     .from("friendships")
     .select(
       `
     *, 
-    requester:requester_id (username),
-    friend:friend_id (username)
+    requester:requester_id (id, username),
+    friend:friend_id (id, username)
     `
     )
     .eq("friend_id", user_id)
@@ -55,3 +55,68 @@ export const loadRequestsToMe = async () => {
   console.log("Friend requests:", data);
   return data;
 };
+
+export const getUserIdByUsername = async (friendUsername: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", friendUsername)
+    .single();
+  if (error || !data) {
+    if (error.code === "PGRST116") return null;
+    console.error(error);
+    return null;
+  }
+  console.log("Friend ID", data);
+  return data;
+};
+
+export const findExistingReq = async (user_id: string, friend_id: string) => {
+  const { data, error } = await supabase
+    .from("friendships")
+    .select("*")
+    .or(
+      `\
+    and(requester_id.eq.${user_id},friend_id.eq.${friend_id}),\
+    and(requester_id.eq.${friend_id},friend_id.eq.${user_id})\
+    `
+    )
+    .single();
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.error(error);
+    return null;
+  }
+  console.log("Friendships:", data);
+  return data;
+};
+
+export const createRequest = async (friendId: string) => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
+  const { data, error } = await supabase.from("friendships").insert({
+    requester_id: user_id,
+    friend_id: friendId,
+  });
+  if (error || !data) {
+    console.error(error);
+    return null; // False?
+  }
+  console.log("New friendship:", data);
+  return data;
+};
+
+// export const deleteRequest = async (friendId: string) => {
+//   const user = await supabase.auth.getUser();
+//   const user_id = user.data.user?.id || "";
+//   const { data, error } = await supabase.from("friendships").delete().match({
+//     requester_id: user_id,
+//     friend_id: friendId,
+//   });
+//   if (error || !data) {
+//     console.error(error);
+//     return null; // False?
+//   }
+//   console.log("Friendship deleted:", data);
+//   return data;
+// };
