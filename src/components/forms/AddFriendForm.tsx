@@ -14,6 +14,7 @@ import { Database } from "../../lib/database.types";
 import {
   createRequest,
   findExistingReq,
+  getUserById,
   getUserIdByUsername,
   loadRequestsToMe,
 } from "../../util/queries";
@@ -34,7 +35,7 @@ interface IFriendRequest extends D {
 const AddFriendForm: Component<Props> = (props) => {
   const [data, { refetch, mutate }] = createResource(loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<IFriendRequest[]>([]);
-  const [friendUsername, setFriendUsername] = createSignal("");
+  const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
   const [loading2, setLoading2] = createSignal(false);
@@ -46,13 +47,18 @@ const AddFriendForm: Component<Props> = (props) => {
     if (returnedValue) setFriendRequests(returnedValue);
   });
 
+  // TODO should be able to send invites to players that don't have accounts yet.
+  // This would require knowing the new player's id when they sign up, or having
+  // a webhook tied to their email, etc.
+  // TODO Players should be able to share "friend request" links on social media
+  // and maybe QR codes
   const sendRequest = async (e: Event) => {
     e.preventDefault();
     setLoading(true);
     const user = await supabase.auth.getUser();
     const user_id = user.data.user?.id || "";
     console.log("Sending request");
-    const friendIdData = await getUserIdByUsername(friendUsername());
+    const friendIdData = await getUserIdByUsername(friendEmail());
     if (!friendIdData) {
       setMsg("No user with that username found.");
       setLoading(false);
@@ -76,7 +82,21 @@ const AddFriendForm: Component<Props> = (props) => {
     }
     const newRequest = await createRequest(friend_id);
     console.log(newRequest);
-    setMsg("Friend request sent!");
+
+    const userProfile = await getUserById(user_id);
+    const res = await fetch("/api/inviteByEmail", {
+      method: "POST",
+      body: JSON.stringify({
+        friendEmail: friendEmail(),
+        username: userProfile?.username,
+      }),
+    });
+    // const res = await fetch("/.netlify/functions/inviteByEmail");
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+      setMsg("Friend request sent!");
+    }
     setLoading(false);
     return;
   };
@@ -180,13 +200,13 @@ const AddFriendForm: Component<Props> = (props) => {
           X
         </button>
         <div class="flex flex-col space-y-2">
-          <label for="text">Enter your friend's username</label>
+          <label for="text">Enter your friend's email</label>
           <input
-            type="text"
+            type="email"
             name="text"
             class="border w-1/2 px-2"
-            value={friendUsername()}
-            onChange={(e) => setFriendUsername(e.currentTarget.value)}
+            value={friendEmail()}
+            onChange={(e) => setFriendEmail(e.currentTarget.value)}
             minLength={3}
           />
         </div>

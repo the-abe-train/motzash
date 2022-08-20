@@ -56,11 +56,25 @@ export const loadRequestsToMe = async () => {
   return data;
 };
 
-export const getUserIdByUsername = async (friendUsername: string) => {
+export const getUserIdByUsername = async (username: string) => {
   const { data, error } = await supabase
     .from("profiles")
     .select("id")
-    .eq("username", friendUsername)
+    .eq("username", username)
+    .single();
+  if (error || !data) {
+    if (error.code === "PGRST116") return null;
+    console.error(error);
+    return null;
+  }
+  return data;
+};
+
+export const getUserById = async (user_id: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user_id)
     .single();
   if (error || !data) {
     if (error.code === "PGRST116") return null;
