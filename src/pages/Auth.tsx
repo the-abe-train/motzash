@@ -11,8 +11,12 @@ const Auth: Component = () => {
 
     try {
       setLoading(true);
+      console.log("email", email());
       const { error } = await supabase.auth.signInWithOtp({ email: email() });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       alert("Check your email for the login link!");
     } catch (error: any) {
       alert(error.error_description || error.message || "Login error");

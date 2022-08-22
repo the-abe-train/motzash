@@ -1,3 +1,4 @@
+import { Database } from "../lib/database.types";
 import { supabase } from "./supabase";
 
 export const loadMyStatus = async () => {
@@ -56,36 +57,24 @@ export const loadRequestsToMe = async () => {
   return data;
 };
 
-export const getUserIdByUsername = async (username: string) => {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", username)
-    .single();
-  if (error || !data) {
-    if (error.code === "PGRST116") return null;
-    console.error(error);
-    return null;
-  }
-  return data;
-};
+type UserInfo = Database["public"]["Tables"]["profiles"]["Update"];
 
-export const getUserById = async (user_id: string) => {
+export async function getUser(info: UserInfo) {
+  const key = Object.keys(info)[0] as keyof UserInfo;
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", user_id)
+    .eq(key, info[key])
     .single();
   if (error || !data) {
     if (error.code === "PGRST116") return null;
     console.error(error);
     return null;
   }
-  console.log("Friend ID", data);
   return data;
-};
+}
 
-export const findExistingReq = async (user_id: string, friend_id: string) => {
+export const findFriendship = async (user_id: string, friend_id: string) => {
   const { data, error } = await supabase
     .from("friendships")
     .select("*")
@@ -105,32 +94,51 @@ export const findExistingReq = async (user_id: string, friend_id: string) => {
   return data;
 };
 
-export const createRequest = async (friendId: string) => {
+export async function createRequest(info: UserInfo) {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
-  const { data, error } = await supabase.from("friendships").insert({
-    requester_id: user_id,
-    friend_id: friendId,
-  });
-  if (error || !data) {
-    console.error(error);
-    return null; // False?
+  let friend_id = info["id"];
+  if (!friend_id) {
+    const friend = await getUser(info);
+    friend_id = friend?.id;
   }
-  console.log("New friendship:", data);
-  return data;
-};
+  if (!friend_id) {
+    console.log("Cannot create friendship, no friend id found.");
+    return false;
+  }
+  const { error } = await supabase.from("friendships").insert({
+    requester_id: user_id,
+    friend_id,
+  });
+  if (error) {
+    console.error(error);
+    return false;
+  }
+  return true;
+}
 
-// export const deleteRequest = async (friendId: string) => {
-//   const user = await supabase.auth.getUser();
-//   const user_id = user.data.user?.id || "";
-//   const { data, error } = await supabase.from("friendships").delete().match({
-//     requester_id: user_id,
-//     friend_id: friendId,
-//   });
-//   if (error || !data) {
-//     console.error(error);
-//     return null; // False?
-//   }
-//   console.log("Friendship deleted:", data);
-//   return data;
-// };
+export const deleteRequest = async (info: UserInfo) => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
+  let friend_id = info["id"];
+  if (!friend_id) {
+    const friend = await getUser(info);
+    friend_id = friend?.id;
+  }
+  console.log("friend_id", user_id);
+  console.log("requester_id", friend_id);
+  const { error, count } = await supabase
+    .from("friendships")
+    .delete()
+    .or(
+      `\
+    and(requester_id.eq.${user_id},friend_id.eq.${friend_id}),\
+    and(requester_id.eq.${friend_id},friend_id.eq.${user_id})\
+    `
+    );
+  if (error) {
+    console.error(error);
+    return false; // False?
+  }
+  return true;
+};

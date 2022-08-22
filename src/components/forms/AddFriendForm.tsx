@@ -13,9 +13,9 @@ import { createStore } from "solid-js/store";
 import { Database } from "../../lib/database.types";
 import {
   createRequest,
-  findExistingReq,
-  getUserById,
-  getUserIdByUsername,
+  deleteRequest,
+  findFriendship,
+  getUser,
   loadRequestsToMe,
 } from "../../util/queries";
 import { supabase } from "../../util/supabase";
@@ -47,30 +47,57 @@ const AddFriendForm: Component<Props> = (props) => {
     if (returnedValue) setFriendRequests(returnedValue);
   });
 
-  // TODO should be able to send invites to players that don't have accounts yet.
-  // This would require knowing the new player's id when they sign up, or having
-  // a webhook tied to their email, etc.
   // TODO Players should be able to share "friend request" links on social media
   // and maybe QR codes
   const sendRequest = async (e: Event) => {
+    // Manage form
     e.preventDefault();
     setLoading(true);
+
+    // User entered their own email address
     const user = await supabase.auth.getUser();
     const user_id = user.data.user?.id || "";
-    console.log("Sending request");
-    const friendIdData = await getUserIdByUsername(friendEmail());
-    if (!friendIdData) {
-      setMsg("No user with that username found.");
-      setLoading(false);
-      return;
-    }
-    const { id: friend_id } = friendIdData;
-    if (friend_id === user_id) {
+    if (friendEmail() === user.data.user?.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
       return;
     }
-    const existingReq = await findExistingReq(user_id, friend_id);
+
+    // User doesn't have a username
+    const userData = await getUser({ id: user_id });
+    if (!userData?.username) {
+      setMsg(
+        `You need a username to send a friend request.
+        You can set your username in the Profile page.`
+      );
+      setLoading(false);
+      return;
+    }
+
+    // Friend is not an existing user
+    const friendData = await getUser({ email: friendEmail() });
+    if (!friendData) {
+      const userProfile = await getUser({ id: user_id });
+      const res = await fetch("/api/inviteByEmail", {
+        method: "POST",
+        body: JSON.stringify({
+          friendEmail: friendEmail(),
+          username: userProfile?.username,
+        }),
+      });
+      if (res.ok) {
+        await createRequest({ email: friendEmail() });
+        setMsg("New user invited to Motzash!");
+      } else {
+        setMsg("Something went wrong. Please contact Support.");
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Friendship request already exists
+    const { id: friend_id } = friendData;
+    const existingReq = await findFriendship(user_id, friend_id);
     if (existingReq) {
       if (existingReq.accepted) {
         setMsg("Friendship already exists.");
@@ -80,18 +107,21 @@ const AddFriendForm: Component<Props> = (props) => {
       setLoading(false);
       return;
     }
-    const newRequest = await createRequest(friend_id);
-    console.log(newRequest);
 
-    const userProfile = await getUserById(user_id);
+    // Send friend request to existing user
+    const requestCreated = await createRequest({ id: friend_id });
+    if (!requestCreated) {
+      setMsg("Error creating friend request. Please contact support");
+      setLoading(false);
+      return;
+    }
     const res = await fetch("/api/inviteByEmail", {
       method: "POST",
       body: JSON.stringify({
         friendEmail: friendEmail(),
-        username: userProfile?.username,
+        username: userData?.username,
       }),
     });
-    // const res = await fetch("/.netlify/functions/inviteByEmail");
     if (res.ok) {
       const data = await res.json();
       console.log(data);
@@ -136,18 +166,23 @@ const AddFriendForm: Component<Props> = (props) => {
     }
     setLoading2(false);
     refetch();
-    // setFriendRequests(prev => {
-    //   prev.splice(idx, 1)
-    //   return prev
-    // });
-    // console.log("Friend reqs", friendRequests);
-    // setLoading(false);
   }
 
   // TODO Wire up remove friendship form
-  function removeFriendship(e: Event) {
+  const [deleteEmail, setDeleteEmail] = createSignal("");
+  const [msg2, setMsg2] = createSignal("");
+  const [loading3, setLoading3] = createSignal(false);
+  async function removeFriendship(e: Event) {
     e.preventDefault();
-    console.log("Friendship deleted");
+    setLoading3(true);
+    const requestDeleted = await deleteRequest({ email: deleteEmail() });
+    if (requestDeleted) {
+      setMsg2("Friendship deleted.");
+    } else {
+      setMsg2("An error occurred. Please contact support.");
+    }
+    setLoading3(false);
+    return;
   }
 
   const FriendRequest: Component<IFriendRequest & { idx: number }> = (
@@ -207,7 +242,7 @@ const AddFriendForm: Component<Props> = (props) => {
             class="border w-1/2 px-2"
             value={friendEmail()}
             onChange={(e) => setFriendEmail(e.currentTarget.value)}
-            minLength={3}
+            required
           />
         </div>
         <button
@@ -219,7 +254,7 @@ const AddFriendForm: Component<Props> = (props) => {
         </button>
       </form>
       <p>{msg}</p>
-      <div>
+      <div class="my-8">
         <h2 class="text-lg mt-24">Friend requests</h2>
         <Switch fallback={<p>Loading...</p>}>
           <Match when={!friendRequests}>
@@ -238,23 +273,28 @@ const AddFriendForm: Component<Props> = (props) => {
       </div>
       <form
         action=""
-        class="flex space-x-4 items-center absolute bottom-4"
+        class="flex space-x-4 items-center"
         onSubmit={removeFriendship}
       >
         <label for="remove">Remove a friendship</label>
         <input
-          type="text"
-          name="remove"
+          type="email"
+          name="text"
           class="border w-1/2 px-2"
-          placeholder="Friend's username"
+          value={deleteEmail()}
+          onChange={(e) => setDeleteEmail(e.currentTarget.value)}
+          required
+          placeholder="Friend's email"
         />
         <button
           type="submit"
           class="w-fit px-2 py-1 border rounded bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          disabled={loading3()}
         >
           Remove
         </button>
       </form>
+      <p>{msg2}</p>
     </div>
   );
 };

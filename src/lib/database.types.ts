@@ -58,23 +58,6 @@ export interface Database {
           task?: string | null;
         };
       };
-      profiles: {
-        Row: {
-          id: string;
-          updated_at: string | null;
-          username: string | null;
-        };
-        Insert: {
-          id: string;
-          updated_at?: string | null;
-          username?: string | null;
-        };
-        Update: {
-          id?: string;
-          updated_at?: string | null;
-          username?: string | null;
-        };
-      };
       statuses: {
         Row: {
           city: string | null;
@@ -105,6 +88,26 @@ export interface Database {
           lat?: number | null;
           lng?: number | null;
           user_id?: string;
+        };
+      };
+      profiles: {
+        Row: {
+          email: string | null;
+          id: string;
+          updated_at: string | null;
+          username: string | null;
+        };
+        Insert: {
+          email?: string | null;
+          id: string;
+          updated_at?: string | null;
+          username?: string | null;
+        };
+        Update: {
+          email?: string | null;
+          id?: string;
+          updated_at?: string | null;
+          username?: string | null;
         };
       };
     };

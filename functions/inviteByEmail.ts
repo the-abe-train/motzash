@@ -7,14 +7,18 @@ const handler: Handler = async (event, context) => {
   try {
     const supabaseUrl = process.env.VITE_SUPABASE_URL || "";
     const supabaseAnonKey = process.env.SUPABASE_SERVICE_KEY || "";
-
     const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
     const { friendEmail, username } = JSON.parse(event.body || "{}");
+    console.log("Friend email:", friendEmail);
+    console.log("User username:", username);
 
+    // Invite to player that doesn't have an account yet
+    // TODO customize this email in the supabase dashboard
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(
       friendEmail
     );
+    console.log("New user:", data);
     if (!error) {
       console.log("Invite email sent to:", friendEmail);
       return {
@@ -22,6 +26,8 @@ const handler: Handler = async (event, context) => {
         body: JSON.stringify({ message: "Email sent successfully" }),
       };
     }
+
+    // Invite to player that has an account
     if (error.name === "AuthApiError") {
       const subject = "You have a new Motzash friend request!";
       const link = (await supabase.auth.admin.generateLink(
@@ -33,7 +39,7 @@ const handler: Handler = async (event, context) => {
 
 <p>${username} has sent you a friend request in Motzash!</p>
 
-<p><a href="${link.data?.action_link}">Click here</a> below to log-in and accept the request.</p>
+<p><a href="${link.data?.action_link}">Click here</a> to log-in and view the request.</p>
 
 <p>Thank you!</p>
 
@@ -45,9 +51,14 @@ const handler: Handler = async (event, context) => {
         statusCode: 200,
         body: JSON.stringify({ message: "Email sent successfully" }),
       };
+    } else {
+      console.log("Supabase error.");
+      console.error(error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: "Server error", details: error }),
+      };
     }
-
-    throw error;
   } catch (e) {
     console.error(e);
     return {
@@ -81,17 +92,19 @@ function sendEmail({ emailBody, emailTo, subject }: Record<string, string>) {
     // Setting a timeout to return a good response because it takes more than
     // 10 seconds to return when there is no error, and hopefully errors out
     // right away.
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       console.log("Timing out with no error.");
       res(200);
-    }, 5000);
+    }, 2000);
     transporter.sendMail(options, (err, info) => {
       console.log("Info", info);
       if (err) {
         console.log(err.message);
         console.error(err);
+        clearTimeout(timeout);
         return rej(err);
       }
+      clearTimeout(timeout);
       res(200);
     });
   });
