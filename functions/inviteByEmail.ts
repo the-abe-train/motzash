@@ -16,7 +16,8 @@ const handler: Handler = async (event, context) => {
     // Invite to player that doesn't have an account yet
     // TODO customize this email in the supabase dashboard
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-      friendEmail
+      friendEmail,
+      { redirectTo: "localhost:8888" }
     );
     console.log("New user:", data);
     if (!error) {

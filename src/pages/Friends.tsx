@@ -14,8 +14,6 @@ import { loadFriendStatuses, loadMyStatus } from "../util/queries";
 import UpdateStatusForm from "../components/forms/UpdateStatusForm";
 import AddFriendForm from "../components/forms/AddFriendForm";
 
-// TODO only show your friends' statuses
-
 const Friends: Component = () => {
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 

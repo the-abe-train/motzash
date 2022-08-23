@@ -168,7 +168,6 @@ const AddFriendForm: Component<Props> = (props) => {
     refetch();
   }
 
-  // TODO Wire up remove friendship form
   const [deleteEmail, setDeleteEmail] = createSignal("");
   const [msg2, setMsg2] = createSignal("");
   const [loading3, setLoading3] = createSignal(false);

@@ -1,7 +1,15 @@
-import { Component, createEffect, Resource, Setter } from "solid-js";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  Resource,
+  Setter,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { getGeoNameId, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
+
+// TODO Should be able to choose status location on a map
 
 type Status = {
   text: string | null;
@@ -75,12 +83,20 @@ const UpdateStatusForm: Component<Props> = (props) => {
     setNewStatus("tags", values);
   };
 
+  const [loading, setLoading] = createSignal(false);
   async function updateLocation() {
-    const { lat, lng } = await getLocation();
-    const city = await getGeoNameId(lat, lng);
-    setNewStatus("lat", lat);
-    setNewStatus("lng", lng);
-    setNewStatus("city", city);
+    setLoading(true);
+    try {
+      const { lat, lng } = await getLocation();
+      const city = await getGeoNameId(lat, lng);
+      console.log(city);
+      setNewStatus("lat", lat);
+      setNewStatus("lng", lng);
+      setNewStatus("city", city);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
   }
 
   return (
@@ -118,9 +134,10 @@ const UpdateStatusForm: Component<Props> = (props) => {
       <div class="flex space-x-4">
         <button
           class="w-fit p-2  border rounded
-    bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
+    bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
           onClick={updateLocation}
           type="button"
+          disabled={loading()}
         >
           Get location
         </button>

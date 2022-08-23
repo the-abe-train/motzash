@@ -17,23 +17,60 @@ export const loadMyStatus = async () => {
   return data;
 };
 
+type Profiles = {
+  username: string;
+  friend: { accepted: boolean; friend_id: string; requester_id: string }[];
+  requester: { accepted: boolean; friend_id: string; requester_id: string }[];
+};
 export const loadFriendStatuses = async () => {
-  // TODO should only pull in friends's statuses, not all statuses
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
+
+  // Could use !inner for better query but it doesn't work with friend & requester :(
   const { data, error } = await supabase
     .from("statuses")
-    .select("*, profiles (username)")
+    .select(
+      `
+    *, 
+    profiles!inner (
+      username, 
+      friend:friendships!requester_id (
+        accepted, friend_id, requester_id
+      ),      
+      requester:friendships!friend_id (
+        accepted, friend_id, requester_id
+      )      
+    )
+    `
+    )
+    .or(`friend_id.eq.${user_id},requester_id.eq.${user_id}`, {
+      foreignTable: "profiles.friend",
+    })
+    .or(`friend_id.eq.${user_id},requester_id.eq.${user_id}`, {
+      foreignTable: "profiles.requester",
+    })
+    .eq("profiles.friend.accepted", true)
+    .eq("profiles.requester.accepted", true)
     .neq("user_id", user_id);
+
   if (error) {
     if (error.code === "PGRST116") return null;
     console.error(error);
     return null;
   }
-  return data;
+
+  const filtered = data.filter((row) => {
+    const profiles = row.profiles as Profiles;
+    return (
+      profiles.friend.some((f) => f.accepted) ||
+      profiles.requester.some((r) => r.accepted)
+    );
+  });
+
+  return filtered;
 };
 
-// from_col_alias:from_col (join_col)
+// new_col_object:from_col (join_table_cols[])
 export const loadRequestsToMe = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
