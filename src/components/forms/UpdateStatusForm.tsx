@@ -8,22 +8,12 @@ import {
 import { createStore } from "solid-js/store";
 import { getGeoNameId, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
+import StatusMap from "../maps/StatusMap";
 
-// TODO Should be able to choose status location on a map
 // TODO possible tags should come from database
 
-type Status = {
-  text: string | null;
-  tags: string[] | null;
-  location: {
-    lat: number;
-    lng: number;
-  } | null;
-  city: string | null;
-};
-
 type Props = {
-  myStatus: Resource<any>;
+  myStatus: Resource<MyStatus | null | undefined>;
   setShowScreen: Setter<ScreenName>;
   myStatusRefetch: () => any | Promise<any> | undefined | null;
 };
@@ -148,17 +138,19 @@ const UpdateStatusForm: Component<Props> = (props) => {
           <option value="chulent">Chulent</option>
         </select>
       </div>
+      <button
+        class="w-fit p-2  border rounded
+          bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+        onClick={updateLocation}
+        type="button"
+        disabled={loading()}
+      >
+        Get GPS location
+      </button>
       <div class="flex space-x-4">
-        <button
-          class="w-fit p-2  border rounded
-    bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-          onClick={updateLocation}
-          type="button"
-          disabled={loading()}
-        >
-          Get location
-        </button>
+        <label for="city">City/town:</label>
         <input
+          name="city"
           class="border px-2"
           type="text"
           value={newStatus.city || ""}
@@ -166,6 +158,8 @@ const UpdateStatusForm: Component<Props> = (props) => {
         />
       </div>
       <p>{msg}</p>
+      <p>Drag the marker below to show where you're going to be on Shabbat!</p>
+      <StatusMap newStatus={newStatus} setNewStatus={setNewStatus} />
       <div class="flex space-x-4">
         <button
           type="submit"

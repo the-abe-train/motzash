@@ -5,7 +5,6 @@ import {
   createSignal,
   For,
   Match,
-  Resource,
   Setter,
   Switch,
 } from "solid-js";
@@ -25,9 +24,9 @@ type Props = {
   setShowScreen: Setter<ScreenName>;
 };
 
-type D = Database["public"]["Tables"]["friendships"]["Row"];
+type Friendships = Database["public"]["Tables"]["friendships"]["Row"];
 
-interface IFriendRequest extends D {
+interface IFriendRequest extends Friendships {
   friend: Database["public"]["Tables"]["profiles"]["Row"];
   requester: Database["public"]["Tables"]["profiles"]["Row"];
 }

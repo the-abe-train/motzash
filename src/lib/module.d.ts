@@ -1,6 +1,7 @@
 import { TimedEvent } from "@hebcal/core";
 import { Dayjs } from "dayjs";
 import { Component } from "solid-js";
+import { Database } from "./database.types";
 
 export {};
 
@@ -12,7 +13,6 @@ declare global {
     lng: number;
   };
 
-  // Other types
   type CalendarDay = {
     date: Dayjs;
     holiday?: TimedEvent;
@@ -23,11 +23,18 @@ declare global {
     component: Component;
   };
 
-  type ShowStatus = {
-    name: string;
-    text: string;
-    tags: string[];
-    lat?: number;
-    lng?: number;
-  };
+  // Derived statuses
+  type Status = Database["public"]["Tables"]["statuses"]["Update"];
+  interface MyStatus extends Status {
+    profiles: Database["public"]["Tables"]["profiles"]["Row"];
+  }
+
+  type Friend = { accepted: boolean; friend_id: string; requester_id: string };
+  interface FriendStatus extends Status {
+    profiles: {
+      username: string;
+      friend: Friend[];
+      requester: Friend[];
+    };
+  }
 }

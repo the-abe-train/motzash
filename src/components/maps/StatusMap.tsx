@@ -1,67 +1,55 @@
 import mapboxgl from "mapbox-gl";
+import type { EventData } from "mapbox-gl";
 import { Component, onMount } from "solid-js";
-import { Database } from "../../lib/database.types";
-import { getLocation } from "../../util/location";
-
-type Status = Database["public"]["Tables"]["statuses"]["Row"];
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+import { getGeoNameId, getLocation } from "../../util/location";
+import { SetStoreFunction } from "solid-js/store";
 
 type Props = {
-  friends: (Status & { profiles: Profile })[];
-  user?: Status & { profiles: Profile };
+  newStatus: Status;
+  setNewStatus: SetStoreFunction<Status>;
 };
 
 const FriendMap: Component<Props> = (props) => {
   let mapContainer: HTMLDivElement;
+  // const [newCoords, setNewCoords] = createSignal<Coords | null>(null);
 
   onMount(async () => {
-    let lat: number, lng: number;
-    if (props.user?.lat && props.user?.lng) {
-      lat = props.user.lat;
-      lng = props.user.lng;
+    console.log("Mounting map");
+    let location: Coords | null = null;
+    const currentLocation = await getLocation();
+    const myLocation = props.newStatus?.location;
+    if (myLocation) {
+      location = myLocation;
+    } else if (currentLocation) {
+      location = currentLocation;
     } else {
-      const currentLocation = await getLocation();
-      lat = currentLocation.lat;
-      lng = currentLocation.lng;
+      location = { lat: 43.6, lng: -79.4 };
     }
-    // TODO add another "else" for when no location allowed.
-    // TODO there shouldn't be a marker if no use status, just a centered map
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainer, // container ID
       style: "mapbox://styles/mapbox/streets-v11", // style URL
-      center: [lng, lat], // starting position [lng, lat]
+      center: [location.lng, location.lat], // starting position [lng, lat]
       zoom: 11, // starting zoom
     });
 
     // User marker
     new mapboxgl.Marker({
       color: "red",
-      draggable: false,
+      draggable: true,
     })
-      .setLngLat([lng, lat])
-      .setPopup(
-        // new mapboxgl.Popup().setHTML(`<p>${props.user.profiles.username}!</p>`)
-        new mapboxgl.Popup().setHTML(`<p>${props.user?.profiles.username}!</p>`)
-      )
-      .addTo(map);
-
-    // Friend markers
-    // TODO bind markers to focused friend
-    props.friends.forEach(({ lat, lng, profiles }) => {
-      if (!lat || !lng) return;
-      new mapboxgl.Marker({
-        color: "blue",
-        draggable: false,
-      })
-        .setLngLat([lng, lat])
-        .setPopup(new mapboxgl.Popup().setHTML(`<p>${profiles.username}!</p>`))
-        .addTo(map);
-    });
+      .setLngLat([location.lng, location.lat])
+      .addTo(map)
+      .on("dragend", async (e: EventData) => {
+        const location = e.target._lngLat;
+        const city = await getGeoNameId(location);
+        props.setNewStatus("location", location);
+        props.setNewStatus("city", city);
+      });
   });
 
-  return <div ref={mapContainer!} class="col-span-8 m-4"></div>;
+  return <div ref={mapContainer!} class="my-4 w-full h-80"></div>;
 };
 
 export default FriendMap;

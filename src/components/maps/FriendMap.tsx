@@ -1,8 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import { Component, onMount } from "solid-js";
 import { Database } from "../../lib/database.types";
-import { latLngMidpoint } from "../../util/geography";
-import { getLocation } from "../../util/location";
+import { getLocation, latLngMidpoint } from "../../util/location";
 
 type Status = Database["public"]["Tables"]["statuses"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -64,14 +63,19 @@ const FriendMap: Component<Props> = (props) => {
 
     // Friend markers
     // TODO bind markers to focused friend
-    props.friends.forEach(({ location, profiles }) => {
+    props.friends.forEach(({ location, profiles, text }) => {
       if (!location) return;
       new mapboxgl.Marker({
         color: "blue",
         draggable: false,
       })
         .setLngLat([location.lng, location.lat])
-        .setPopup(new mapboxgl.Popup().setHTML(`<p>${profiles.username}!</p>`))
+        .setPopup(
+          new mapboxgl.Popup().setHTML(`
+          <b>${profiles.username}</b>
+          <p>${text}!</p>
+        `)
+        )
         .addTo(map);
     });
   });

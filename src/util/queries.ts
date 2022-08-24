@@ -14,14 +14,14 @@ export const loadMyStatus = async () => {
     console.log(error);
     return null;
   }
-  return data;
+  return data as MyStatus;
 };
 
-type Profiles = {
-  username: string;
-  friend: { accepted: boolean; friend_id: string; requester_id: string }[];
-  requester: { accepted: boolean; friend_id: string; requester_id: string }[];
-};
+// type Profiles = {
+//   username: string;
+//   friend: { accepted: boolean; friend_id: string; requester_id: string }[];
+//   requester: { accepted: boolean; friend_id: string; requester_id: string }[];
+// };
 // TODO I'm worried that unaccpeted friends' statuses will be in the payload
 export const loadFriendStatuses = async () => {
   const user = await supabase.auth.getUser();
@@ -60,13 +60,17 @@ export const loadFriendStatuses = async () => {
     return null;
   }
 
-  const acceptedRequests = data.filter((row) => {
-    const profiles = row.profiles as Profiles;
+  const x = data as FriendStatus[];
+
+  const acceptedRequests = x.filter((row) => {
+    const profiles = row.profiles;
     return (
       profiles.friend.some((f) => f.accepted) ||
       profiles.requester.some((r) => r.accepted)
     );
   });
+
+  console.log(acceptedRequests);
 
   return acceptedRequests;
 };
