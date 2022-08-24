@@ -43,46 +43,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
     }
   });
 
-  const upsertStatus = async (e: Event) => {
-    e.preventDefault();
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
-    const updates = { ...newStatus, user_id };
-    const { data, error } = await supabase.from("statuses").upsert(updates, {
-      onConflict: "user_id",
-    });
-    if (error) {
-      console.error(error);
-      return;
-    }
-    props.myStatusRefetch();
-  };
-
-  const deleteStatus = async (e: Event) => {
-    e.preventDefault();
-    console.log("Deleting status");
-    const user = await supabase.auth.getUser();
-    const userId = user.data.user?.id;
-    console.log(userId);
-    const { count, error } = await supabase
-      .from("statuses")
-      .delete()
-      .eq("user_id", userId || "");
-    console.log(count, "rows deleted.");
-    if (error) console.error(error);
-  };
-
-  const selectTags = (e: Event & { currentTarget: HTMLSelectElement }) => {
-    const options = e.currentTarget.selectedOptions;
-    const numTags = options.length;
-    const values: string[] = [];
-    for (let i = 0; i < numTags; i++) {
-      const option = options.item(i);
-      if (option?.value) values.push(option?.value);
-    }
-    setNewStatus("tags", values);
-  };
-
   const [loading, setLoading] = createSignal(false);
   async function updateLocation() {
     setLoading(true);
@@ -98,6 +58,55 @@ const UpdateStatusForm: Component<Props> = (props) => {
     }
     setLoading(false);
   }
+
+  const [loading2, setLoading2] = createSignal(false);
+  const upsertStatus = async (e: Event) => {
+    e.preventDefault();
+    setLoading2(true);
+    const user = await supabase.auth.getUser();
+    const user_id = user.data.user?.id || "";
+    const updates = { ...newStatus, user_id };
+    const { data, error } = await supabase.from("statuses").upsert(updates, {
+      onConflict: "user_id",
+    });
+    if (error) {
+      console.error(error);
+      setLoading2(false);
+      return;
+    }
+    setLoading2(false);
+    props.myStatusRefetch();
+    props.setShowScreen("Map");
+  };
+
+  const deleteStatus = async (e: Event) => {
+    e.preventDefault();
+    setLoading2(true);
+    console.log("Deleting status");
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+    console.log(userId);
+    const { count, error } = await supabase
+      .from("statuses")
+      .delete()
+      .eq("user_id", userId || "");
+    console.log(count, "rows deleted.");
+    if (error) console.error(error);
+    setLoading2(false);
+    props.myStatusRefetch();
+    props.setShowScreen("Map");
+  };
+
+  const selectTags = (e: Event & { currentTarget: HTMLSelectElement }) => {
+    const options = e.currentTarget.selectedOptions;
+    const numTags = options.length;
+    const values: string[] = [];
+    for (let i = 0; i < numTags; i++) {
+      const option = options.item(i);
+      if (option?.value) values.push(option?.value);
+    }
+    setNewStatus("tags", values);
+  };
 
   return (
     <form
@@ -152,14 +161,16 @@ const UpdateStatusForm: Component<Props> = (props) => {
         <button
           type="submit"
           class="w-fit p-2  border rounded
-    bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
+    bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          disabled={loading2()}
         >
           Update status
         </button>
         <button
           class="w-fit p-2  border rounded
-     hover:bg-slate-300 active:bg-slate-400"
+          hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
           onClick={deleteStatus}
+          disabled={loading2()}
         >
           Delete status
         </button>

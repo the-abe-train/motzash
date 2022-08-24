@@ -6,16 +6,16 @@ export {};
 
 declare global {
   // Database schemas
-  type Status = {
-    id?: string;
-    created_at?: string;
-    user_id: string;
-    text: string;
-    tags: string[];
-    lat: number | null;
-    lng: number | null;
-    city: string;
-  };
+  // type Status = {
+  //   id?: string;
+  //   created_at?: string;
+  //   user_id: string;
+  //   text: string;
+  //   tags: string[];
+  //   lat: number | null;
+  //   lng: number | null;
+  //   city: string;
+  // };
 
   type Profile = {
     id: string;
@@ -25,11 +25,11 @@ declare global {
 
   type ScreenName = "UpdateStatus" | "AddFriend" | "Map" | null;
 
-  interface ProfileStatus extends Status {
-    profiles: {
-      username: string;
-    };
-  }
+  // interface ProfileStatus extends Status {
+  //   profiles: {
+  //     username: string;
+  //   };
+  // }
 
   // Other types
   type CalendarDay = {

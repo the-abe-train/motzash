@@ -66,6 +66,7 @@ export const loadFriendStatuses = async () => {
       profiles.requester.some((r) => r.accepted)
     );
   });
+  console.log(filtered);
 
   return filtered;
 };

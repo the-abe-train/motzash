@@ -7,7 +7,7 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import FriendMap from "../components/FriendMap";
+import FriendMap from "../components/maps/FriendMap";
 import Status from "../components/Status";
 
 import { loadFriendStatuses, loadMyStatus } from "../util/queries";
@@ -20,6 +20,7 @@ const Friends: Component = () => {
   // Get data from Supabase
   const [myStatus, { refetch: myStatusRefetch }] = createResource(loadMyStatus);
   const [friendStatuses] = createResource(loadFriendStatuses);
+  console.log(friendStatuses());
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -78,7 +79,7 @@ const Friends: Component = () => {
           <Show when={friendStatuses()}>
             {/* Don't show map until friend Statuses have loaded */}
             {/* @ts-ignore */}
-            <FriendMap statuses={friendStatuses() || []} />
+            <FriendMap friends={friendStatuses() || []} user={myStatus()} />
           </Show>
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>
