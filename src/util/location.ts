@@ -1,12 +1,18 @@
-export function getLocation(): Promise<{ lat: number; lng: number }> {
+export function getLocation(): Promise<{ lat: number; lng: number } | null> {
   return new Promise((res, rej) => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude: lat, longitude: lng } = position.coords;
-        res({ lat, lng });
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: lat, longitude: lng } = position.coords;
+          res({ lat, lng });
+        },
+        (error) => {
+          console.error(error);
+          res(null);
+        }
+      );
     } else {
-      rej();
+      res(null);
     }
   });
 }

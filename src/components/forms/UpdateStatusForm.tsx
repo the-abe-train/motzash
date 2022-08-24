@@ -10,6 +10,7 @@ import { getGeoNameId, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 
 // TODO Should be able to choose status location on a map
+// TODO possible tags should come from database
 
 type Status = {
   text: string | null;
@@ -44,14 +45,20 @@ const UpdateStatusForm: Component<Props> = (props) => {
   });
 
   const [loading, setLoading] = createSignal(false);
+  const [msg, setMsg] = createSignal("");
   async function updateLocation() {
     setLoading(true);
+    setMsg("");
     try {
-      const { lat, lng } = await getLocation();
-      const city = await getGeoNameId(lat, lng);
+      const coords = await getLocation();
+      if (!coords) {
+        setMsg("Enable geolocation API to use automatic location detection.");
+        return;
+      }
+      const city = await getGeoNameId(coords.lat, coords.lng);
       console.log(city);
-      setNewStatus("lat", lat);
-      setNewStatus("lng", lng);
+      setNewStatus("lat", coords.lat);
+      setNewStatus("lng", coords.lng);
       setNewStatus("city", city);
     } catch (e) {
       console.error(e);
@@ -128,6 +135,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
           name="text"
           class="border w-1/2 px-2"
           value={newStatus.text || ""}
+          required
           onChange={(e) => setNewStatus("text", e.currentTarget.value)}
         />
       </div>
@@ -157,6 +165,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
           onChange={(e) => setNewStatus("city", e.currentTarget.value)}
         />
       </div>
+      <p>{msg}</p>
       <div class="flex space-x-4">
         <button
           type="submit"

@@ -76,7 +76,7 @@ const Friends: Component = () => {
       </aside>
       <Switch>
         <Match when={showScreen() === "Map"}>
-          <Show when={friendStatuses()}>
+          <Show when={friendStatuses()} fallback={<p>Loading...</p>}>
             {/* Don't show map until friend Statuses have loaded */}
             {/* @ts-ignore */}
             <FriendMap friends={friendStatuses() || []} user={myStatus()} />

@@ -1,7 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { Component, onMount } from "solid-js";
 import { Database } from "../../lib/database.types";
-import { latLngMidpoint } from "../../util/geography";
 import { getLocation } from "../../util/location";
 
 type Status = Database["public"]["Tables"]["statuses"]["Row"];
@@ -16,29 +15,17 @@ const FriendMap: Component<Props> = (props) => {
   let mapContainer: HTMLDivElement;
 
   onMount(async () => {
-    // const markerFriends = props.friends.filter(friend => {
-    //   return friend.lat && friend.lng
-    // })
-
-    console.log("mounting friend map");
-
     let lat: number, lng: number;
-    const currentLocation = await getLocation();
     if (props.user?.lat && props.user?.lng) {
-      console.log("User status marker");
       lat = props.user.lat;
       lng = props.user.lng;
-    } else if (currentLocation) {
-      console.log("Location from api");
+    } else {
+      const currentLocation = await getLocation();
       lat = currentLocation.lat;
       lng = currentLocation.lng;
-    } else {
-      console.log("Calculated midpoint");
-      const friendCoords = props.friends.map(({ lat, lng }) => ({ lat, lng }));
-      const midpoint = latLngMidpoint(friendCoords);
-      lat = midpoint.lat;
-      lng = midpoint.lng;
     }
+    // TODO add another "else" for when no location allowed.
+    // TODO there shouldn't be a marker if no use status, just a centered map
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
@@ -49,19 +36,16 @@ const FriendMap: Component<Props> = (props) => {
     });
 
     // User marker
-    if (props.user?.lat && props.user.lng) {
-      new mapboxgl.Marker({
-        color: "red",
-        draggable: false,
-      })
-        .setLngLat([lng, lat])
-        .setPopup(
-          new mapboxgl.Popup().setHTML(
-            `<p>${props.user?.profiles.username}!</p>`
-          )
-        )
-        .addTo(map);
-    }
+    new mapboxgl.Marker({
+      color: "red",
+      draggable: false,
+    })
+      .setLngLat([lng, lat])
+      .setPopup(
+        // new mapboxgl.Popup().setHTML(`<p>${props.user.profiles.username}!</p>`)
+        new mapboxgl.Popup().setHTML(`<p>${props.user?.profiles.username}!</p>`)
+      )
+      .addTo(map);
 
     // Friend markers
     // TODO bind markers to focused friend
@@ -77,7 +61,7 @@ const FriendMap: Component<Props> = (props) => {
     });
   });
 
-  return <div ref={mapContainer!} class="col-span-6 m-4"></div>;
+  return <div ref={mapContainer!} class="col-span-8 m-4"></div>;
 };
 
 export default FriendMap;
