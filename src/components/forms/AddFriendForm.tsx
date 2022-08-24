@@ -21,7 +21,7 @@ import {
 import { supabase } from "../../util/supabase";
 
 type Props = {
-  myStatus: Resource<any>;
+  refetchFriendStatuses: () => any | Promise<any> | undefined | null;
   setShowScreen: Setter<ScreenName>;
 };
 
@@ -146,6 +146,7 @@ const AddFriendForm: Component<Props> = (props) => {
       setLoading2(false);
       return;
     }
+    props.refetchFriendStatuses();
     setFriendRequests(idx, "accepted", true);
     console.log("Friend reqs", friendRequests);
     setLoading2(false);

@@ -5,31 +5,12 @@ import { Component } from "solid-js";
 export {};
 
 declare global {
-  // Database schemas
-  // type Status = {
-  //   id?: string;
-  //   created_at?: string;
-  //   user_id: string;
-  //   text: string;
-  //   tags: string[];
-  //   lat: number | null;
-  //   lng: number | null;
-  //   city: string;
-  // };
-
-  type Profile = {
-    id: string;
-    updated_at: string;
-    username: string;
-  };
-
   type ScreenName = "UpdateStatus" | "AddFriend" | "Map" | null;
 
-  // interface ProfileStatus extends Status {
-  //   profiles: {
-  //     username: string;
-  //   };
-  // }
+  type Coords = {
+    lat: number;
+    lng: number;
+  };
 
   // Other types
   type CalendarDay = {

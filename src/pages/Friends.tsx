@@ -18,8 +18,9 @@ const Friends: Component = () => {
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
-  const [myStatus, { refetch: myStatusRefetch }] = createResource(loadMyStatus);
-  const [friendStatuses] = createResource(loadFriendStatuses);
+  const [myStatus, { refetch: refetchMyStatus }] = createResource(loadMyStatus);
+  const [friendStatuses, { refetch: refetchFriendStatuses }] =
+    createResource(loadFriendStatuses);
   console.log(friendStatuses());
 
   return (
@@ -57,7 +58,10 @@ const Friends: Component = () => {
         </Switch>
         <h2>Your Friends</h2>
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
-          <For each={friendStatuses()}>
+          <For
+            each={friendStatuses()}
+            fallback={<p>No friend statuses to show.</p>}
+          >
             {(status) => {
               // It's very silly that Supabase couldn't figure out the column
               // type of the joined table
@@ -76,7 +80,10 @@ const Friends: Component = () => {
       </aside>
       <Switch>
         <Match when={showScreen() === "Map"}>
-          <Show when={friendStatuses()} fallback={<p>Loading...</p>}>
+          <Show
+            when={!friendStatuses.loading && !myStatus.loading}
+            fallback={<p>Loading map...</p>}
+          >
             {/* Don't show map until friend Statuses have loaded */}
             {/* @ts-ignore */}
             <FriendMap friends={friendStatuses() || []} user={myStatus()} />
@@ -86,11 +93,14 @@ const Friends: Component = () => {
           <UpdateStatusForm
             myStatus={myStatus}
             setShowScreen={setShowScreen}
-            myStatusRefetch={myStatusRefetch}
+            myStatusRefetch={refetchMyStatus}
           />
         </Match>
         <Match when={showScreen() === "AddFriend"}>
-          <AddFriendForm myStatus={myStatus} setShowScreen={setShowScreen} />
+          <AddFriendForm
+            setShowScreen={setShowScreen}
+            refetchFriendStatuses={refetchFriendStatuses}
+          />
         </Match>
       </Switch>
     </main>

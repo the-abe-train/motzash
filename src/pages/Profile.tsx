@@ -35,7 +35,7 @@ const loadProfile = async () => {
 const Profile: Component = () => {
   const [msg, setMsg] = createSignal("");
   const [newProfile, setNewProfile] = createStore<
-    Database["public"]["Tables"]["profiles"]["Row"]
+    Database["public"]["Tables"]["profiles"]["Update"]
   >({
     id: "",
     updated_at: "",
@@ -51,8 +51,10 @@ const Profile: Component = () => {
     if (returnedValue) setNewProfile(() => returnedValue);
   });
 
+  const [loading, setLoading] = createSignal(false);
   const updateProfile = async (e: Event) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const user = await supabase.auth.getUser();
@@ -72,6 +74,7 @@ const Profile: Component = () => {
     } catch (error: any) {
       alert(error.message || "Database error.");
     }
+    setLoading(false);
   };
 
   const session = useContext(AuthContext);
@@ -102,7 +105,7 @@ const Profile: Component = () => {
                 type="submit"
                 class=" rounded p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                disabled={profile.loading}
+                disabled={profile.loading || loading()}
               >
                 Update profile
               </button>
@@ -114,6 +117,7 @@ const Profile: Component = () => {
             class=" rounded p-2 my-2
         bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
             onClick={() => supabase.auth.signOut()}
+            disabled={profile.loading || loading()}
           >
             Sign Out
           </button>

@@ -22,39 +22,38 @@ const FriendMap: Component<Props> = (props) => {
 
     console.log("mounting friend map");
 
-    let lat: number, lng: number;
+    let location: Coords | null = null;
     const currentLocation = await getLocation();
-    if (props.user?.lat && props.user?.lng) {
+    if (props.user?.location) {
       console.log("User status marker");
-      lat = props.user.lat;
-      lng = props.user.lng;
+      location = props.user.location;
     } else if (currentLocation) {
       console.log("Location from api");
-      lat = currentLocation.lat;
-      lng = currentLocation.lng;
+      location = currentLocation;
     } else {
       console.log("Calculated midpoint");
-      const friendCoords = props.friends.map(({ lat, lng }) => ({ lat, lng }));
+      const friendCoords = props.friends
+        .map(({ location }) => location)
+        .filter((c) => !!c) as Coords[];
       const midpoint = latLngMidpoint(friendCoords);
-      lat = midpoint.lat;
-      lng = midpoint.lng;
+      location = midpoint;
     }
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainer, // container ID
       style: "mapbox://styles/mapbox/streets-v11", // style URL
-      center: [lng, lat], // starting position [lng, lat]
+      center: [location.lng, location.lat], // starting position [lng, lat]
       zoom: 11, // starting zoom
     });
 
     // User marker
-    if (props.user?.lat && props.user.lng) {
+    if (props.user?.location) {
       new mapboxgl.Marker({
         color: "red",
         draggable: false,
       })
-        .setLngLat([lng, lat])
+        .setLngLat([location.lng, location.lat])
         .setPopup(
           new mapboxgl.Popup().setHTML(
             `<p>${props.user?.profiles.username}!</p>`
@@ -65,13 +64,13 @@ const FriendMap: Component<Props> = (props) => {
 
     // Friend markers
     // TODO bind markers to focused friend
-    props.friends.forEach(({ lat, lng, profiles }) => {
-      if (!lat || !lng) return;
+    props.friends.forEach(({ location, profiles }) => {
+      if (!location) return;
       new mapboxgl.Marker({
         color: "blue",
         draggable: false,
       })
-        .setLngLat([lng, lat])
+        .setLngLat([location.lng, location.lat])
         .setPopup(new mapboxgl.Popup().setHTML(`<p>${profiles.username}!</p>`))
         .addTo(map);
     });

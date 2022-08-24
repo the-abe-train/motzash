@@ -1,20 +1,11 @@
-type Coords = {
-  lat: number | null;
-  lng: number | null;
-};
-
-type RealCoords = {
-  lat: number;
-  lng: number;
-};
-
 const degToRad = (deg: number) => (deg * Math.PI) / 180;
 const radToDeg = (rad: number) => (rad / Math.PI) * 180;
 
 export function latLngMidpoint(coords: Coords[]) {
+  // Make sure there are no nulls
   const realCoords = coords.filter((set) => {
     return set.lat && set.lng;
-  }) as RealCoords[];
+  }) as Coords[];
 
   console.log("Real coords", realCoords);
 

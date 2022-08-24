@@ -15,8 +15,10 @@ import { supabase } from "../../util/supabase";
 type Status = {
   text: string | null;
   tags: string[] | null;
-  lat: number | null;
-  lng: number | null;
+  location: {
+    lat: number;
+    lng: number;
+  } | null;
   city: string | null;
 };
 
@@ -30,8 +32,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
   const [newStatus, setNewStatus] = createStore<Status>({
     text: "",
     tags: [""],
-    lat: null,
-    lng: null,
+    location: null,
     city: "",
   });
 
@@ -55,10 +56,9 @@ const UpdateStatusForm: Component<Props> = (props) => {
         setMsg("Enable geolocation API to use automatic location detection.");
         return;
       }
-      const city = await getGeoNameId(coords.lat, coords.lng);
+      const city = await getGeoNameId(coords);
       console.log(city);
-      setNewStatus("lat", coords.lat);
-      setNewStatus("lng", coords.lng);
+      setNewStatus("location", coords);
       setNewStatus("city", city);
     } catch (e) {
       console.error(e);

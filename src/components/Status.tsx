@@ -7,8 +7,10 @@ import { Component, For } from "solid-js";
 type Props = {
   status: {
     user_id: string;
-    lat: number | null;
-    lng: number | null;
+    location: {
+      lat: number | null;
+      lng: number | null;
+    };
     tags: string[] | null;
     city: string | null;
     created_at: string | null;

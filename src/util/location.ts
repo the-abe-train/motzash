@@ -1,4 +1,6 @@
-export function getLocation(): Promise<{ lat: number; lng: number } | null> {
+type Coordinates = { lat: number; lng: number };
+
+export function getLocation(): Promise<Coordinates | null> {
   return new Promise((res, rej) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -19,7 +21,7 @@ export function getLocation(): Promise<{ lat: number; lng: number } | null> {
 
 // cities1000 means all cities with a population of over 1000
 // 500, 1000, 5000, 15000 are all options
-export async function getGeoNameId(lat: number, lng: number) {
+export async function getGeoNameId({ lat, lng }: Coordinates) {
   const url = new URL("http://api.geonames.org/findNearbyPlaceNameJSON");
   const queryParams = {
     lat: lat.toString(),
