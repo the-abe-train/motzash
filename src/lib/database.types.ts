@@ -86,7 +86,6 @@ export interface Database {
           city: string | null;
           location: Coords | null;
           id: number;
-          tags: string[] | null;
           created_at: string | null;
           text: string | null;
           user_id: string;
@@ -95,7 +94,6 @@ export interface Database {
           city?: string | null;
           location?: Coords | null;
           id?: number;
-          tags?: string[] | null;
           created_at?: string | null;
           text?: string | null;
           user_id: string;
@@ -104,7 +102,6 @@ export interface Database {
           city?: string | null;
           location?: Coords | null;
           id?: number;
-          tags?: string[] | null;
           created_at?: string | null;
           text?: string | null;
           user_id?: string;

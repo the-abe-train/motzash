@@ -23,6 +23,8 @@ const Friends: Component = () => {
     createResource(loadFriendStatuses);
   console.log(friendStatuses());
 
+  const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
+
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
       <aside
@@ -43,7 +45,7 @@ const Friends: Component = () => {
           </Match>
           <Match when={!myStatus.loading}>
             {/* @ts-ignore */}
-            <Status status={myStatus()} />
+            <Status status={myStatus()} focus={focus} setFocus={setFocus} />
             <button
               class="rounded w-fit p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
@@ -56,6 +58,7 @@ const Friends: Component = () => {
             <p>Loading...</p>
           </Match>
         </Switch>
+        {/* TODO search bar */}
         <h2>Your Friends</h2>
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
           <For
@@ -63,10 +66,9 @@ const Friends: Component = () => {
             fallback={<p>No friend statuses to show.</p>}
           >
             {(status) => {
-              // It's very silly that Supabase couldn't figure out the column
-              // type of the joined table
-              // @ts-ignore
-              return <Status status={status} />;
+              return (
+                <Status status={status} focus={focus} setFocus={setFocus} />
+              );
             }}
           </For>
         </div>
@@ -84,9 +86,12 @@ const Friends: Component = () => {
             when={!friendStatuses.loading && !myStatus.loading}
             fallback={<p>Loading map...</p>}
           >
-            {/* Don't show map until friend Statuses have loaded */}
-            {/* @ts-ignore */}
-            <FriendMap friends={friendStatuses() || []} user={myStatus()} />
+            <FriendMap
+              friends={friendStatuses() || []}
+              user={myStatus() || null}
+              focus={focus()}
+              setFocus={setFocus}
+            />
           </Show>
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>

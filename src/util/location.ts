@@ -83,6 +83,28 @@ export function latLngMidpoint(coords: Coords[]) {
   return output;
 }
 
+export async function getMapCentre(
+  user: MyStatus | Status | null,
+  friends?: FriendStatus[]
+) {
+  let mapCentre = user?.location;
+  if (!mapCentre) {
+    const currentLocation = await getLocation();
+    if (currentLocation) {
+      mapCentre = currentLocation;
+    } else if (friends) {
+      const friendCoords = friends
+        .map(({ location }) => location)
+        .filter((c) => !!c) as Coords[];
+      const midpoint = latLngMidpoint(friendCoords);
+      mapCentre = midpoint;
+    } else {
+      mapCentre = { lat: 43.6, lng: -79.4 };
+    }
+  }
+  return mapCentre;
+}
+
 // async function getShabbosTimes(geonameId: string) {
 //   const url = new URL("https://www.hebcal.com/shabbat");
 //   const queryParams = {

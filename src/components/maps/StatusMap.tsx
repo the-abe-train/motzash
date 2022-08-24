@@ -1,7 +1,7 @@
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Marker } from "mapbox-gl";
 import type { EventData } from "mapbox-gl";
-import { Component, onMount } from "solid-js";
-import { getGeoNameId, getLocation } from "../../util/location";
+import { Component, createEffect, onMount } from "solid-js";
+import { getGeoNameId, getMapCentre } from "../../util/location";
 import { SetStoreFunction } from "solid-js/store";
 
 type Props = {
@@ -11,35 +11,25 @@ type Props = {
 
 const FriendMap: Component<Props> = (props) => {
   let mapContainer: HTMLDivElement;
-  // const [newCoords, setNewCoords] = createSignal<Coords | null>(null);
+  let marker: Marker;
 
   onMount(async () => {
-    console.log("Mounting map");
-    let location: Coords | null = null;
-    const currentLocation = await getLocation();
-    const myLocation = props.newStatus?.location;
-    if (myLocation) {
-      location = myLocation;
-    } else if (currentLocation) {
-      location = currentLocation;
-    } else {
-      location = { lat: 43.6, lng: -79.4 };
-    }
+    const mapCentre = await getMapCentre(props.newStatus);
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainer, // container ID
       style: "mapbox://styles/mapbox/streets-v11", // style URL
-      center: [location.lng, location.lat], // starting position [lng, lat]
+      center: [mapCentre.lng, mapCentre.lat], // starting position [lng, lat]
       zoom: 11, // starting zoom
     });
 
     // User marker
-    new mapboxgl.Marker({
+    marker = new mapboxgl.Marker({
       color: "red",
       draggable: true,
     })
-      .setLngLat([location.lng, location.lat])
+      .setLngLat([mapCentre.lng, mapCentre.lat])
       .addTo(map)
       .on("dragend", async (e: EventData) => {
         const location = e.target._lngLat;
@@ -47,6 +37,18 @@ const FriendMap: Component<Props> = (props) => {
         props.setNewStatus("location", location);
         props.setNewStatus("city", city);
       });
+  });
+
+  createEffect(() => {
+    try {
+      if (props.newStatus.location) {
+        console.log("Changing pin location");
+        const { lat, lng } = props.newStatus.location;
+        marker.setLngLat([lng, lat]);
+      }
+    } catch (e) {
+      console.log("Pin moving cancelled");
+    }
   });
 
   return <div ref={mapContainer!} class="my-4 w-full h-80"></div>;

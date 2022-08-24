@@ -10,7 +10,7 @@ import { getGeoNameId, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
 
-// TODO possible tags should come from database
+// TODO Reintroduce tags, which should be defined by database
 
 type Props = {
   myStatus: Resource<MyStatus | null | undefined>;
@@ -21,7 +21,6 @@ type Props = {
 const UpdateStatusForm: Component<Props> = (props) => {
   const [newStatus, setNewStatus] = createStore<Status>({
     text: "",
-    tags: [""],
     location: null,
     city: "",
   });
@@ -94,25 +93,13 @@ const UpdateStatusForm: Component<Props> = (props) => {
     props.setShowScreen("Map");
   };
 
-  const selectTags = (e: Event & { currentTarget: HTMLSelectElement }) => {
-    const options = e.currentTarget.selectedOptions;
-    const numTags = options.length;
-    const values: string[] = [];
-    for (let i = 0; i < numTags; i++) {
-      const option = options.item(i);
-      if (option?.value) values.push(option?.value);
-    }
-    setNewStatus("tags", values);
-  };
-
   return (
     <form
       onSubmit={upsertStatus}
       class="col-span-7 flex flex-col space-y-4 p-4 relative"
     >
       <button
-        class="absolute top-2 right-2
-      w-fit px-2  border rounded
+        class="absolute top-2 right-2 w-fit px-2  border rounded
       bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
         onClick={() => props.setShowScreen(() => "Map")}
       >
@@ -128,15 +115,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
           required
           onChange={(e) => setNewStatus("text", e.currentTarget.value)}
         />
-      </div>
-      <div class="flex flex-col space-y-2">
-        <label for="cars">Choose up to 4 tags:</label>
-        <select multiple name="cars" class="w-96 border" onChange={selectTags}>
-          <option value="board games">Board games</option>
-          <option value="basketball">Basketball</option>
-          <option value="Shaleshudes">Shaleshudes</option>
-          <option value="chulent">Chulent</option>
-        </select>
       </div>
       <button
         class="w-fit p-2  border rounded
