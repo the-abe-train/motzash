@@ -24,6 +24,26 @@ const Friends: Component = () => {
   console.log(friendStatuses());
 
   const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
+  const [friendFilter, setFriendFilter] = createSignal("");
+  // const [filteredFriends, setFilteredFriends] = createSignal(friendStatuses());
+
+  // const activateFilter = () => {
+  //   const ff = friendFilter().toLowerCase();
+  //   const regex = new RegExp(ff, "i");
+  //   setFilteredFriends(
+  //     friendStatuses()?.filter((name) => name.profiles.username.match(regex)) ||
+  //       []
+  //   );
+  // };
+
+  const filteredFriends = () => {
+    const ff = friendFilter().toLowerCase();
+    const regex = new RegExp(ff, "i");
+    return (
+      friendStatuses()?.filter((name) => name.profiles.username.match(regex)) ||
+      []
+    );
+  };
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -44,7 +64,6 @@ const Friends: Component = () => {
             </button>
           </Match>
           <Match when={!myStatus.loading}>
-            {/* @ts-ignore */}
             <Status status={myStatus()} focus={focus} setFocus={setFocus} />
             <button
               class="rounded w-fit p-2
@@ -58,11 +77,37 @@ const Friends: Component = () => {
             <p>Loading...</p>
           </Match>
         </Switch>
-        {/* TODO search bar */}
         <h2>Your Friends</h2>
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
+          <form
+            class="flex w-full space-x-2"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <input
+              type="text"
+              class="mx-2 border px-2 w-1/2"
+              placeholder="Filter by name"
+              value={friendFilter()}
+              onChange={(e) => setFriendFilter(e.currentTarget.value)}
+            />
+            <button
+              type="submit"
+              class="py-1 px-2 rounded
+              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+            >
+              Filter
+            </button>
+            <button
+              type="reset"
+              class="py-1 px-2 rounded
+              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+              onClick={() => setFriendFilter("")}
+            >
+              Clear
+            </button>
+          </form>
           <For
-            each={friendStatuses()}
+            each={filteredFriends()}
             fallback={<p>No friend statuses to show.</p>}
           >
             {(status) => {
