@@ -1,8 +1,5 @@
-import { RealtimeSubscription } from "@supabase/supabase-js";
 import {
   Component,
-  createEffect,
-  createResource,
   createSignal,
   ErrorBoundary,
   For,
@@ -14,79 +11,38 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../context/auth";
+import { Database } from "../lib/database.types";
 import { createSync } from "../util/createSync";
 import { supabase } from "../util/supabase";
 
-type Todo = {
-  id: number;
-  task: string;
-  inserted_at: string;
-  is_complete: boolean;
-  user_id: string;
-};
+type Todo = Database["public"]["Tables"]["todos"]["Insert"];
 
-const loadTodos = async () => {
-  const { data, error } = await supabase.from<Todo>("todos").select();
-  if (error) {
-    console.log(error);
-    throw error;
-  }
-  return data;
-};
+// const loadTodos = async () => {
+//   const { data, error } = await supabase.from("todos").select();
+//   if (error) {
+//     console.log(error);
+//     throw error;
+//   }
+//   return data;
+// };
 
 const Todo: Component = () => {
   const session = useContext(AuthContext);
   const [todos, setTodos] = createStore<Todo[]>([]);
 
-  // const [data, { mutate, refetch }] = createResource(loadTodos);
-  // createEffect(() => {
-  //   const returnedValue = data();
-  //   if (returnedValue) setTodos(returnedValue);
-  // });
-  const data = createSync(setTodos, loadTodos);
-
-  let subscription: RealtimeSubscription | null;
-
-  onMount(() => {
-    subscription = supabase
-      .from<Todo>("todos")
-      .on("*", (payload) => {
-        console.log("Running subscription", payload);
-        switch (payload.eventType) {
-          case "INSERT":
-            setTodos((prev) => [...prev, payload.new]);
-            break;
-          case "UPDATE":
-            setTodos((item) => item.id === payload.new.id, payload.new);
-            break;
-          case "DELETE":
-            setTodos((prev) =>
-              prev.filter((item) => item.id !== payload.old.id)
-            );
-            break;
-        }
-      })
-      .subscribe();
-  });
-
-  onCleanup(() => {
-    console.log("clean up");
-    subscription?.unsubscribe();
-  });
+  //   async function submitted() {
+  //     const { data, error } = await supabase.from<Todo>("todos").insert({
+  //       task: inputTodo(),
+  //       is_complete: false,
+  //       user_id: session()?.user?.id,
+  //     });
+  //     if (error) {
+  //       console.error(error.message);
+  //     }
+  //     setInputTodo("");
+  //   }
 
   const [inputTodo, setInputTodo] = createSignal("");
-
-  async function submitted() {
-    const { data, error } = await supabase.from<Todo>("todos").insert({
-      task: inputTodo(),
-      is_complete: false,
-      user_id: session()?.user?.id,
-    });
-    if (error) {
-      console.error(error.message);
-    }
-    setInputTodo("");
-  }
 
   return (
     <ErrorBoundary

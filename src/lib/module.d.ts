@@ -23,6 +23,45 @@ declare global {
     component: Component;
   };
 
+  // API
+  type Geoname = {
+    adminCode1: string;
+    adminCodes1: { ISO3166_2: string }; // Not sure if this one is always true
+    adminName1: string;
+    countryCode: string;
+    countryId: string;
+    countryName: string;
+    distance: string;
+    fcl: string;
+    fclName: string;
+    fcode: string;
+    fcodeName: string;
+    geonameId: number;
+    lat: string;
+    lng: string;
+    name: string;
+    population: number;
+    toponymName: string;
+  };
+
+  type Geodata = {
+    geonames: Geoname[];
+  };
+
+  type Timezone = {
+    countryCode: string;
+    countryName: string;
+    dstOffset: number;
+    gmtOffset: number;
+    lat: number;
+    lng: number;
+    rawOffset: number;
+    sunrise: string;
+    sunset: string;
+    time: string;
+    timezoneId: string;
+  };
+
   // Derived statuses
   type Status = Database["public"]["Tables"]["statuses"]["Update"];
   interface MyStatus extends Status {

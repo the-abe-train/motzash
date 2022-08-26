@@ -96,7 +96,7 @@ function sendEmail({ emailBody, emailTo, subject }: Record<string, string>) {
     const timeout = setTimeout(() => {
       console.log("Timing out with no error.");
       res(200);
-    }, 2000);
+    }, 1000);
     transporter.sendMail(options, (err, info) => {
       console.log("Info", info);
       if (err) {

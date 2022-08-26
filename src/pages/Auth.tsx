@@ -36,7 +36,7 @@ const Auth: Component = () => {
           <label for="email">Email</label>
           <input
             id="email"
-            class="border w-1/2"
+            class="border w-1/2 px-2 py-1"
             type="email"
             placeholder="Your email"
             value={email()}

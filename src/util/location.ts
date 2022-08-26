@@ -1,9 +1,13 @@
+import { Location } from "@hebcal/core";
+
 export function getLocation(): Promise<Coords | null> {
   return new Promise((res, rej) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude: lat, longitude: lng } = position.coords;
+          // const { latitude: lat, longitude: lng } = position.coords;
+          const lat = parseFloat(position.coords.latitude.toFixed(2));
+          const lng = parseFloat(position.coords.longitude.toFixed(2));
           res({ lat, lng });
         },
         (error) => {
@@ -19,7 +23,7 @@ export function getLocation(): Promise<Coords | null> {
 
 // cities1000 means all cities with a population of over 1000
 // 500, 1000, 5000, 15000 are all options
-export async function getGeoNameId({ lat, lng }: Coords) {
+export async function getGeoData({ lat, lng }: Coords) {
   const url = new URL("http://api.geonames.org/findNearbyPlaceNameJSON");
   const queryParams = {
     lat: lat.toString(),
@@ -28,9 +32,42 @@ export async function getGeoNameId({ lat, lng }: Coords) {
     username: "theabetrain",
   };
   url.search = new URLSearchParams(queryParams).toString();
-  const geoData = await fetch(url).then((data) => data.json());
+  const geoname = (await fetch(url).then((data) => data.json())) as Geodata;
+  return geoname;
+}
+
+export async function getCity({ lat, lng }: Coords) {
+  const geoData = await getGeoData({ lat, lng });
   const { name, adminName1 } = geoData.geonames[0];
   return `${name}, ${adminName1}`;
+}
+
+async function getTimezone({ lat, lng }: Coords) {
+  const url = new URL("http://api.geonames.org/timezoneJSON");
+  const queryParams = {
+    lat: lat.toString(),
+    lng: lng.toString(),
+    username: "theabetrain",
+  };
+  url.search = new URLSearchParams(queryParams).toString();
+  const timezone = (await fetch(url).then((data) => data.json())) as Timezone;
+  return timezone;
+}
+
+export async function getHebcalLocation() {
+  try {
+    const coords = await getLocation();
+    if (!coords) return null;
+    const tz = await getTimezone(coords);
+    const isIsrael = tz.countryCode === "IL";
+    const tzid = tz.timezoneId;
+    const location = new Location(coords.lat, coords.lng, isIsrael, tzid);
+    return location;
+  } catch (e) {
+    console.log("Error occurred while create Location.");
+    console.error(e);
+    return null;
+  }
 }
 
 const degToRad = (deg: number) => (deg * Math.PI) / 180;

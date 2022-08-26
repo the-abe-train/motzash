@@ -1,11 +1,4 @@
-import {
-  children,
-  ParentComponent,
-  ParentProps,
-  Setter,
-  Show,
-  useContext,
-} from "solid-js";
+import { children, ParentComponent, Setter, Show, useContext } from "solid-js";
 import { AuthContext } from "../context/auth";
 import Auth from "../pages/Auth";
 

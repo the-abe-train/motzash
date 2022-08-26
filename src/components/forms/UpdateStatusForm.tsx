@@ -6,7 +6,7 @@ import {
   Setter,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { getGeoNameId, getLocation } from "../../util/location";
+import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
 
@@ -45,7 +45,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
         setMsg("Enable geolocation API to use automatic location detection.");
         return;
       }
-      const city = await getGeoNameId(coords);
+      const city = await getCity(coords);
       console.log(city);
       setNewStatus("location", coords);
       setNewStatus("city", city);

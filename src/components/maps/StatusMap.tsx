@@ -1,7 +1,7 @@
 import mapboxgl, { Marker } from "mapbox-gl";
 import type { EventData } from "mapbox-gl";
 import { Component, createEffect, onMount } from "solid-js";
-import { getGeoNameId, getMapCentre } from "../../util/location";
+import { getCity, getMapCentre } from "../../util/location";
 import { SetStoreFunction } from "solid-js/store";
 
 type Props = {
@@ -33,7 +33,7 @@ const FriendMap: Component<Props> = (props) => {
       .addTo(map)
       .on("dragend", async (e: EventData) => {
         const location = e.target._lngLat;
-        const city = await getGeoNameId(location);
+        const city = await getCity(location);
         props.setNewStatus("location", location);
         props.setNewStatus("city", city);
       });

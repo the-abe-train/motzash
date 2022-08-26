@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import { Component, createSignal, For } from "solid-js";
 import {
   CalOptions,
   Location,
@@ -15,7 +15,11 @@ dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(objectSupport);
 
-export default function Calendar() {
+type Props = {
+  location: Location | null;
+};
+
+const Calendar: Component<Props> = (props) => {
   // Create signal
   const [displayDay, setDisplayDay] = createSignal(dayjs());
 
@@ -28,8 +32,8 @@ export default function Calendar() {
       month: month + 1,
       isHebrewYear: false,
       candlelighting: true,
-      location: Location.lookup("Toronto"),
     };
+    if (props.location) calOptions["location"] = props.location;
     return HebrewCalendar.calendar(calOptions) as TimedEvent[];
   };
 
@@ -169,4 +173,6 @@ export default function Calendar() {
       </button>
     </div>
   );
-}
+};
+
+export default Calendar;
