@@ -77,4 +77,12 @@ declare global {
       requester: Friend[];
     };
   }
+
+  type Friendships = Database["public"]["Tables"]["friendships"]["Row"];
+  interface IFriendRequest extends Friendships {
+    friend: Database["public"]["Tables"]["profiles"]["Row"];
+    requester: Database["public"]["Tables"]["profiles"]["Row"];
+  }
+
+  type Todo = Database["public"]["Tables"]["todos"]["Row"];
 }

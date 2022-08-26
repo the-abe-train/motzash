@@ -9,7 +9,6 @@ import {
   Switch,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Database } from "../../lib/database.types";
 import {
   createRequest,
   deleteRequest,
@@ -24,15 +23,8 @@ type Props = {
   setShowScreen: Setter<ScreenName>;
 };
 
-type Friendships = Database["public"]["Tables"]["friendships"]["Row"];
-
-interface IFriendRequest extends Friendships {
-  friend: Database["public"]["Tables"]["profiles"]["Row"];
-  requester: Database["public"]["Tables"]["profiles"]["Row"];
-}
-
 const AddFriendForm: Component<Props> = (props) => {
-  const [data, { refetch, mutate }] = createResource(loadRequestsToMe);
+  const [data, { refetch }] = createResource(loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<IFriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
@@ -41,8 +33,7 @@ const AddFriendForm: Component<Props> = (props) => {
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
-    const returnedValue = data();
-    // @ts-ignore
+    const returnedValue = data() as IFriendRequest[];
     if (returnedValue) setFriendRequests(returnedValue);
   });
 

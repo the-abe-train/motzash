@@ -13,7 +13,7 @@ import { HebrewCalendar, CalOptions, TimedEvent, Location } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
-import Todo from "../widgets/Todo";
+import Todo from "../components/widgets/Todo";
 
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
@@ -21,7 +21,7 @@ import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { findNextEvent } from "../util/datetime";
 import { getHebcalLocation } from "../util/location";
-import Cookbook from "../widgets/Cookbook";
+import Cookbook from "../components/widgets/Cookbook";
 import { loadWidgets } from "../util/queries";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
@@ -59,8 +59,8 @@ const Dashboard: Component = () => {
   // TODO replace this with widget data from database
   const widgetMacros: WidgetMacro[] = [
     { name: "Cookbook", type: "cookbook", component: Cookbook },
-    { name: "Todos", type: "todo", component: Todo },
-    { name: "Polls", type: "poll", component: Todo },
+    { name: "Todos", type: "todo", component: () => Todo({ widgetId: 2 }) },
+    { name: "Polls", type: "poll", component: () => Todo({ widgetId: 2 }) },
   ];
 
   // TODO when previews are more thoroughly designed, the data should be passed
