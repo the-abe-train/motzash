@@ -3,7 +3,7 @@ import { AuthContext } from "../context/auth";
 import Auth from "../pages/Auth";
 
 type Props = {
-  setActiveWidget: Setter<WidgetData | null>;
+  setActiveWidget: Setter<WidgetMacro | null>;
 };
 
 const Widget: ParentComponent<Props> = (props) => {

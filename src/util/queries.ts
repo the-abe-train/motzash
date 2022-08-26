@@ -1,6 +1,24 @@
 import { Database } from "../lib/database.types";
 import { supabase } from "./supabase";
 
+export const loadWidgets = async (type: string) => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
+  // console.log(type);
+  const { data, error } = await supabase
+    .from("widgets")
+    .select("*")
+    .eq("user_id", user_id);
+  // .match({ user_id, type });
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  console.log(data);
+  return data;
+};
+
 export const loadMyStatus = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
@@ -17,11 +35,6 @@ export const loadMyStatus = async () => {
   return data as MyStatus;
 };
 
-// type Profiles = {
-//   username: string;
-//   friend: { accepted: boolean; friend_id: string; requester_id: string }[];
-//   requester: { accepted: boolean; friend_id: string; requester_id: string }[];
-// };
 // TODO I'm worried that unaccpeted friends' statuses will be in the payload
 export const loadFriendStatuses = async () => {
   const user = await supabase.auth.getUser();

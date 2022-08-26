@@ -18,8 +18,9 @@ declare global {
     holiday?: TimedEvent;
   };
 
-  type WidgetData = {
+  type WidgetMacro = {
     name: string;
+    type: string;
     component: Component;
   };
 

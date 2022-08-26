@@ -9,6 +9,52 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      widgets: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          name: string | null;
+          user_id: string | null;
+          type: string | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          name?: string | null;
+          user_id?: string | null;
+          type?: string | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          name?: string | null;
+          user_id?: string | null;
+          type?: string | null;
+        };
+      };
+      todos: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          widget_id: number | null;
+          task: string | null;
+          is_complete: boolean | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          widget_id?: number | null;
+          task?: string | null;
+          is_complete?: boolean | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          widget_id?: number | null;
+          task?: string | null;
+          is_complete?: boolean | null;
+        };
+      };
       friendships: {
         Row: {
           id: number;
@@ -33,29 +79,6 @@ export interface Database {
           requester_id?: string;
           friend_id?: string;
           accepted?: boolean;
-        };
-      };
-      todos: {
-        Row: {
-          is_complete: boolean | null;
-          inserted_at: string;
-          id: number;
-          user_id: string;
-          task: string | null;
-        };
-        Insert: {
-          is_complete?: boolean | null;
-          inserted_at?: string;
-          id?: number;
-          user_id: string;
-          task?: string | null;
-        };
-        Update: {
-          is_complete?: boolean | null;
-          inserted_at?: string;
-          id?: number;
-          user_id?: string;
-          task?: string | null;
         };
       };
       profiles: {
@@ -84,7 +107,7 @@ export interface Database {
       statuses: {
         Row: {
           city: string | null;
-          location: Coords | null;
+          location: Json | null;
           id: number;
           created_at: string | null;
           text: string | null;
@@ -92,7 +115,7 @@ export interface Database {
         };
         Insert: {
           city?: string | null;
-          location?: Coords | null;
+          location?: Json | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;
@@ -100,7 +123,7 @@ export interface Database {
         };
         Update: {
           city?: string | null;
-          location?: Coords | null;
+          location?: Json | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;
@@ -111,3 +134,4 @@ export interface Database {
     Functions: {};
   };
 }
+

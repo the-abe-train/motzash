@@ -25,16 +25,6 @@ const Friends: Component = () => {
 
   const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
   const [friendFilter, setFriendFilter] = createSignal("");
-  // const [filteredFriends, setFilteredFriends] = createSignal(friendStatuses());
-
-  // const activateFilter = () => {
-  //   const ff = friendFilter().toLowerCase();
-  //   const regex = new RegExp(ff, "i");
-  //   setFilteredFriends(
-  //     friendStatuses()?.filter((name) => name.profiles.username.match(regex)) ||
-  //       []
-  //   );
-  // };
 
   const filteredFriends = () => {
     const ff = friendFilter().toLowerCase();

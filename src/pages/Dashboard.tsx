@@ -1,5 +1,6 @@
 import {
   Component,
+  createResource,
   createSignal,
   For,
   Match,
@@ -20,6 +21,8 @@ import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { findNextEvent } from "../util/datetime";
 import { getHebcalLocation } from "../util/location";
+import Cookbook from "../widgets/Cookbook";
+import { loadWidgets } from "../util/queries";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
@@ -27,6 +30,7 @@ dayjs.extend(relativeTime);
 const Dashboard: Component = () => {
   const [cal, setCal] = createSignal<TimedEvent[]>([]);
   const [location, setLocation] = createSignal<Location | null>(null);
+  const [widgets, { refetch: refetchWidgets }] = createResource(loadWidgets);
 
   onMount(async () => {
     const newLocation = await getHebcalLocation();
@@ -48,14 +52,20 @@ const Dashboard: Component = () => {
   const nextHavdalah = () => findNextEvent(cal(), "Havdalah");
 
   // Widget grid
-  const [activeWidget, setActiveWidget] = createSignal<WidgetData | null>(null);
+  const [activeWidget, setActiveWidget] = createSignal<WidgetMacro | null>(
+    null
+  );
 
   // TODO replace this with widget data from database
-  const widgetData = [
-    { name: "Cookbook", component: Todo },
-    { name: "Todos", component: Todo },
-    { name: "Polls", component: Todo },
+  const widgetMacros: WidgetMacro[] = [
+    { name: "Cookbook", type: "cookbook", component: Cookbook },
+    { name: "Todos", type: "todo", component: Todo },
+    { name: "Polls", type: "poll", component: Todo },
   ];
+
+  // TODO when previews are more thoroughly designed, the data should be passed
+  // through to create a customized preview by widget type, rather than
+  // rendering a list from here.
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -88,13 +98,23 @@ const Dashboard: Component = () => {
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeWidget()}>
           <div class="bg-green-100 col-span-9 grid grid-cols-2 p-4 gap-4">
-            <For each={widgetData}>
-              {(widget) => {
+            <For each={widgetMacros}>
+              {(macro) => {
+                const widgetListByType = () =>
+                  widgets()?.filter((w) => w.type === macro.type);
                 return (
                   <WidgetPreview
-                    widget={widget}
+                    widget={macro}
                     setActiveWidget={setActiveWidget}
-                  />
+                  >
+                    <ul class="list-disc list-inside mx-2">
+                      <For each={widgetListByType()}>
+                        {(widget) => {
+                          return <li>{widget.name}</li>;
+                        }}
+                      </For>
+                    </ul>
+                  </WidgetPreview>
                 );
               }}
             </For>

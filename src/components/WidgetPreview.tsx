@@ -1,18 +1,20 @@
-import { Component, Setter } from "solid-js";
+import { children, ParentComponent, Setter } from "solid-js";
 
 type Props = {
-  widget: WidgetData | null;
-  setActiveWidget: Setter<WidgetData | null>;
+  widget: WidgetMacro;
+  setActiveWidget: Setter<WidgetMacro | null>;
 };
 
-const WidgetPreview: Component<Props> = ({ widget, setActiveWidget }) => {
-  if (!widget) return <></>;
+const WidgetPreview: ParentComponent<Props> = (props) => {
+  const c = children(() => props.children);
+  if (!props.widget) return <></>;
   return (
     <div
       class="bg-blue-100 h-full cursor-pointer"
-      onClick={() => setActiveWidget(widget)}
+      onClick={() => props.setActiveWidget(props.widget)}
     >
-      {widget.name} preview
+      {props.widget.name}
+      {c()}
     </div>
   );
 };
