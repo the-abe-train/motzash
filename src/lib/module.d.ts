@@ -22,6 +22,7 @@ declare global {
     name: string;
     type: string;
     component: Component;
+    widgets: Widget[];
   };
 
   // API
@@ -84,5 +85,6 @@ declare global {
     requester: Database["public"]["Tables"]["profiles"]["Row"];
   }
 
+  type Widget = Database["public"]["Tables"]["widgets"]["Row"];
   type Todo = Database["public"]["Tables"]["todos"]["Row"];
 }

@@ -7,13 +7,12 @@ type Props = {
 
 const WidgetPreview: ParentComponent<Props> = (props) => {
   const c = children(() => props.children);
-  if (!props.widget) return <></>;
   return (
     <div
-      class="bg-blue-100 h-full cursor-pointer"
+      class="bg-blue-100 h-full cursor-pointer p-2"
       onClick={() => props.setActiveWidget(props.widget)}
     >
-      {props.widget.name}
+      <h2 class="text-lg">{props.widget.name}</h2>
       {c()}
     </div>
   );

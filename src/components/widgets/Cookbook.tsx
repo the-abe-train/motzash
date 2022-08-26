@@ -1,6 +1,10 @@
 import { Component } from "solid-js";
 
-const Cookbook: Component<{}> = (props) => {
+type Props = {
+  widgets: Widget[];
+};
+
+const Cookbook: Component<Props> = () => {
   return <div></div>;
 };
 

@@ -1,5 +1,6 @@
 import {
   Component,
+  createEffect,
   createResource,
   createSignal,
   For,
@@ -52,20 +53,80 @@ const Dashboard: Component = () => {
   const nextHavdalah = () => findNextEvent(cal(), "Havdalah");
 
   // Widget grid
-  const [activeWidget, setActiveWidget] = createSignal<WidgetMacro | null>(
-    null
-  );
+  const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
 
   // TODO replace this with widget data from database
-  const widgetMacros: WidgetMacro[] = [
-    { name: "Cookbook", type: "cookbook", component: Cookbook },
-    { name: "Todos", type: "todo", component: () => Todo({ widgetId: 2 }) },
-    { name: "Polls", type: "poll", component: () => Todo({ widgetId: 2 }) },
-  ];
+  // const widgetMacros: WidgetMacro[] = [
+  //   { name: "Cookbook", type: "cookbook", component: Cookbook, widgets: [] },
+  //   {
+  //     name: "Todos",
+  //     type: "todo",
+  //     component: () => Todo({ widgetId: 2 }),
+  //     widgets: [],
+  //   },
+  //   {
+  //     name: "Polls",
+  //     type: "poll",
+  //     component: () => Todo({ widgetId: 2 }),
+  //     widgets: [],
+  //   },
+  // ];
 
   // TODO when previews are more thoroughly designed, the data should be passed
   // through to create a customized preview by widget type, rather than
   // rendering a list from here.
+
+  // All widgets categorized by type
+  const widgetsReduced = () => {
+    const staticWidgets = widgets();
+    if (staticWidgets) {
+      const widgetMacros = [
+        {
+          name: "Cookbook",
+          type: "cookbook",
+          component: Cookbook,
+          widgets: [] as Widget[],
+        },
+        {
+          name: "Todos",
+          type: "todo",
+          component: Todo,
+          widgets: [] as Widget[],
+        },
+        {
+          name: "Polls",
+          type: "poll",
+          component: Todo,
+          widgets: [] as Widget[],
+        },
+      ];
+      const widgetCategories = staticWidgets.map((w) => w.type);
+      const starter = widgetCategories?.reduce((obj, type) => {
+        if (type) {
+          obj[type] = [];
+        }
+        return obj;
+      }, {} as Record<string, Widget[]>);
+      const reducedObj = staticWidgets.reduce((obj, w) => {
+        if (w.type) {
+          obj[w.type].push(w);
+        }
+        return obj;
+      }, starter);
+      return widgetMacros.map((w) => {
+        w["widgets"] = reducedObj[w.type];
+        return w;
+      });
+    }
+  };
+
+  createEffect(() => {
+    console.log("Reduced", widgetsReduced());
+  });
+
+  // I need an array of objs to be rendered by For
+  // The objs shoul have the following keys:
+  // name, type, component (unrendered), array of widgets
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -96,19 +157,18 @@ const Dashboard: Component = () => {
         </Show>
       </aside>
       <Switch fallback={<div>Loading...</div>}>
-        <Match when={!activeWidget()}>
+        <Match when={!activeMacro()}>
           <div class="bg-green-100 col-span-9 grid grid-cols-2 p-4 gap-4">
-            <For each={widgetMacros}>
+            <For each={widgetsReduced()}>
               {(macro) => {
-                const widgetListByType = () =>
-                  widgets()?.filter((w) => w.type === macro.type);
                 return (
                   <WidgetPreview
+                    // @ts-ignore
                     widget={macro}
-                    setActiveWidget={setActiveWidget}
+                    setActiveWidget={setActiveMacro}
                   >
                     <ul class="list-disc list-inside mx-2">
-                      <For each={widgetListByType()}>
+                      <For each={macro.widgets}>
                         {(widget) => {
                           return <li>{widget.name}</li>;
                         }}
@@ -120,12 +180,16 @@ const Dashboard: Component = () => {
             </For>
           </div>
         </Match>
-        <Match when={activeWidget()}>
-          <div class="bg-green-100 col-span-9 p-4">
-            <Widget setActiveWidget={setActiveWidget}>
-              {activeWidget()?.component({})}
-            </Widget>
-          </div>
+        <Match when={activeMacro()}>
+          {(activeWidget) => {
+            return (
+              <div class="bg-green-100 col-span-9 p-4">
+                <Widget setActiveWidget={setActiveMacro}>
+                  {activeWidget.component({ widgets: activeWidget.widgets })}
+                </Widget>
+              </div>
+            );
+          }}
         </Match>
       </Switch>
     </main>
