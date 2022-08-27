@@ -1,6 +1,5 @@
 import {
   Component,
-  createEffect,
   createResource,
   createSignal,
   For,
@@ -24,6 +23,7 @@ import { findNextEvent } from "../util/datetime";
 import { getHebcalLocation } from "../util/location";
 import Cookbook from "../components/widgets/Cookbook";
 import { loadWidgets } from "../util/queries";
+import TodoList from "../components/widgets/TodoList";
 dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
@@ -54,27 +54,7 @@ const Dashboard: Component = () => {
 
   // Widget grid
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
-
-  // TODO replace this with widget data from database
-  // const widgetMacros: WidgetMacro[] = [
-  //   { name: "Cookbook", type: "cookbook", component: Cookbook, widgets: [] },
-  //   {
-  //     name: "Todos",
-  //     type: "todo",
-  //     component: () => Todo({ widgetId: 2 }),
-  //     widgets: [],
-  //   },
-  //   {
-  //     name: "Polls",
-  //     type: "poll",
-  //     component: () => Todo({ widgetId: 2 }),
-  //     widgets: [],
-  //   },
-  // ];
-
-  // TODO when previews are more thoroughly designed, the data should be passed
-  // through to create a customized preview by widget type, rather than
-  // rendering a list from here.
+  const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
 
   // All widgets categorized by type
   const widgetsReduced = () => {
@@ -85,18 +65,21 @@ const Dashboard: Component = () => {
           name: "Cookbook",
           type: "cookbook",
           component: Cookbook,
+          list: TodoList,
           widgets: [] as Widget[],
         },
         {
           name: "Todos",
           type: "todo",
           component: Todo,
+          list: TodoList,
           widgets: [] as Widget[],
         },
         {
           name: "Polls",
           type: "poll",
           component: Todo,
+          list: TodoList,
           widgets: [] as Widget[],
         },
       ];
@@ -120,13 +103,12 @@ const Dashboard: Component = () => {
     }
   };
 
-  createEffect(() => {
-    console.log("Reduced", widgetsReduced());
-  });
-
-  // I need an array of objs to be rendered by For
-  // The objs shoul have the following keys:
-  // name, type, component (unrendered), array of widgets
+  // Experimenting with the entire control flow from the dashboard page component
+  // Using Match to show default, active macro, and active widget focuses
+  // Child         -> Parent
+  // WidgetPreview -> WidgetPreview
+  // WidgetList    -> Widget
+  // Widget        -> Widget
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -162,18 +144,11 @@ const Dashboard: Component = () => {
             <For each={widgetsReduced()}>
               {(macro) => {
                 return (
-                  <WidgetPreview
-                    // @ts-ignore
-                    widget={macro}
-                    setActiveWidget={setActiveMacro}
-                  >
-                    <ul class="list-disc list-inside mx-2">
-                      <For each={macro.widgets}>
-                        {(widget) => {
-                          return <li>{widget.name}</li>;
-                        }}
-                      </For>
-                    </ul>
+                  <WidgetPreview macro={macro} setActiveMacro={setActiveMacro}>
+                    {macro.list({
+                      widgets: macro.widgets,
+                      setActiveWidget,
+                    })}
                   </WidgetPreview>
                 );
               }}
@@ -181,11 +156,26 @@ const Dashboard: Component = () => {
           </div>
         </Match>
         <Match when={activeMacro()}>
-          {(activeWidget) => {
+          {(activeMacro) => {
             return (
               <div class="bg-green-100 col-span-9 p-4">
-                <Widget setActiveWidget={setActiveMacro}>
-                  {activeWidget.component({ widgets: activeWidget.widgets })}
+                <Widget
+                  setActiveMacro={setActiveMacro}
+                  setActiveWidget={setActiveWidget}
+                >
+                  <Switch fallback={<div>Loading...</div>}>
+                    <Match when={!activeWidget()}>
+                      {activeMacro.list({
+                        widgets: activeMacro.widgets,
+                        setActiveWidget,
+                      })}
+                    </Match>
+                    <Match when={activeWidget()}>
+                      {(activeWidget) =>
+                        activeMacro.component({ widget: activeWidget })
+                      }
+                    </Match>
+                  </Switch>
                 </Widget>
               </div>
             );

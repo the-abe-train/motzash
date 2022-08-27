@@ -1,6 +1,6 @@
 import { TimedEvent } from "@hebcal/core";
 import { Dayjs } from "dayjs";
-import { Component } from "solid-js";
+import { Component, Setter } from "solid-js";
 import { Database } from "./database.types";
 
 export {};
@@ -18,10 +18,20 @@ declare global {
     holiday?: TimedEvent;
   };
 
+  type WidgetListComponent = Component<{
+    widgets: Widget[];
+    setActiveWidget: Setter<Widget | null>;
+  }>;
+
+  type WidgetComponent = Component<{
+    widget: Widget;
+  }>;
+
   type WidgetMacro = {
     name: string;
     type: string;
-    component: Component;
+    list: WidgetListComponent;
+    component: WidgetComponent;
     widgets: Widget[];
   };
 

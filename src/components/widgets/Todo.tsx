@@ -13,10 +13,10 @@ import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 type Props = {
-  widgets: Widget[];
+  widget: Widget;
 };
 
-const Todo: Component<Props> = () => {
+const Todo: Component<Props> = (props) => {
   const [loadedTodos, { refetch }] = createResource<Todo[] | null>(loadTodos);
   const [storedTodos, setStoredTodos] = createStore<Todo[]>([]);
 
@@ -35,7 +35,7 @@ const Todo: Component<Props> = () => {
       .insert({
         task: inputTodo(),
         is_complete: false,
-        widget_id: 2,
+        widget_id: props.widget.id,
       })
       .select();
     if (data) {

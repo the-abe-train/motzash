@@ -1,10 +1,4 @@
-import { Component } from "solid-js";
-
-type Props = {
-  widgets: Widget[];
-};
-
-const Cookbook: Component<Props> = () => {
+const Cookbook: WidgetComponent = () => {
   return <div></div>;
 };
 

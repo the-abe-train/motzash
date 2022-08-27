@@ -4,18 +4,15 @@ import { supabase } from "./supabase";
 export const loadWidgets = async (type: string) => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
-  // console.log(type);
   const { data, error } = await supabase
     .from("widgets")
     .select("*")
     .eq("user_id", user_id);
-  // .match({ user_id, type });
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
-  console.log(data);
   return data;
 };
 
@@ -26,13 +23,11 @@ export const loadTodos = async () => {
     .from("todos")
     .select("*, widgets!inner(*)")
     .eq("widgets.user_id", user_id);
-  // .match({ user_id, type });
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
-  console.log(data);
   return data;
 };
 

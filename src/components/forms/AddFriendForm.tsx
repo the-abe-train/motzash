@@ -255,7 +255,6 @@ const AddFriendForm: Component<Props> = (props) => {
           </Match>
           <Match when={friendRequests.length > 0}>
             <For each={friendRequests}>
-              {/* @ts-ignore */}
               {(req, idx) => <FriendRequest {...req} idx={idx()} />}
             </For>
           </Match>
