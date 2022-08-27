@@ -2,6 +2,7 @@ import { Component, lazy, Show, useContext } from "solid-js";
 import { Routes, Route, Link, Outlet } from "@solidjs/router";
 import Auth from "./pages/Auth";
 import { AuthContext } from "./context/auth";
+import About from "./pages/About";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Friends = lazy(() => import("./pages/Friends"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -31,6 +32,7 @@ const App: Component = () => {
       </header>
       <Routes>
         <Route path="/" component={Dashboard} />
+        <Route path="/about" component={About} />
         <Route path="" component={Protected}>
           <Route path="/friends" component={Friends} />
           <Route path="/profile" component={Profile} />
