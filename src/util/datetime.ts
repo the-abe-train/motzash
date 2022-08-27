@@ -1,16 +1,27 @@
-import { HDate, TimedEvent } from "@hebcal/core";
 import dayjs from "dayjs";
-import invariant from "tiny-invariant";
 
 export function findNextEvent(
-  cal: TimedEvent[],
+  weeks: CalendarDay[][],
   type: string,
-  prev = new HDate()
-): CalendarDay {
-  const nextEvent = cal.find((event) => {
-    const eventHDate = event.getDate();
-    return eventHDate.abs() >= prev.abs() && event.desc === type;
+  prev = dayjs()
+) {
+  const x = weeks.flatMap((day) => day);
+  const withType = x.filter((day) =>
+    day.holidays?.some((h) => h.desc === type)
+  );
+  const nextEvent = withType.find((event) => {
+    const date = event.date;
+    return date.isAfter(prev);
   });
-  if (!nextEvent) return { date: dayjs(prev.getDate()) };
-  return { date: dayjs(nextEvent.eventTime), holiday: nextEvent };
+  // console.log(nextEvent);
+  if (nextEvent) {
+    if (nextEvent.holidays) {
+      if (nextEvent.holidays.length > 0) {
+        return {
+          day: dayjs(nextEvent.holidays[0].eventTime),
+          event: nextEvent.holidays[0].linkedEvent?.desc || "Shabbat",
+        };
+      }
+    }
+  }
 }

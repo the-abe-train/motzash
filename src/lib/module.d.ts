@@ -15,7 +15,7 @@ declare global {
 
   type CalendarDay = {
     date: Dayjs;
-    holiday?: TimedEvent;
+    holidays?: TimedEvent[];
   };
 
   type WidgetListComponent = Component<{

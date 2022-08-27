@@ -8,49 +8,31 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import { HebrewCalendar, CalOptions, TimedEvent, Location } from "@hebcal/core";
+import { Location } from "@hebcal/core";
 
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
 import Todo from "../components/widgets/Todo";
 
-import dayjs from "dayjs";
-import calendarPlugin from "dayjs/plugin/calendar";
-import weekdayPlugin from "dayjs/plugin/weekday";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { findNextEvent } from "../util/datetime";
 import { getHebcalLocation } from "../util/location";
 import Cookbook from "../components/widgets/Cookbook";
 import { loadWidgets } from "../util/queries";
 import TodoList from "../components/widgets/TodoList";
-dayjs.extend(calendarPlugin);
-dayjs.extend(weekdayPlugin);
-dayjs.extend(relativeTime);
+import { Link } from "@solidjs/router";
 
 const Dashboard: Component = () => {
-  const [cal, setCal] = createSignal<TimedEvent[]>([]);
   const [location, setLocation] = createSignal<Location | null>(null);
   const [widgets, { refetch: refetchWidgets }] = createResource(loadWidgets);
 
   onMount(async () => {
     const newLocation = await getHebcalLocation();
     setLocation(newLocation);
-
-    const calOptions: CalOptions = {
-      isHebrewYear: false,
-      numYears: 1,
-      candlelighting: true,
-    };
-
-    if (newLocation) calOptions["location"] = newLocation;
-
-    setCal(HebrewCalendar.calendar(calOptions) as TimedEvent[]);
   });
 
   // TODO check if this flag accounts for chag, or if I need a separate one
-  const nextCandleLighting = () => findNextEvent(cal(), "Candle lighting");
-  const nextHavdalah = () => findNextEvent(cal(), "Havdalah");
+  // const nextCandleLighting = () => findNextEvent(cal(), "Candle lighting");
+  // const nextHavdalah = () => findNextEvent(cal(), "Havdalah");
 
   // Widget grid
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
@@ -121,38 +103,45 @@ const Dashboard: Component = () => {
             </p>
           }
         >
-          <h1 class="text-xl">Candle Lighting</h1>
-          <p>
-            Get ready! Shabbos starts {nextCandleLighting().date.calendar()}
-          </p>
-          <div class="flex justify-around">
-            <div class="flex flex-col items-center">
-              <span>Candle Lighting</span>
-              <span>{nextCandleLighting().date.format("h:mm a")}</span>
-            </div>
-            <div class="flex flex-col items-center">
-              <span>Motzash</span>
-              <span>{nextHavdalah().date.format("h:mm a")}</span>
-            </div>
-          </div>
           <Calendar location={location()} />
         </Show>
       </aside>
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeMacro()}>
-          <div class="bg-green-100 col-span-9 grid grid-cols-2 p-4 gap-4">
-            <For each={widgetsReduced()}>
-              {(macro) => {
-                return (
-                  <WidgetPreview macro={macro} setActiveMacro={setActiveMacro}>
-                    {macro.list({
-                      widgets: macro.widgets,
-                      setActiveWidget,
-                    })}
-                  </WidgetPreview>
-                );
-              }}
-            </For>
+          <div class="bg-green-100 col-span-9 grid grid-cols-2 grid-rows-2 p-4 gap-4">
+            <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
+              <For each={widgetsReduced()}>
+                {(macro) => {
+                  return (
+                    <WidgetPreview
+                      macro={macro}
+                      setActiveMacro={setActiveMacro}
+                    >
+                      {macro.list({
+                        widgets: macro.widgets,
+                        setActiveWidget,
+                      })}
+                    </WidgetPreview>
+                  );
+                }}
+              </For>
+              <div class="w-full flex flex-col items-center justify-around py-4 px-8">
+                <Link href="/friends" class="w-full">
+                  <button
+                    class="w-full p-8 rounded-xl
+                bg-red-200 hover:bg-red-300 active:bg-red-400 disabled:bg-red-400"
+                  >
+                    See Friend Map
+                  </button>
+                </Link>
+                <button
+                  class="w-full p-8 rounded-xl border-dashed border-red-200 border-2
+                hover:border-red-300 active:bborderg-red-400 disabled:border-red-400"
+                >
+                  Add widgets
+                </button>
+              </div>
+            </Show>
           </div>
         </Match>
         <Match when={activeMacro()}>
