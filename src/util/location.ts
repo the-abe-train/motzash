@@ -21,36 +21,21 @@ export function getLocation(): Promise<Coords | null> {
   });
 }
 
-// cities1000 means all cities with a population of over 1000
-// 500, 1000, 5000, 15000 are all options
-export async function getGeoData({ lat, lng }: Coords) {
-  const url = new URL("http://api.geonames.org/findNearbyPlaceNameJSON");
-  const queryParams = {
-    lat: lat.toString(),
-    lng: lng.toString(),
-    cities: "cities15000",
-    username: "theabetrain",
-  };
-  url.search = new URLSearchParams(queryParams).toString();
-  const geoname = (await fetch(url).then((data) => data.json())) as Geodata;
-  return geoname;
-}
-
 export async function getCity({ lat, lng }: Coords) {
-  const geoData = await getGeoData({ lat, lng });
-  const { name, adminName1 } = geoData.geonames[0];
-  return `${name}, ${adminName1}`;
+  const res = await fetch("/api/getCity", {
+    method: "POST",
+    body: JSON.stringify({ lat, lng }),
+  });
+  const { city } = await res.json();
+  return city;
 }
 
 async function getTimezone({ lat, lng }: Coords) {
-  const url = new URL("http://api.geonames.org/timezoneJSON");
-  const queryParams = {
-    lat: lat.toString(),
-    lng: lng.toString(),
-    username: "theabetrain",
-  };
-  url.search = new URLSearchParams(queryParams).toString();
-  const timezone = (await fetch(url).then((data) => data.json())) as Timezone;
+  const res = await fetch("/api/getTimezone", {
+    method: "POST",
+    body: JSON.stringify({ lat, lng }),
+  });
+  const timezone = (await res.json()) as Timezone;
   return timezone;
 }
 

@@ -21,7 +21,6 @@ const Calendar: Component<Props> = (props) => {
 
   // Derived/memoized signals
   const cal = createMemo(() => {
-    console.log("Deriving cal");
     const calOptions: CalOptions = {
       isHebrewYear: false,
       candlelighting: true,
@@ -31,7 +30,6 @@ const Calendar: Component<Props> = (props) => {
   });
 
   const weeks = createMemo(() => {
-    console.log("Deriving weeks");
     const firstDayOfMonth = displayDay().date(0).weekday() + 1;
     const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
     let markerDay = displayDay().date(0).subtract(firstDayOfMonth, "days");
