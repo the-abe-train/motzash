@@ -23,7 +23,7 @@ import { Link } from "@solidjs/router";
 
 const Dashboard: Component = () => {
   const [location, setLocation] = createSignal<Location | null>(null);
-  const [widgets, { refetch: refetchWidgets }] = createResource(loadWidgets);
+  const [widgets] = createResource(loadWidgets);
 
   onMount(async () => {
     const newLocation = await getHebcalLocation();
@@ -40,49 +40,49 @@ const Dashboard: Component = () => {
 
   // All widgets categorized by type
   const widgetsReduced = () => {
+    const widgetMacros = [
+      {
+        name: "Cookbook",
+        type: "cookbook",
+        component: Cookbook,
+        list: TodoList,
+        widgets: [] as Widget[],
+      },
+      {
+        name: "Todos",
+        type: "todo",
+        component: Todo,
+        list: TodoList,
+        widgets: [] as Widget[],
+      },
+      {
+        name: "Polls",
+        type: "poll",
+        component: Todo,
+        list: TodoList,
+        widgets: [] as Widget[],
+      },
+    ];
     const staticWidgets = widgets();
-    if (staticWidgets) {
-      const widgetMacros = [
-        {
-          name: "Cookbook",
-          type: "cookbook",
-          component: Cookbook,
-          list: TodoList,
-          widgets: [] as Widget[],
-        },
-        {
-          name: "Todos",
-          type: "todo",
-          component: Todo,
-          list: TodoList,
-          widgets: [] as Widget[],
-        },
-        {
-          name: "Polls",
-          type: "poll",
-          component: Todo,
-          list: TodoList,
-          widgets: [] as Widget[],
-        },
-      ];
-      const widgetCategories = staticWidgets.map((w) => w.type);
-      const starter = widgetCategories?.reduce((obj, type) => {
-        if (type) {
-          obj[type] = [];
-        }
-        return obj;
-      }, {} as Record<string, Widget[]>);
-      const reducedObj = staticWidgets.reduce((obj, w) => {
-        if (w.type) {
-          obj[w.type].push(w);
-        }
-        return obj;
-      }, starter);
-      return widgetMacros.map((w) => {
-        w["widgets"] = reducedObj[w.type];
-        return w;
-      });
-    }
+    if (!staticWidgets) return widgetMacros;
+
+    const widgetCategories = staticWidgets.map((w) => w.type);
+    const starter = widgetCategories?.reduce((obj, type) => {
+      if (type) {
+        obj[type] = [];
+      }
+      return obj;
+    }, {} as Record<string, Widget[]>);
+    const reducedObj = staticWidgets.reduce((obj, w) => {
+      if (w.type) {
+        obj[w.type].push(w);
+      }
+      return obj;
+    }, starter);
+    return widgetMacros.map((w) => {
+      w["widgets"] = reducedObj[w.type];
+      return w;
+    });
   };
 
   // Experimenting with the entire control flow from the dashboard page component
@@ -120,6 +120,7 @@ const Dashboard: Component = () => {
                       {macro.list({
                         widgets: macro.widgets,
                         setActiveWidget,
+                        isActive: false,
                       })}
                     </WidgetPreview>
                   );
@@ -157,6 +158,7 @@ const Dashboard: Component = () => {
                       {activeMacro.list({
                         widgets: activeMacro.widgets,
                         setActiveWidget,
+                        isActive: true,
                       })}
                     </Match>
                     <Match when={activeWidget()}>

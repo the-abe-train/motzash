@@ -21,6 +21,7 @@ declare global {
   type WidgetListComponent = Component<{
     widgets: Widget[];
     setActiveWidget: Setter<Widget | null>;
+    isActive: boolean;
   }>;
 
   type WidgetComponent = Component<{

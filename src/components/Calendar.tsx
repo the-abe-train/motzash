@@ -1,4 +1,4 @@
-import { Component, createMemo, createSignal, For } from "solid-js";
+import { Component, createMemo, createSignal, For, Show } from "solid-js";
 import { CalOptions, Location, HebrewCalendar, TimedEvent } from "@hebcal/core";
 
 import { findNextEvent } from "../util/datetime";
@@ -47,19 +47,19 @@ const Calendar: Component<Props> = (props) => {
   });
 
   const thisCandleLighting = () => {
-    return findNextEvent(weeks(), "Candle lighting");
+    return findNextEvent(cal(), "Candle lighting");
   };
 
   const thisHavdalah = () => {
-    return findNextEvent(weeks(), "Havdalah", thisCandleLighting()?.day);
+    return findNextEvent(cal(), "Havdalah", thisCandleLighting()?.day);
   };
 
   const nextCandleLighting = () => {
-    return findNextEvent(weeks(), "Candle lighting", displayDay());
+    return findNextEvent(cal(), "Candle lighting", displayDay());
   };
 
   const nextHavdalah = () => {
-    return findNextEvent(weeks(), "Havdalah", nextCandleLighting()?.day);
+    return findNextEvent(cal(), "Havdalah", nextCandleLighting()?.day);
   };
 
   // Calendar styling
@@ -174,11 +174,13 @@ const Calendar: Component<Props> = (props) => {
             </For>
           </tbody>
         </table>
-        <p>
-          {nextCandleLighting()?.event} starts{" "}
-          {nextCandleLighting()?.day.format("DD/MM/YYYY")}
-        </p>
-        <p>Candle lighting: {nextCandleLighting()?.day.format("h:mm A")}</p>
+        <Show when={nextCandleLighting()}>
+          <p>
+            {nextCandleLighting()?.event} starts{" "}
+            {nextCandleLighting()?.day.format("DD/MM/YYYY")}
+          </p>
+          <p>Candle lighting: {nextCandleLighting()?.day.format("h:mm A")}</p>
+        </Show>
         <p>Havdalah: {nextHavdalah()?.day.format("h:mm A")}</p>
         <button
           onClick={() => setDisplayDay(dayjs())}
