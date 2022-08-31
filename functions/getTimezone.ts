@@ -1,4 +1,5 @@
 import { Handler } from "@netlify/functions";
+import fetch from "node-fetch";
 
 const handler: Handler = async (event, context) => {
   try {
@@ -10,7 +11,8 @@ const handler: Handler = async (event, context) => {
       username: process.env.GEONAMES_USERNAME || "",
     };
     url.search = new URLSearchParams(queryParams).toString();
-    const timezone = (await fetch(url).then((data) => data.json())) as Timezone;
+    const response = await fetch(url.toString());
+    const timezone = (await response.json()) as Timezone;
     return {
       statusCode: 200,
       body: JSON.stringify(timezone),

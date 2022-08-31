@@ -1,4 +1,5 @@
 import { Handler } from "@netlify/functions";
+import fetch from "node-fetch";
 
 const handler: Handler = async (event, context) => {
   try {
@@ -14,7 +15,8 @@ const handler: Handler = async (event, context) => {
       username: process.env.GEONAMES_USERNAME || "",
     };
     url.search = new URLSearchParams(queryParams).toString();
-    const geoname = (await fetch(url).then((data) => data.json())) as Geodata;
+    const response = await fetch(url.toString());
+    const geoname = (await response.json()) as Geodata;
     const { name, adminName1 } = geoname.geonames[0];
     return {
       statusCode: 200,
