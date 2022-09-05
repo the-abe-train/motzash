@@ -9,7 +9,26 @@ const TodoList: WidgetListComponent = (props) => {
   const [loading, setLoading] = createSignal(false);
   const [msg, setMsg] = createSignal("");
 
-  console.log("Todo list");
+  console.log("widgets", props.widgets);
+
+  const cookbook = props.widgets.reduce(
+    (book, widget) => {
+      switch (widget.type) {
+        case "dairy_recipe":
+          book["dairy"]++;
+          break;
+        case "meat_recipe":
+          book["meat"]++;
+          break;
+        case "pareve_recipe":
+          book["pareve"]++;
+          break;
+      }
+      return book;
+    },
+    { meat: 0, dairy: 0, pareve: 0 }
+  );
+  console.log(cookbook);
 
   async function createNewWidget(e: Event) {
     e.preventDefault();
@@ -51,46 +70,15 @@ const TodoList: WidgetListComponent = (props) => {
 
   return (
     <div>
-      <ul class="list-disc list-inside mx-2">
-        <For each={storedWidgets}>
-          {(widget) => {
-            return (
-              <form class="flex space-x-2">
-                <li
-                  class="cursor-pointer"
-                  onClick={() => props.setActiveWidget(widget)}
-                >
-                  {widget.name}
-                </li>
-                <button type="button" onClick={(e) => deleteWidget(e, widget)}>
-                  &#10006;
-                </button>
-              </form>
-            );
-          }}
-        </For>
-      </ul>
-      <Show when={props.isActive}>
-        <form
-          onSubmit={createNewWidget}
-          class="m-4 p-4 flex flex-col space-y-4"
-        >
-          <input
-            type="text"
-            value={inputName()}
-            onChange={(e) => setInputName(e.currentTarget.value)}
-            class="w-fit p-2"
-          />
-          <button
-            class="w-fit p-2 border border-black rounded
-       bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-            disabled={loading()}
-          >
-            Create new todo list
-          </button>
-        </form>
-        <p>{msg()}</p>
-      </Show>
+      <div class="bg-white p-2 w-full">
+        <p>Meat ({cookbook["meat"]} recipes)</p>
+      </div>
+      <div class="bg-white p-2 w-full">
+        <p>Dairy ({cookbook["dairy"]} recipes)</p>
+      </div>
+      <div class="bg-white p-2 w-full">
+        <p>Pareve ({cookbook["pareve"]} recipes)</p>
+      </div>
     </div>
   );
 };

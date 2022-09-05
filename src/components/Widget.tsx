@@ -1,13 +1,11 @@
 import { User } from "@supabase/supabase-js";
 import {
   children,
-  createEffect,
   createSignal,
   onMount,
   ParentComponent,
   Setter,
   Show,
-  useContext,
 } from "solid-js";
 import Auth from "../pages/Auth";
 import { supabase } from "../util/supabase";

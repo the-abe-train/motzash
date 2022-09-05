@@ -36,6 +36,14 @@ declare global {
     widgets: Widget[];
   };
 
+  type MacroType = "cookbook" | "todo" | "poll";
+  type WidgetType =
+    | "meat_recipe"
+    | "dairy_recipe"
+    | "pareve_recipe"
+    | "todo"
+    | "poll";
+
   // API
   type Geoname = {
     adminCode1: string;

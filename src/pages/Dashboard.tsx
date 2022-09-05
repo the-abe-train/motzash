@@ -13,12 +13,13 @@ import { Location } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
+import Cookbook from "../widgets/Cookbook";
+import CookbookList from "../widgets/CookbookList";
 import Todo from "../widgets/Todo";
+import TodoList from "../widgets/TodoList";
 
 import { getHebcalLocation } from "../util/location";
-import Cookbook from "../widgets/Cookbook";
 import { loadWidgets } from "../util/queries";
-import TodoList from "../widgets/TodoList";
 import { Link } from "@solidjs/router";
 
 const Dashboard: Component = () => {
@@ -41,45 +42,56 @@ const Dashboard: Component = () => {
     const widgetMacros = [
       {
         name: "Cookbook",
-        type: "cookbook",
+        type: "cookbook" as MacroType,
         component: Cookbook,
-        list: TodoList,
+        list: CookbookList,
         widgets: [] as Widget[],
       },
       {
         name: "Todos",
-        type: "todo",
+        type: "todo" as MacroType,
         component: Todo,
         list: TodoList,
         widgets: [] as Widget[],
       },
       {
         name: "Polls",
-        type: "poll",
+        type: "poll" as MacroType,
         component: Todo,
         list: TodoList,
         widgets: [] as Widget[],
       },
     ];
+    const widgetTypeMap = {
+      meat_recipe: "cookbook",
+      dairy_recipe: "cookbook",
+      pareve_recipe: "cookbook",
+      todo: "todo",
+      poll: "poll",
+    } as Record<WidgetType, MacroType>;
     const staticWidgets = widgets();
     if (!staticWidgets) return widgetMacros;
 
     const widgetCategories = staticWidgets.map((w) => w.type);
-    const starter = widgetCategories?.reduce((obj, type) => {
-      if (type) {
-        obj[type] = [];
-      }
-      return obj;
-    }, {} as Record<string, Widget[]>);
-    const reducedObj = staticWidgets.reduce((obj, w) => {
-      if (w.type) {
-        obj[w.type].push(w);
-      }
-      return obj;
-    }, starter);
-    return widgetMacros.map((w) => {
-      w["widgets"] = reducedObj[w.type];
-      return w;
+    // const starter = widgetCategories?.reduce((obj, type) => {
+    //   if (type) {
+    //     obj[type] = [];
+    //   }
+    //   return obj;
+    // }, {} as Record<MacroType, Widget[]>);
+    const reducedObj = staticWidgets.reduce(
+      (obj, w) => {
+        if (w.type) {
+          const macroType = widgetTypeMap[w.type];
+          obj[macroType].push(w);
+        }
+        return obj;
+      },
+      { cookbook: [], todo: [], poll: [] } as Record<MacroType, Widget[]>
+    );
+    return widgetMacros.map((macro) => {
+      macro["widgets"] = reducedObj[macro.type];
+      return macro;
     });
   };
 
@@ -133,12 +145,6 @@ const Dashboard: Component = () => {
                     See Friend Map
                   </button>
                 </Link>
-                <button
-                  class="w-full p-8 rounded-xl border-dashed border-red-200 border-2
-                hover:border-red-300 active:bborderg-red-400 disabled:border-red-400"
-                >
-                  Add widgets
-                </button>
               </div>
             </Show>
           </div>
