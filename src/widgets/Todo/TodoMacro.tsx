@@ -1,20 +1,8 @@
-import {
-  Component,
-  createEffect,
-  createResource,
-  createSignal,
-  ErrorBoundary,
-  For,
-  Match,
-  Show,
-  Switch,
-} from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { createStore } from "solid-js/store";
-import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
-  // const [widgets] = splitProps(props)
   const [storedWidgets, setStoredWidgets] = createStore(props.widgets);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
