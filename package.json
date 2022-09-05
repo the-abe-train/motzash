@@ -29,7 +29,7 @@
     "mapbox-gl": "^2.9.2",
     "node-fetch": "^3.2.10",
     "nodemailer": "^6.7.8",
-    "solid-js": "^1.4.7",
+    "solid-js": "^1.5.4",
     "tiny-invariant": "^1.2.0"
   }
 }
