@@ -1,6 +1,6 @@
 import { createSignal, For, Show, splitProps } from "solid-js";
 import { createStore } from "solid-js/store";
-import { supabase } from "../util/supabase";
+import { supabase } from "../../util/supabase";
 
 const TodoList: WidgetListComponent = (props) => {
   // const [widgets] = splitProps(props)

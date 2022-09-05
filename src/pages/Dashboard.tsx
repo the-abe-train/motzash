@@ -13,10 +13,10 @@ import { Location } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
-import Cookbook from "../widgets/Cookbook";
-import CookbookList from "../widgets/CookbookList";
-import Todo from "../widgets/Todo";
-import TodoList from "../widgets/TodoList";
+import Cookbook from "../widgets/Cookbook/CookbookWidget";
+import CookbookList from "../widgets/Cookbook/CookbookPreview";
+import Todo from "../widgets/Todo/TodoWidget";
+import TodoList from "../widgets/Todo/TodoPreview";
 
 import { getHebcalLocation } from "../util/location";
 import { loadWidgets } from "../util/queries";
