@@ -1,23 +1,42 @@
-import { createSignal, For, Show } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  For,
+  Match,
+  Switch,
+} from "solid-js";
 import { createStore, SetStoreFunction } from "solid-js/store";
+import { receiveMessageOnPort } from "worker_threads";
+import { loadAllRecipes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const CookbookMacro: WidgetPreviewComponent = (props) => {
-  const [meatRecipes, setMeatRecipes] = createStore<Widget[]>(
-    props.widgets.filter((w) => w.type === "meat_recipe")
-  );
-  const [dairyRecipes, setDairyRecipes] = createStore<Widget[]>(
-    props.widgets.filter((w) => w.type === "dairy_recipe")
-  );
-  const [pareveRecipes, setPareveRecipes] = createStore<Widget[]>(
-    props.widgets.filter((w) => w.type === "pareve_recipe")
-  );
+  const [loadedRecipes, { refetch }] = createResource(loadAllRecipes, {
+    initialValue: [],
+  });
+  const [meatRecipes, setMeatRecipes] = createStore<Recipe[]>([]);
+  const [dairyRecipes, setDairyRecipes] = createStore<Recipe[]>([]);
+  const [pareveRecipes, setPareveRecipes] = createStore<Recipe[]>([]);
 
   const data = [
     { name: "Meat", recipes: meatRecipes, setRecipes: setMeatRecipes },
     { name: "Dairy", recipes: dairyRecipes, setRecipes: setDairyRecipes },
     { name: "Pareve", recipes: pareveRecipes, setRecipes: setPareveRecipes },
   ];
+
+  createEffect(() => {
+    if (loadedRecipes.state === "ready") {
+      const returnedValue = loadedRecipes();
+      if (returnedValue) {
+        setMeatRecipes(returnedValue.filter((w) => w.type === "meat_recipe"));
+        setDairyRecipes(returnedValue.filter((w) => w.type === "dairy_recipe"));
+        setPareveRecipes(
+          returnedValue.filter((w) => w.type === "pareve_recipe")
+        );
+      }
+    }
+  });
 
   const [loading, setLoading] = createSignal(false);
   const [inputName, setInputName] = createSignal("");
@@ -26,7 +45,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
   async function createNewWidget(
     e: Event,
     name: string,
-    setRecipeList: SetStoreFunction<Widget[]>
+    setRecipeList: SetStoreFunction<Recipe[]>
   ) {
     e.preventDefault();
     setLoading(true);
@@ -45,7 +64,8 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
       await supabase.from("recipe_metadata").insert({
         widget_id: data[0].id,
       });
-      setRecipeList((prev) => (prev ? [...prev, ...data] : data));
+      // const newRecipe = { ...data[0], recipe_metadata: [] as RecipeMetadata[] };
+      setRecipeList((prev) => (prev ? [...prev, data[0]] : data));
       setInputName("");
       setLoading(false);
       setMsg("");
@@ -66,21 +86,36 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
           return (
             <div>
               <h2>{recipeList.name}</h2>
-              <For each={recipeList.recipes}>
-                {(recipe) => {
-                  return (
-                    <li
-                      class="cursor-pointer"
-                      onClick={() => props.setActiveWidget(recipe)}
-                    >
-                      {recipe.name}
-                    </li>
-                  );
-                }}
-              </For>
-              <Show when={recipeList.recipes.length === 0}>
-                <p>No {recipeList.name} recipes</p>
-              </Show>
+              <Switch fallback={<p>Loading cookbook...</p>}>
+                <Match when={loadedRecipes.state !== "ready"}>
+                  <p>Loading recipes...</p>
+                </Match>
+                <Match when={recipeList.recipes.length === 0}>
+                  <p>No {recipeList.name} recipes</p>
+                </Match>
+                <Match when={recipeList.recipes.length > 0}>
+                  <For each={recipeList.recipes}>
+                    {(recipe) => {
+                      let metaString = "";
+                      if (
+                        recipe.recipe_metadata &&
+                        recipe.recipe_metadata?.length > 0
+                      ) {
+                        const metadata = recipe.recipe_metadata[0];
+                        metaString = `(${metadata.servings} servings, ${metadata.prep_time} min)`;
+                      }
+                      return (
+                        <li
+                          class="cursor-pointer"
+                          onClick={() => props.setActiveWidget(recipe)}
+                        >
+                          {recipe.name} {metaString}
+                        </li>
+                      );
+                    }}
+                  </For>
+                </Match>
+              </Switch>
               <form
                 onSubmit={(e) =>
                   createNewWidget(e, recipeList.name, recipeList.setRecipes)

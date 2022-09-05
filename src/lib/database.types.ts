@@ -15,21 +15,96 @@ export interface Database {
           created_at: string | null;
           name: string | null;
           user_id: string | null;
-          type: WidgetType | null;
+          type: string | null;
         };
         Insert: {
           id?: number;
           created_at?: string | null;
           name?: string | null;
           user_id?: string | null;
-          type?: WidgetType | null;
+          type?: string | null;
         };
         Update: {
           id?: number;
           created_at?: string | null;
           name?: string | null;
           user_id?: string | null;
-          type?: WidgetType | null;
+          type?: string | null;
+        };
+      };
+      recipe_instructions: {
+        Row: {
+          id: number;
+          updated_at: string | null;
+          widget_id: number | null;
+          step: number | null;
+          text: string | null;
+        };
+        Insert: {
+          id?: number;
+          updated_at?: string | null;
+          widget_id?: number | null;
+          step?: number | null;
+          text?: string | null;
+        };
+        Update: {
+          id?: number;
+          updated_at?: string | null;
+          widget_id?: number | null;
+          step?: number | null;
+          text?: string | null;
+        };
+      };
+      recipe_metadata: {
+        Row: {
+          id: number;
+          udpated_at: string | null;
+          widget_id: number | null;
+          servings: number | null;
+          prep_time: number | null;
+          favourite: boolean | null;
+        };
+        Insert: {
+          id?: number;
+          udpated_at?: string | null;
+          widget_id?: number | null;
+          servings?: number | null;
+          prep_time?: number | null;
+          favourite?: boolean | null;
+        };
+        Update: {
+          id?: number;
+          udpated_at?: string | null;
+          widget_id?: number | null;
+          servings?: number | null;
+          prep_time?: number | null;
+          favourite?: boolean | null;
+        };
+      };
+      recipe_ingredients: {
+        Row: {
+          id: number;
+          updated_at: string | null;
+          widget_id: number | null;
+          amount: number | null;
+          unit: string | null;
+          ingredient: string | null;
+        };
+        Insert: {
+          id?: number;
+          updated_at?: string | null;
+          widget_id?: number | null;
+          amount?: number | null;
+          unit?: string | null;
+          ingredient?: string | null;
+        };
+        Update: {
+          id?: number;
+          updated_at?: string | null;
+          widget_id?: number | null;
+          amount?: number | null;
+          unit?: string | null;
+          ingredient?: string | null;
         };
       };
       todos: {
@@ -134,3 +209,4 @@ export interface Database {
     Functions: {};
   };
 }
+

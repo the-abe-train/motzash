@@ -107,4 +107,12 @@ declare global {
 
   type Widget = Database["public"]["Tables"]["widgets"]["Row"];
   type Todo = Database["public"]["Tables"]["todos"]["Row"];
+
+  // Cookbook
+  type RecipeMetadata = Database["public"]["Tables"]["recipe_metadata"]["Row"];
+  type Ingreident = Database["public"]["Tables"]["recipe_ingredients"]["Row"];
+  interface Recipe extends Widget {
+    recipe_metadata?: RecipeMetadata[];
+    recipe_ingredients?: Ingreident[];
+  }
 }

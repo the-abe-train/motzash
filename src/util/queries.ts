@@ -54,20 +54,37 @@ export const loadTodos = async () => {
   return data;
 };
 
-export const loadRecipe = async (widget_id: number) => {
+export const loadAllRecipes = async () => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
   const { data, error } = await supabase
     .from("widgets")
-    .select(
-      "*, recipe_metadata (*), recipe_ingredients (*), recipe_instructions (*)"
-    )
-    .eq("id", widget_id);
+    .select("*, recipe_metadata (*)")
+    .eq("user_id", user_id);
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
   console.log(data);
-  return data;
+  return data as Recipe[];
+};
+
+export const loadRecipe = async (widget_id: number) => {
+  const { data, error } = await supabase
+    .from("widgets")
+    .select(
+      "*, recipe_metadata (*), recipe_ingredients (*), recipe_instructions (*)"
+    )
+    .eq("id", widget_id)
+    .single();
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  console.log(data);
+  return data as Recipe;
 };
 
 export const loadMyStatus = async () => {
