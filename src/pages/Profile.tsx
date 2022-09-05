@@ -1,3 +1,4 @@
+import { userInfo } from "os";
 import {
   Component,
   Switch,
@@ -8,29 +9,9 @@ import {
   createEffect,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../context/auth";
 import { Database } from "../lib/database.types";
+import { loadProfile } from "../util/queries";
 import { supabase } from "../util/supabase";
-
-const loadProfile = async () => {
-  const user = await supabase.auth.getUser();
-
-  let { data, error, status } = await supabase
-    .from("profiles")
-    .select(`username`)
-    .eq("id", user.data.user?.id || "")
-    .single();
-  if (error && status !== 406) {
-    console.log(error);
-    throw error;
-  }
-  if (!data || error) {
-    console.log(error);
-    throw error;
-  }
-  console.log("load data", data);
-  return data;
-};
 
 const Profile: Component = () => {
   const [msg, setMsg] = createSignal("");
@@ -52,6 +33,7 @@ const Profile: Component = () => {
   });
 
   const [loading, setLoading] = createSignal(false);
+
   const updateProfile = async (e: Event) => {
     e.preventDefault();
     setLoading(true);
@@ -77,8 +59,6 @@ const Profile: Component = () => {
     setLoading(false);
   };
 
-  const session = useContext(AuthContext);
-
   return (
     <main class="flex-grow p-4">
       <Switch>
@@ -87,7 +67,7 @@ const Profile: Component = () => {
         </Match>
         <Match when={!profile.loading}>
           <form onSubmit={updateProfile} class="flex flex-col space-y-3">
-            <div>Email: {session()?.user?.email || "no email set"}</div>
+            <div>Email: {profile()?.email || "no email set"}</div>
             <div class="space-x-2">
               <label for="username">Name</label>
               <input

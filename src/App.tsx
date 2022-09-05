@@ -1,21 +1,55 @@
-import { Component, lazy, Show, useContext } from "solid-js";
-import { Routes, Route, Link, Outlet } from "@solidjs/router";
-import Auth from "./pages/Auth";
-import { AuthContext } from "./context/auth";
+import {
+  Component,
+  createEffect,
+  createResource,
+  createSignal,
+  lazy,
+  onCleanup,
+  onMount,
+} from "solid-js";
+import { Routes, Route, Link } from "@solidjs/router";
 import About from "./pages/About";
+import { supabase } from "./util/supabase";
+import { Session, Subscription } from "@supabase/supabase-js";
+import ProtectedRoute from "./pages/ProtectedRoute";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Friends = lazy(() => import("./pages/Friends"));
 const Profile = lazy(() => import("./pages/Profile"));
 
 const App: Component = () => {
-  const Protected: Component = () => {
-    const session = useContext(AuthContext);
-    return (
-      <Show when={session()} fallback={<Auth />}>
-        <Outlet />
-      </Show>
-    );
+  const loadSession = async () => {
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+    if (!session) return null;
+    return session;
   };
+
+  const [data, { mutate, refetch }] = createResource(loadSession);
+  // console.log(data());
+
+  const [session, setSession] = createSignal<Session | null>(null);
+
+  let listener: Subscription | null;
+
+  // TODO figure out if/why this doesn't load right away
+  createEffect(() => {
+    const returnedValue = data();
+    if (returnedValue) setSession(returnedValue);
+    // console.log("Session updated.");
+    // console.log("Session", session());
+    // console.log("User:", supabase.auth.session()?.user);
+  });
+
+  onMount(() => {
+    listener = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    }).subscription;
+  });
+
+  onCleanup(() => {
+    console.log("clean up");
+    listener?.unsubscribe();
+  });
 
   return (
     <div class="flex flex-col h-full justify-between">
@@ -33,7 +67,8 @@ const App: Component = () => {
       <Routes>
         <Route path="/" component={Dashboard} />
         <Route path="/about" component={About} />
-        <Route path="" component={Protected}>
+        <Route path="" element={<ProtectedRoute isConnected={!!session()} />}>
+          {/* <Route path="" component={ProtectedRoute({isConnected: false})}> */}
           <Route path="/friends" component={Friends} />
           <Route path="/profile" component={Profile} />
         </Route>

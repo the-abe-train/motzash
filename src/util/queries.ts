@@ -1,6 +1,29 @@
 import { Database } from "../lib/database.types";
 import { supabase } from "./supabase";
 
+export const loadProfile = async () => {
+  const user = await supabase.auth.getUser();
+  if (!user.data.user) {
+    return null;
+  }
+  const user_id = user.data.user.id || "";
+  let { data, error, status } = await supabase
+    .from("profiles")
+    .select(`username, email`)
+    .eq("id", user_id)
+    .single();
+  if (error && status !== 406) {
+    console.log(error);
+    throw error;
+  }
+  if (!data || error) {
+    console.log(error);
+    throw error;
+  }
+  console.log("load data", data);
+  return data;
+};
+
 export const loadWidgets = async (type: string) => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
@@ -34,6 +57,7 @@ export const loadTodos = async () => {
 export const loadMyStatus = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
+  console.log("User ID", user_id);
   const { data, error } = await supabase
     .from("statuses")
     .select("*, profiles (username)")
@@ -81,7 +105,6 @@ export const loadFriendStatuses = async () => {
 
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.error(error);
     return null;
   }
 
