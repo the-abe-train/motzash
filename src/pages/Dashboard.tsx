@@ -8,19 +8,23 @@ import {
   Show,
   Switch,
 } from "solid-js";
+import { Link } from "@solidjs/router";
 import { Location } from "@hebcal/core";
+
+import { getHebcalLocation } from "../util/location";
+import { loadWidgets } from "../util/queries";
 
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
-import Cookbook from "../widgets/Cookbook/CookbookWidget";
-import CookbookList from "../widgets/Cookbook/CookbookPreview";
-import Todo from "../widgets/Todo/TodoWidget";
-import TodoList from "../widgets/Todo/TodoPreview";
 
-import { getHebcalLocation } from "../util/location";
-import { loadWidgets } from "../util/queries";
-import { Link } from "@solidjs/router";
+import CookbookPreview from "../widgets/Cookbook/CookbookPreview";
+import CookbookMacro from "../widgets/Cookbook/CookbookMacro";
+import CookbookWidget from "../widgets/Cookbook/CookbookWidget";
+
+import TodoPreview from "../widgets/Todo/TodoPreview";
+import TodoMacro from "../widgets/Todo/TodoMacro";
+import TodoWidget from "../widgets/Todo/TodoWidget";
 
 const Dashboard: Component = () => {
   const [location, setLocation] = createSignal<Location | null>(null);
@@ -42,26 +46,29 @@ const Dashboard: Component = () => {
     const widgetMacros = [
       {
         name: "Cookbook",
-        type: "cookbook" as MacroType,
-        component: Cookbook,
-        list: CookbookList,
-        widgets: [] as Widget[],
+        type: "cookbook",
+        preview: CookbookPreview,
+        macro: CookbookMacro,
+        component: CookbookWidget,
+        widgets: [],
       },
       {
         name: "Todos",
-        type: "todo" as MacroType,
-        component: Todo,
-        list: TodoList,
-        widgets: [] as Widget[],
+        type: "todo",
+        preview: TodoPreview,
+        macro: TodoMacro,
+        component: TodoWidget,
+        widgets: [],
       },
       {
         name: "Polls",
-        type: "poll" as MacroType,
-        component: Todo,
-        list: TodoList,
-        widgets: [] as Widget[],
+        type: "poll",
+        preview: TodoPreview,
+        macro: TodoMacro,
+        component: TodoWidget,
+        widgets: [],
       },
-    ];
+    ] as WidgetMacro[];
     const widgetTypeMap = {
       meat_recipe: "cookbook",
       dairy_recipe: "cookbook",
@@ -69,28 +76,22 @@ const Dashboard: Component = () => {
       todo: "todo",
       poll: "poll",
     } as Record<WidgetType, MacroType>;
+
     const staticWidgets = widgets();
     if (!staticWidgets) return widgetMacros;
 
-    const widgetCategories = staticWidgets.map((w) => w.type);
-    // const starter = widgetCategories?.reduce((obj, type) => {
-    //   if (type) {
-    //     obj[type] = [];
-    //   }
-    //   return obj;
-    // }, {} as Record<MacroType, Widget[]>);
-    const reducedObj = staticWidgets.reduce(
-      (obj, w) => {
-        if (w.type) {
-          const macroType = widgetTypeMap[w.type];
-          obj[macroType].push(w);
+    const categorizedWidgets = staticWidgets.reduce(
+      (obj, widget) => {
+        if (widget.type) {
+          const macroType = widgetTypeMap[widget.type];
+          obj[macroType].push(widget);
         }
         return obj;
       },
       { cookbook: [], todo: [], poll: [] } as Record<MacroType, Widget[]>
     );
     return widgetMacros.map((macro) => {
-      macro["widgets"] = reducedObj[macro.type];
+      macro["widgets"] = categorizedWidgets[macro.type];
       return macro;
     });
   };
@@ -127,7 +128,7 @@ const Dashboard: Component = () => {
                       macro={macro}
                       setActiveMacro={setActiveMacro}
                     >
-                      {macro.list({
+                      {macro.preview({
                         widgets: macro.widgets,
                         setActiveWidget,
                         isActive: false,
@@ -159,7 +160,7 @@ const Dashboard: Component = () => {
                 >
                   <Switch fallback={<div>Loading...</div>}>
                     <Match when={!activeWidget()}>
-                      {activeMacro.list({
+                      {activeMacro.macro({
                         widgets: activeMacro.widgets,
                         setActiveWidget,
                         isActive: true,

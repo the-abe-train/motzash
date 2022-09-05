@@ -6,123 +6,89 @@ import {
   ErrorBoundary,
   For,
   Match,
+  Show,
   Switch,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
-type Props = {
-  widget: Widget;
-};
+const TodoMacro: WidgetPreviewComponent = (props) => {
+  // const [widgets] = splitProps(props)
+  const [storedWidgets, setStoredWidgets] = createStore(props.widgets);
+  const [inputName, setInputName] = createSignal("");
+  const [loading, setLoading] = createSignal(false);
+  const [msg, setMsg] = createSignal("");
 
-const Todo: Component<Props> = (props) => {
-  const [loadedTodos, { refetch }] = createResource<Todo[] | null>(loadTodos);
-  const [storedTodos, setStoredTodos] = createStore<Todo[]>([]);
+  console.log("Todo list");
 
-  // Turn the async data into a store rather than a signal
-  createEffect(() => {
-    const returnedValue = loadedTodos();
-    if (returnedValue) setStoredTodos(returnedValue);
-  });
-
-  // TODO This function might feel slow for users.
-  // TODO replace 2 with actual widget ids
-  async function createNewTask(e: Event) {
+  async function createNewWidget(e: Event) {
     e.preventDefault();
+    setLoading(true);
+    const user = await supabase.auth.getUser();
+    const user_id = user.data.user?.id || "";
     const { data, error } = await supabase
-      .from("todos")
+      .from("widgets")
       .insert({
-        task: inputTodo(),
-        is_complete: false,
-        widget_id: props.widget.id,
+        name: inputName(),
+        user_id,
+        type: "todo",
       })
       .select();
     if (data) {
-      setStoredTodos((prev) => [...prev, ...data]);
-      setInputTodo("");
+      setStoredWidgets((prev) => (prev ? [...prev, ...data] : data));
+      setInputName("");
+      setLoading(false);
+      setMsg("");
       return;
     }
     if (error) {
       console.error(error.message);
+      setMsg("Failed to create new widget.");
     }
-    setInputTodo("");
-    refetch();
+    setLoading(false);
+    setInputName("");
   }
-
-  async function deleteTask(e: Event, item: Todo) {
-    e.preventDefault();
-    const { error } = await supabase.from("todos").delete().eq("id", item.id);
-    if (error) {
-      console.error(error.message);
-      refetch();
-      return;
-    }
-    setStoredTodos((prev) => prev.filter((i) => i.id !== item.id));
-  }
-
-  // TODO make update task work.
-  async function updateTask(e: Event, item: Todo) {
-    e.preventDefault();
-    console.log("Task updated");
-    // const { error } = await supabase.from("todos").delete().eq("id", item.id);
-    // if (error) {
-    //   console.error(error.message);
-    //   refetch();
-    //   return;
-    // }
-    // setStoredTodos((prev) => prev.filter((i) => i.id !== item.id));
-  }
-
-  const [inputTodo, setInputTodo] = createSignal("");
 
   return (
-    <ErrorBoundary
-      fallback={
-        <div>
-          <p>Something went terribly wrong. Try refreshing the page!</p>
-          <p>{loadedTodos.error}</p>
-        </div>
-      }
-    >
-      <Switch>
-        <Match when={loadedTodos.loading}>
-          <p>Loading...</p>
-        </Match>
-        <Match when={!loadedTodos.loading}>
-          <h2></h2>
-          <div class="m-2 flex flex-col space-y-2">
-            <For each={storedTodos}>
-              {(item, idx) => {
-                return (
-                  <form
-                    onSubmit={(e) => updateTask(e, item)}
-                    class="flex space-x-2"
-                  >
-                    <input value={item.task || ""} class="bg-transparent" />
-                    <button type="button" onClick={(e) => deleteTask(e, item)}>
-                      &#10006;
-                    </button>
-                  </form>
-                );
-              }}
-            </For>
-          </div>
-        </Match>
-      </Switch>
-      <form onSubmit={createNewTask}>
-        <input
-          class="border"
-          type="text"
-          name="todo"
-          required
-          value={inputTodo()}
-          onInput={(e) => setInputTodo(e.currentTarget.value)}
-        />
-        <button type="submit">Submit</button>
-      </form>
-    </ErrorBoundary>
+    <div>
+      <ul class="list-disc list-inside mx-2">
+        <For each={storedWidgets}>
+          {(widget) => {
+            return (
+              <li
+                class="cursor-pointer"
+                onClick={() => props.setActiveWidget(widget)}
+              >
+                {widget.name}
+              </li>
+            );
+          }}
+        </For>
+      </ul>
+      <Show when={props.isActive}>
+        <form
+          onSubmit={createNewWidget}
+          class="m-4 p-4 flex flex-col space-y-4"
+        >
+          <input
+            type="text"
+            value={inputName()}
+            onChange={(e) => setInputName(e.currentTarget.value)}
+            class="w-fit p-2"
+          />
+          <button
+            class="w-fit p-2 border border-black rounded
+      bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+            disabled={loading()}
+          >
+            Create new todo list
+          </button>
+        </form>
+        <p>{msg()}</p>
+      </Show>
+    </div>
   );
 };
 
-export default Todo;
+export default TodoMacro;

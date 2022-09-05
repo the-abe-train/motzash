@@ -1,4 +1,4 @@
-const Cookbook: WidgetComponent = () => {
+const Cookbook: WidgetPreviewComponent = (props) => {
   return <div></div>;
 };
 

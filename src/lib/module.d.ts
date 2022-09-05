@@ -6,7 +6,15 @@ import { Database } from "./database.types";
 export {};
 
 declare global {
+  // Enums
   type ScreenName = "UpdateStatus" | "AddFriend" | "Map" | null;
+  type MacroType = "cookbook" | "todo" | "poll";
+  type WidgetType =
+    | "meat_recipe"
+    | "dairy_recipe"
+    | "pareve_recipe"
+    | "todo"
+    | "poll";
 
   type Coords = {
     lat: number;
@@ -18,7 +26,7 @@ declare global {
     holidays?: TimedEvent[];
   };
 
-  type WidgetListComponent = Component<{
+  type WidgetPreviewComponent = Component<{
     widgets: Widget[];
     setActiveWidget: Setter<Widget | null>;
     isActive: boolean;
@@ -30,19 +38,12 @@ declare global {
 
   type WidgetMacro = {
     name: string;
-    type: string;
-    list: WidgetListComponent;
+    type: MacroType;
+    preview: WidgetPreviewComponent;
+    macro: WidgetPreviewComponent;
     component: WidgetComponent;
     widgets: Widget[];
   };
-
-  type MacroType = "cookbook" | "todo" | "poll";
-  type WidgetType =
-    | "meat_recipe"
-    | "dairy_recipe"
-    | "pareve_recipe"
-    | "todo"
-    | "poll";
 
   // API
   type Geoname = {

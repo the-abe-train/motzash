@@ -1,5 +1,4 @@
 import {
-  Component,
   createEffect,
   createResource,
   createSignal,
@@ -12,11 +11,7 @@ import { createStore } from "solid-js/store";
 import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
-type Props = {
-  widget: Widget;
-};
-
-const Todo: Component<Props> = (props) => {
+const TodoWidget: WidgetComponent = (props) => {
   const [loadedTodos, { refetch }] = createResource<Todo[] | null>(loadTodos);
   const [storedTodos, setStoredTodos] = createStore<Todo[]>([]);
 
@@ -74,6 +69,16 @@ const Todo: Component<Props> = (props) => {
     // setStoredTodos((prev) => prev.filter((i) => i.id !== item.id));
   }
 
+  async function deleteTodoList(e: Event, item: Widget) {
+    e.preventDefault();
+    const { error } = await supabase.from("todos").delete().eq("id", item.id);
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    // setStoredWidgets((prev) => prev.filter((i) => i.id !== item.id));
+  }
+
   const [inputTodo, setInputTodo] = createSignal("");
 
   return (
@@ -125,4 +130,4 @@ const Todo: Component<Props> = (props) => {
   );
 };
 
-export default Todo;
+export default TodoWidget;
