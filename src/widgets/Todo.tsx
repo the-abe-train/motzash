@@ -9,8 +9,8 @@ import {
   Switch,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { loadTodos } from "../../util/queries";
-import { supabase } from "../../util/supabase";
+import { loadTodos } from "../util/queries";
+import { supabase } from "../util/supabase";
 
 type Props = {
   widget: Widget;

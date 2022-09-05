@@ -13,12 +13,12 @@ import { Location } from "@hebcal/core";
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
-import Todo from "../components/widgets/Todo";
+import Todo from "../widgets/Todo";
 
 import { getHebcalLocation } from "../util/location";
-import Cookbook from "../components/widgets/Cookbook";
+import Cookbook from "../widgets/Cookbook";
 import { loadWidgets } from "../util/queries";
-import TodoList from "../components/widgets/TodoList";
+import TodoList from "../widgets/TodoList";
 import { Link } from "@solidjs/router";
 
 const Dashboard: Component = () => {
@@ -31,8 +31,6 @@ const Dashboard: Component = () => {
   });
 
   // TODO check if this flag accounts for chag, or if I need a separate one
-  // const nextCandleLighting = () => findNextEvent(cal(), "Candle lighting");
-  // const nextHavdalah = () => findNextEvent(cal(), "Havdalah");
 
   // Widget grid
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
