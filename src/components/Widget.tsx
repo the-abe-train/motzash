@@ -13,6 +13,8 @@ import { supabase } from "../util/supabase";
 type Props = {
   setActiveMacro: Setter<WidgetMacro | null>;
   setActiveWidget: Setter<Widget | null>;
+  activeMacro: WidgetMacro | null;
+  activeWidget: Widget | null;
 };
 
 const Widget: ParentComponent<Props> = (props) => {
@@ -25,16 +27,28 @@ const Widget: ParentComponent<Props> = (props) => {
     setUser(supabaseUser.data.user);
   });
   return (
-    <div class="bg-blue-100 h-full relative">
-      <button
-        class="border rounded absolute top-2 right-2"
-        onClick={() => {
-          props.setActiveMacro(null);
-          props.setActiveWidget(null);
-        }}
-      >
-        X
-      </button>
+    <div class="bg-blue-100 h-full relative p-2">
+      <div class="absolute top-2 right-2">
+        <button
+          class="border rounded bg-white mx-2 p-1"
+          onClick={() => {
+            props.setActiveMacro(null);
+            props.setActiveWidget(null);
+          }}
+        >
+          Dashboard
+        </button>
+        <Show when={props.activeWidget}>
+          <button
+            class="border rounded bg-white mx-2 p-1"
+            onClick={() => {
+              props.setActiveWidget(null);
+            }}
+          >
+            {props.activeMacro?.name}
+          </button>
+        </Show>
+      </div>
       <Show when={user()} fallback={<Auth />}>
         {c()}
       </Show>

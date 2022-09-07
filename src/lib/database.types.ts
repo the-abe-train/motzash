@@ -15,21 +15,21 @@ export interface Database {
           created_at: string | null;
           name: string | null;
           user_id: string | null;
-          type: string | null;
+          type: WidgetType | null;
         };
         Insert: {
           id?: number;
           created_at?: string | null;
           name?: string | null;
           user_id?: string | null;
-          type?: string | null;
+          type?: WidgetType | null;
         };
         Update: {
           id?: number;
           created_at?: string | null;
           name?: string | null;
           user_id?: string | null;
-          type?: string | null;
+          type?: WidgetType | null;
         };
       };
       recipe_instructions: {
@@ -209,4 +209,3 @@ export interface Database {
     Functions: {};
   };
 }
-

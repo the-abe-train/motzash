@@ -26,6 +26,7 @@ declare global {
     holidays?: TimedEvent[];
   };
 
+  // Components
   type WidgetPreviewComponent = Component<{
     widgets: Widget[];
     setActiveWidget: Setter<Widget | null>;
@@ -34,6 +35,7 @@ declare global {
 
   type WidgetComponent = Component<{
     widget: Widget;
+    setActiveWidget: Setter<Widget | null>;
   }>;
 
   type WidgetMacro = {
@@ -110,9 +112,11 @@ declare global {
 
   // Cookbook
   type RecipeMetadata = Database["public"]["Tables"]["recipe_metadata"]["Row"];
-  type Ingreident = Database["public"]["Tables"]["recipe_ingredients"]["Row"];
+  type Ingredient = Database["public"]["Tables"]["recipe_ingredients"]["Row"];
+  type Instruction = Database["public"]["Tables"]["recipe_instructions"]["Row"];
   interface Recipe extends Widget {
     recipe_metadata?: RecipeMetadata[];
-    recipe_ingredients?: Ingreident[];
+    recipe_ingredients?: Ingredient[];
+    recipe_instructions?: Instruction[];
   }
 }

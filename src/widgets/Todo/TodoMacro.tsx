@@ -8,8 +8,6 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   const [loading, setLoading] = createSignal(false);
   const [msg, setMsg] = createSignal("");
 
-  console.log("Todo list");
-
   async function createNewWidget(e: Event) {
     e.preventDefault();
     setLoading(true);

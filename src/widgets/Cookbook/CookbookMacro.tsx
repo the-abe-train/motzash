@@ -7,7 +7,6 @@ import {
   Switch,
 } from "solid-js";
 import { createStore, SetStoreFunction } from "solid-js/store";
-import { receiveMessageOnPort } from "worker_threads";
 import { loadAllRecipes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
@@ -64,11 +63,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
       await supabase.from("recipe_metadata").insert({
         widget_id: data[0].id,
       });
-      // const newRecipe = { ...data[0], recipe_metadata: [] as RecipeMetadata[] };
-      setRecipeList((prev) => (prev ? [...prev, data[0]] : data));
-      setInputName("");
-      setLoading(false);
-      setMsg("");
+      props.setActiveWidget(data[0]);
       return;
     }
     if (error) {
@@ -127,6 +122,8 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
                   value={inputName()}
                   onChange={(e) => setInputName(e.currentTarget.value)}
                   class="w-fit p-2"
+                  required
+                  minLength={6}
                 />
                 <button
                   class="w-fit p-2 border border-black rounded

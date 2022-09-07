@@ -20,11 +20,10 @@ export const loadProfile = async () => {
     console.log(error);
     throw error;
   }
-  console.log("load data", data);
   return data;
 };
 
-export const loadWidgets = async (type: string) => {
+export const loadWidgets = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
   const { data, error } = await supabase
@@ -66,7 +65,6 @@ export const loadAllRecipes = async () => {
     console.log(error);
     return null;
   }
-  console.log(data);
   return data as Recipe[];
 };
 
@@ -90,7 +88,6 @@ export const loadRecipe = async (widget_id: number) => {
 export const loadMyStatus = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";
-  console.log("User ID", user_id);
   const { data, error } = await supabase
     .from("statuses")
     .select("*, profiles (username)")
@@ -150,9 +147,6 @@ export const loadFriendStatuses = async () => {
       profiles.requester.some((r) => r.accepted)
     );
   });
-
-  console.log(acceptedRequests);
-
   return acceptedRequests;
 };
 
@@ -176,7 +170,6 @@ export const loadRequestsToMe = async () => {
     console.error(error);
     return null;
   }
-  console.log("Friend requests:", data);
   return data;
 };
 
@@ -213,7 +206,6 @@ export const findFriendship = async (user_id: string, friend_id: string) => {
     console.error(error);
     return null;
   }
-  console.log("Friendships:", data);
   return data;
 };
 
@@ -248,8 +240,6 @@ export const deleteRequest = async (info: UserInfo) => {
     const friend = await getUser(info);
     friend_id = friend?.id;
   }
-  console.log("friend_id", user_id);
-  console.log("requester_id", friend_id);
   const { error, count } = await supabase
     .from("friendships")
     .delete()

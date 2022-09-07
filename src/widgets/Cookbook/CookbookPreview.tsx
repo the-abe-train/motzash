@@ -16,7 +16,6 @@ const CookbookPreview: WidgetPreviewComponent = (props) => {
     },
     { meat: 0, dairy: 0, pareve: 0 }
   );
-  console.log(cookbook);
 
   return (
     <div>

@@ -150,13 +150,15 @@ const Dashboard: Component = () => {
             </Show>
           </div>
         </Match>
-        <Match when={activeMacro()}>
+        <Match when={activeMacro()} keyed>
           {(activeMacro) => {
             return (
               <div class="bg-green-100 col-span-9 p-4">
                 <Widget
                   setActiveMacro={setActiveMacro}
                   setActiveWidget={setActiveWidget}
+                  activeMacro={activeMacro}
+                  activeWidget={activeWidget()}
                 >
                   <Switch fallback={<div>Loading...</div>}>
                     <Match when={!activeWidget()}>
@@ -166,9 +168,12 @@ const Dashboard: Component = () => {
                         isActive: true,
                       })}
                     </Match>
-                    <Match when={activeWidget()}>
+                    <Match when={activeWidget()} keyed>
                       {(activeWidget) =>
-                        activeMacro.component({ widget: activeWidget })
+                        activeMacro.component({
+                          widget: activeWidget,
+                          setActiveWidget,
+                        })
                       }
                     </Match>
                   </Switch>
