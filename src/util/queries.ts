@@ -125,6 +125,20 @@ export const loadPolls = async () => {
   return data;
 };
 
+export const loadVotes = async (widget_id: number) => {
+  const { data, error } = await supabase
+    .from("poll_votes")
+    .select("*")
+    .eq("widget_id", widget_id);
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  console.log(data);
+  return data as Vote[];
+};
+
 export const loadMyStatus = async () => {
   const user = await supabase.auth.getUser();
   const user_id = user.data.user?.id || "";

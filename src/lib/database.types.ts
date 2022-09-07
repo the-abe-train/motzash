@@ -130,6 +130,29 @@ export interface Database {
           is_complete?: boolean | null;
         };
       };
+      poll_votes: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          text: string | null;
+          widget_id: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          text?: string | null;
+          widget_id?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          text?: string | null;
+          widget_id?: number | null;
+          user_id?: string | null;
+        };
+      };
       friendships: {
         Row: {
           id: number;

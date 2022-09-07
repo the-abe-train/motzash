@@ -109,6 +109,7 @@ declare global {
 
   type Widget = Database["public"]["Tables"]["widgets"]["Row"];
   type Todo = Database["public"]["Tables"]["todos"]["Row"];
+  type Vote = Database["public"]["Tables"]["poll_votes"]["Row"];
 
   // Cookbook
   type RecipeMetadata = Database["public"]["Tables"]["recipe_metadata"]["Row"];
