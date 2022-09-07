@@ -108,11 +108,11 @@ const Calendar: Component<Props> = (props) => {
       </p>
       <div class="flex justify-around">
         <div class="flex flex-col items-center">
-          <span>Candle Lighting</span>
+          <span>Candles</span>
           <span>{thisCandleLighting()?.day.format("h:mm a")}</span>
         </div>
         <div class="flex flex-col items-center">
-          <span>Motzash</span>
+          <span>Havdalah</span>
           <span>{thisHavdalah()?.day.format("h:mm a")}</span>
         </div>
       </div>
@@ -179,7 +179,7 @@ const Calendar: Component<Props> = (props) => {
             {nextCandleLighting()?.event} starts{" "}
             {nextCandleLighting()?.day.format("DD/MM/YYYY")}
           </p>
-          <p>Candle lighting: {nextCandleLighting()?.day.format("h:mm A")}</p>
+          <p>Candles: {nextCandleLighting()?.day.format("h:mm A")}</p>
         </Show>
         <p>Havdalah: {nextHavdalah()?.day.format("h:mm A")}</p>
         <button

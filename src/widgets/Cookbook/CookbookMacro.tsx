@@ -41,11 +41,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
   const [inputName, setInputName] = createSignal("");
   const [msg, setMsg] = createSignal("");
 
-  async function createNewWidget(
-    e: Event,
-    name: string,
-    setRecipeList: SetStoreFunction<Recipe[]>
-  ) {
+  async function createNewWidget(e: Event, name: string) {
     e.preventDefault();
     setLoading(true);
     const user = await supabase.auth.getUser();
@@ -112,9 +108,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
                 </Match>
               </Switch>
               <form
-                onSubmit={(e) =>
-                  createNewWidget(e, recipeList.name, recipeList.setRecipes)
-                }
+                onSubmit={(e) => createNewWidget(e, recipeList.name)}
                 class="m-4 p-4 flex flex-col space-y-4"
               >
                 <input

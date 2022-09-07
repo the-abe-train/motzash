@@ -25,6 +25,8 @@ import CookbookWidget from "../widgets/Cookbook/CookbookWidget";
 import TodoPreview from "../widgets/Todo/TodoPreview";
 import TodoMacro from "../widgets/Todo/TodoMacro";
 import TodoWidget from "../widgets/Todo/TodoWidget";
+import PollPreview from "../widgets/Poll/PollPreview";
+import PollMacro from "../widgets/Poll/PollMacro";
 
 const Dashboard: Component = () => {
   const [location, setLocation] = createSignal<Location | null>(null);
@@ -63,8 +65,8 @@ const Dashboard: Component = () => {
       {
         name: "Polls",
         type: "poll",
-        preview: TodoPreview,
-        macro: TodoMacro,
+        preview: PollPreview,
+        macro: PollMacro,
         component: TodoWidget,
         widgets: [],
       },

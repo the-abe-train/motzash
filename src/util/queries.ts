@@ -44,7 +44,7 @@ export const loadTodos = async () => {
   const { data, error } = await supabase
     .from("todos")
     .select("*, widgets!inner(*)")
-    .eq("widgets.user_id", user_id);
+    .match({ "widgets.user_id": user_id, type: "todo" });
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
@@ -59,7 +59,8 @@ export const loadAllRecipes = async () => {
   const { data, error } = await supabase
     .from("widgets")
     .select("*, recipe_metadata (*)")
-    .eq("user_id", user_id);
+    .eq("user_id", user_id)
+    .in("type", ["meat_recipe", "dairy_recipe", "pareve_recipe"]);
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
@@ -83,6 +84,45 @@ export const loadRecipe = async (widget_id: number) => {
   }
   console.log(data);
   return data as Recipe;
+};
+
+export const loadPolls = async () => {
+  const user = await supabase.auth.getUser();
+  const user_id = user.data.user?.id || "";
+  const { data, error } = await supabase
+    .from("widgets")
+    .select(
+      `
+    *, 
+    profiles!inner (
+      username, 
+      friend:friendships!requester_id (
+        accepted, friend_id, requester_id
+      ),      
+      requester:friendships!friend_id (
+        accepted, friend_id, requester_id
+      )      
+    )
+    `
+    )
+    .or(`friend_id.eq.${user_id},requester_id.eq.${user_id}`, {
+      foreignTable: "profiles.friend",
+    })
+    .or(`friend_id.eq.${user_id},requester_id.eq.${user_id}`, {
+      foreignTable: "profiles.requester",
+    })
+    .match({
+      "profiles.friend.accepted": true,
+      "profiles.requester.accepted": true,
+      type: "poll",
+    });
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  console.log("Friends polls", data);
+  return data;
 };
 
 export const loadMyStatus = async () => {
