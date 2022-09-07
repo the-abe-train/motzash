@@ -1,9 +1,17 @@
-import { createEffect, createResource, createSignal, on } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  on,
+  useContext,
+} from "solid-js";
 import { createStore } from "solid-js/store";
+import { AuthContext } from "../../context/auth";
 import { loadVotes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
+  const session = useContext(AuthContext);
   // Signals and stores
   const [votes, setVotes] = createStore<Vote[]>([]);
   const [newVote, setNewVote] = createSignal("");
@@ -34,8 +42,7 @@ const PollWidget: WidgetComponent = (props) => {
   // I should almost definitely be storing it in context after all.
   async function upsertVote(e: Event, voteText: string) {
     e.preventDefault();
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     const { error } = await supabase.from("poll_votes").upsert(
       {
         widget_id: props.widget.id,
@@ -54,8 +61,7 @@ const PollWidget: WidgetComponent = (props) => {
 
   async function deleteVote(e: Event) {
     e.preventDefault();
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     const { error } = await supabase
       .from("poll_votes")
       .delete()

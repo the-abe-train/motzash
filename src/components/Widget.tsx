@@ -6,7 +6,9 @@ import {
   ParentComponent,
   Setter,
   Show,
+  useContext,
 } from "solid-js";
+import { AuthContext } from "../context/auth";
 import Auth from "../pages/Auth";
 import { supabase } from "../util/supabase";
 
@@ -19,13 +21,8 @@ type Props = {
 
 const Widget: ParentComponent<Props> = (props) => {
   const c = children(() => props.children);
-  // Putting this weird default "true" value in the signal to stop the Auth
-  // screen from flashing for logged-in users.
-  const [user, setUser] = createSignal<User | null | boolean>(true);
-  onMount(async () => {
-    const supabaseUser = await supabase.auth.getUser();
-    setUser(supabaseUser.data.user);
-  });
+  const session = useContext(AuthContext);
+
   return (
     <div class="bg-blue-100 h-full relative p-2">
       <div class="absolute top-2 right-2">
@@ -49,7 +46,7 @@ const Widget: ParentComponent<Props> = (props) => {
           </button>
         </Show>
       </div>
-      <Show when={user()} fallback={<Auth />}>
+      <Show when={session()} fallback={<Auth />}>
         {c()}
       </Show>
     </div>

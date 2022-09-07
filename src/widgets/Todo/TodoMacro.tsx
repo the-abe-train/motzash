@@ -1,8 +1,10 @@
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, For, Show, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
+import { AuthContext } from "../../context/auth";
 import { supabase } from "../../util/supabase";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
+  const session = useContext(AuthContext);
   const [storedWidgets, setStoredWidgets] = createStore(props.widgets);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
@@ -11,8 +13,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   async function createNewWidget(e: Event) {
     e.preventDefault();
     setLoading(true);
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     const { data, error } = await supabase
       .from("widgets")
       .insert({

@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import {
   Component,
   Switch,
@@ -9,15 +8,14 @@ import {
   createEffect,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Database } from "../lib/database.types";
+import { AuthContext } from "../context/auth";
 import { loadProfile } from "../util/queries";
 import { supabase } from "../util/supabase";
 
 const Profile: Component = () => {
+  const session = useContext(AuthContext);
   const [msg, setMsg] = createSignal("");
-  const [newProfile, setNewProfile] = createStore<
-    Database["public"]["Tables"]["profiles"]["Update"]
-  >({
+  const [newProfile, setNewProfile] = createStore<Profile>({
     id: "",
     updated_at: "",
     username: "",
@@ -39,15 +37,13 @@ const Profile: Component = () => {
     setLoading(true);
 
     try {
-      const user = await supabase.auth.getUser();
-
       const updates: Record<string, any> = { updated_at: new Date() };
       if (newProfile.username) updates["username"] = newProfile.username;
 
       let { error } = await supabase
         .from("profiles")
         .update(updates)
-        .match({ id: user.data.user?.id });
+        .match({ id: session()?.user.id });
 
       if (error) {
         throw error;

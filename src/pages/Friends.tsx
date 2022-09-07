@@ -21,7 +21,6 @@ const Friends: Component = () => {
   const [myStatus, { refetch: refetchMyStatus }] = createResource(loadMyStatus);
   const [friendStatuses, { refetch: refetchFriendStatuses }] =
     createResource(loadFriendStatuses);
-  console.log(friendStatuses());
 
   const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
   const [friendFilter, setFriendFilter] = createSignal("");

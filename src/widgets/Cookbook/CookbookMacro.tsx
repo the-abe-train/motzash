@@ -5,12 +5,15 @@ import {
   For,
   Match,
   Switch,
+  useContext,
 } from "solid-js";
-import { createStore, SetStoreFunction } from "solid-js/store";
+import { createStore } from "solid-js/store";
+import { AuthContext } from "../../context/auth";
 import { loadAllRecipes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const CookbookMacro: WidgetPreviewComponent = (props) => {
+  const session = useContext(AuthContext);
   const [loadedRecipes, { refetch }] = createResource(loadAllRecipes, {
     initialValue: [],
   });
@@ -44,8 +47,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
   async function createNewWidget(e: Event, name: string) {
     e.preventDefault();
     setLoading(true);
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     const recipeType = `${name.toLowerCase()}_recipe` as WidgetType;
     const { data, error } = await supabase
       .from("widgets")

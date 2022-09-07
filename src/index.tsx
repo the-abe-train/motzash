@@ -5,13 +5,15 @@ import "tailwindcss/tailwind.css";
 
 import "./index.css";
 import App from "./App";
-import { AuthProvider } from "./context/auth";
-import { supabase } from "./util/supabase";
+import { AuthProvider, loadSession } from "./context/auth";
+
+// No clue how top level await works here. Vite???
+const session = await loadSession();
 
 render(
   () => (
     <Router>
-      <AuthProvider value={supabase.auth.session()}>
+      <AuthProvider value={session}>
         <App />
       </AuthProvider>
     </Router>

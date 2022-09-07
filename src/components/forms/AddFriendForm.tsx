@@ -7,8 +7,10 @@ import {
   Match,
   Setter,
   Switch,
+  useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import { AuthContext } from "../../context/auth";
 import {
   createRequest,
   deleteRequest,
@@ -24,6 +26,7 @@ type Props = {
 };
 
 const AddFriendForm: Component<Props> = (props) => {
+  const session = useContext(AuthContext);
   const [data, { refetch }] = createResource(loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<IFriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
@@ -45,9 +48,9 @@ const AddFriendForm: Component<Props> = (props) => {
     setLoading(true);
 
     // User entered their own email address
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
-    if (friendEmail() === user.data.user?.email) {
+
+    const user_id = session()?.user.id || "";
+    if (friendEmail() === session()?.user.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
       return;
@@ -123,8 +126,7 @@ const AddFriendForm: Component<Props> = (props) => {
 
   async function acceptRequest(idx: number, requester_id: string) {
     setLoading2(true);
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     console.log("user_id", user_id);
     console.log("requester_id", requester_id);
     const { data, error } = await supabase
@@ -144,8 +146,7 @@ const AddFriendForm: Component<Props> = (props) => {
 
   async function rejectRequest(idx: number, requester_id: string) {
     setLoading2(true);
-    const user = await supabase.auth.getUser();
-    const user_id = user.data.user?.id || "";
+    const user_id = session()?.user.id || "";
     const { data, error } = await supabase
       .from("friendships")
       .delete()

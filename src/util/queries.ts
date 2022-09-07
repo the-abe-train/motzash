@@ -1,12 +1,11 @@
+import { useContext } from "solid-js";
+import { AuthContext } from "../context/auth";
 import { Database } from "../lib/database.types";
 import { supabase } from "./supabase";
 
 export const loadProfile = async () => {
-  const user = await supabase.auth.getUser();
-  if (!user.data.user) {
-    return null;
-  }
-  const user_id = user.data.user.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   let { data, error, status } = await supabase
     .from("profiles")
     .select(`username, email`)
@@ -24,8 +23,8 @@ export const loadProfile = async () => {
 };
 
 export const loadWidgets = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("widgets")
     .select("*")
@@ -39,8 +38,8 @@ export const loadWidgets = async () => {
 };
 
 export const loadTodos = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("todos")
     .select("*, widgets!inner(*)")
@@ -54,8 +53,8 @@ export const loadTodos = async () => {
 };
 
 export const loadAllRecipes = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("widgets")
     .select("*, recipe_metadata (*)")
@@ -87,8 +86,8 @@ export const loadRecipe = async (widget_id: number) => {
 };
 
 export const loadPolls = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("widgets")
     .select(
@@ -140,8 +139,8 @@ export const loadVotes = async (widget_id: number) => {
 };
 
 export const loadMyStatus = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("statuses")
     .select("*, profiles (username)")
@@ -157,8 +156,8 @@ export const loadMyStatus = async () => {
 
 // TODO I'm worried that unaccpeted friends' statuses will be in the payload
 export const loadFriendStatuses = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
 
   // Could use !inner for better query but it doesn't work with friend & requester :(
   const { data, error } = await supabase
@@ -206,8 +205,8 @@ export const loadFriendStatuses = async () => {
 
 // new_col_object:from_col (join_table_cols[])
 export const loadRequestsToMe = async () => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("friendships")
     .select(
@@ -264,8 +263,8 @@ export const findFriendship = async (user_id: string, friend_id: string) => {
 };
 
 export async function createRequest(info: UserInfo) {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   let friend_id = info["id"];
   if (!friend_id) {
     const friend = await getUser(info);
@@ -287,8 +286,8 @@ export async function createRequest(info: UserInfo) {
 }
 
 export const deleteRequest = async (info: UserInfo) => {
-  const user = await supabase.auth.getUser();
-  const user_id = user.data.user?.id || "";
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
   let friend_id = info["id"];
   if (!friend_id) {
     const friend = await getUser(info);

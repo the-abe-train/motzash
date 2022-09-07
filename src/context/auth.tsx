@@ -1,4 +1,4 @@
-import { Session, Subscription } from "@supabase/supabase-js";
+import { AuthSession, Subscription, User } from "@supabase/supabase-js";
 import {
   createContext,
   createEffect,
@@ -16,37 +16,43 @@ import { supabase } from "../util/supabase";
 // The benefit of using a context here is that it's a *reactive* context.
 // Thus when users sign in/out the app updates immediately.
 
-export const AuthContext = createContext<Accessor<Session | null>>(() => null);
+export const AuthContext = createContext<Accessor<AuthSession | null>>(
+  () => null
+);
 
-const loadSession = async () => {
-  const { data } = await supabase.auth.getSession();
-  const session = data.session;
-  if (!session) return null;
-  return session;
+export const loadSession = async () => {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) return null;
+  if (!data.session) return null;
+  return data.session;
 };
 
-export const AuthProvider: ContextProviderComponent<Session | null> = (
+export const AuthProvider: ContextProviderComponent<AuthSession | null> = (
   props
 ) => {
   const [data, { mutate, refetch }] = createResource(loadSession);
   // console.log(data());
 
-  const [session, setSession] = createSignal<Session | null>(null);
+  const [session, setSession] = createSignal<AuthSession | null>(null);
 
   let listener: Subscription | null;
+
+  onMount(() => {
+    listener = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session) {
+        setSession(session);
+        return;
+      }
+      setSession(null);
+    }).subscription;
+  });
 
   createEffect(() => {
     const returnedValue = data();
     if (returnedValue) setSession(returnedValue);
     // console.log("Session updated.");
     // console.log("Session", session());
-    // console.log("User:", supabase.auth.session()?.user);
-  });
-
-  onMount(() => {
-    listener = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    }).subscription;
+    // console.log("User:", session()?.user);
   });
 
   onCleanup(() => {

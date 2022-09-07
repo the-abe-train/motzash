@@ -107,6 +107,7 @@ declare global {
     requester: Database["public"]["Tables"]["profiles"]["Row"];
   }
 
+  type Profile = Database["public"]["Tables"]["profiles"]["Update"];
   type Widget = Database["public"]["Tables"]["widgets"]["Row"];
   type Todo = Database["public"]["Tables"]["todos"]["Row"];
   type Vote = Database["public"]["Tables"]["poll_votes"]["Row"];
