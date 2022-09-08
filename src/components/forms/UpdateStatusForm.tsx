@@ -18,6 +18,8 @@ type Props = {
   refetch: () => any | Promise<any> | undefined | null;
 };
 
+// TODO I think "newStatus" can hold the id and user_id parameters across the
+// board, that makes more sense for the upsert
 const UpdateStatusForm: Component<Props> = (props) => {
   const session = useContext(AuthContext);
   const [newStatus, setNewStatus] = createStore<Status>({

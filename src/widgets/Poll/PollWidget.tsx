@@ -14,10 +14,21 @@ import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
   const session = useContext(AuthContext);
+  const myVoteDefault: Vote = {
+    user_id: session()?.user.id,
+    text: "",
+    widget_id: props.widget.id,
+  };
+
   // Signals and stores
   const [votes, setVotes] = createStore<Vote[]>([]);
-  const [newVote, setNewVote] = createSignal("");
+  const [myVote, setMyVote] = createStore<Vote>(myVoteDefault);
   const [msg, setMsg] = createSignal("");
+  const pollAuthor = () => {
+    return "profiles" in props.widget
+      ? props.widget.profiles.username
+      : "Anonymous";
+  };
 
   // Load recipe data
   const [loadedVotes, { refetch }] = createResource(async () =>
@@ -29,6 +40,10 @@ const PollWidget: WidgetComponent = (props) => {
         const returnedValue = loadedVotes();
         if (returnedValue) {
           setVotes(returnedValue);
+          const findMyVote = votes.find(
+            (vote) => vote.user_id === session()?.user.id
+          );
+          setMyVote(findMyVote || {});
         }
       }
     })
@@ -40,25 +55,17 @@ const PollWidget: WidgetComponent = (props) => {
     setTimeout(() => setMsg(""), 3000);
   }
 
-  // TODO getting user id from the database constantly is probably very bad
-  // I should almost definitely be storing it in context after all.
   async function upsertVote(e: Event) {
     e.preventDefault();
-    const user_id = session()?.user.id || "";
-    const { error } = await supabase.from("poll_votes").upsert(
-      {
-        widget_id: props.widget.id,
-        user_id,
-        text: newVote(),
-      },
-      { onConflict: "id" }
-    );
+    console.log("upserting vote:", myVote);
+    const { error } = await supabase.from("poll_votes").upsert(myVote);
     if (error) {
       console.error(error.message);
-      refetch();
+      setMsg("An error occurred, please contact support.");
       return;
     }
     updateMsg();
+    refetch();
   }
 
   async function deleteVote(e: Event) {
@@ -96,6 +103,7 @@ const PollWidget: WidgetComponent = (props) => {
   return (
     <div class="w-full flex flex-col space-y-4">
       <h2 class="text-xl">{props.widget.name}</h2>
+      <p>Poll created by {pollAuthor()}</p>
       <div>
         <h3 class="text-lg">Votes</h3>
         <For each={votes}>
@@ -108,19 +116,25 @@ const PollWidget: WidgetComponent = (props) => {
         <h3 class="text-lg">Change vote</h3>
         <form class="flex space-x-2 w-fit" onSubmit={upsertVote}>
           <input
-            name="ingredient"
-            class="w-40"
-            value={newVote()}
-            onChange={(e) => setNewVote(e.currentTarget.value)}
+            name="vote"
+            class="w-40 px-2"
+            value={myVote?.text || ""}
+            onChange={(e) => setMyVote("text", e.currentTarget.value)}
+            required
           />
           <button
-            class="p-1 border border-black"
+            class="p-2 border border-black w-fit
+            bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
             type="button"
             onClick={deleteVote}
           >
             Remove
           </button>
-          <button class="p-1 border border-black" type="submit">
+          <button
+            class="p-2 border border-black w-fit
+        bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
+            type="submit"
+          >
             Submit
           </button>
         </form>
@@ -131,6 +145,7 @@ const PollWidget: WidgetComponent = (props) => {
           Delete
         </button>
       </Show>
+      <p>{msg()}</p>
     </div>
   );
 };

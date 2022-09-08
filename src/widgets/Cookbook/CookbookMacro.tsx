@@ -44,15 +44,18 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
   const [inputName, setInputName] = createSignal("");
   const [msg, setMsg] = createSignal("");
 
-  async function createNewWidget(e: Event, name: string) {
+  // TODO stop recipe name from flashing in all text boxes
+  async function createNewWidget(e: Event, type: string) {
     e.preventDefault();
     setLoading(true);
+    const name = inputName();
+    setInputName("");
     const user_id = session()?.user.id || "";
-    const recipeType = `${name.toLowerCase()}_recipe` as WidgetType;
+    const recipeType = `${type.toLowerCase()}_recipe` as WidgetType;
     const { data, error } = await supabase
       .from("widgets")
       .insert({
-        name: inputName(),
+        name,
         user_id,
         type: recipeType,
       })
@@ -69,7 +72,6 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
       setMsg("Failed to create new widget.");
     }
     setLoading(false);
-    setInputName("");
   }
 
   return (

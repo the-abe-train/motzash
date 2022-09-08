@@ -18,7 +18,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     initialValue: [],
   });
 
-  const [polls, setPolls] = createStore<Widget[]>([]);
+  const [polls, setPolls] = createStore<UserWidget[]>([]);
   const [newPoll, setNewPoll] = createSignal("");
   const [msg, setMsg] = createSignal("Loading...");
   const [loading, setLoading] = createSignal(true);

@@ -34,7 +34,7 @@ declare global {
   }>;
 
   type WidgetComponent = Component<{
-    widget: Widget;
+    widget: Widget | UserWidget;
     setActiveWidget: Setter<Widget | null>;
   }>;
 
@@ -106,10 +106,16 @@ declare global {
     requester: Database["public"]["Tables"]["profiles"]["Row"];
   }
 
-  type Profile = Database["public"]["Tables"]["profiles"]["Update"];
   type Widget = Database["public"]["Tables"]["widgets"]["Row"];
+  interface UserWidget extends Widget {
+    profiles: {
+      username: string;
+    };
+  }
+
+  type Profile = Database["public"]["Tables"]["profiles"]["Update"];
   type Todo = Database["public"]["Tables"]["todos"]["Row"];
-  type Vote = Database["public"]["Tables"]["poll_votes"]["Row"];
+  type Vote = Database["public"]["Tables"]["poll_votes"]["Update"];
 
   // Cookbook
   type RecipeMetadata = Database["public"]["Tables"]["recipe_metadata"]["Row"];

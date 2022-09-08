@@ -126,14 +126,11 @@ const AddFriendForm: Component<Props> = (props) => {
   async function acceptRequest(idx: number, requester_id: string) {
     setLoading2(true);
     const user_id = session()?.user.id || "";
-    console.log("user_id", user_id);
-    console.log("requester_id", requester_id);
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("friendships")
       .update({ accepted: true })
       .match({ friend_id: user_id, requester_id });
     if (error) {
-      console.error(error);
       setLoading2(false);
       return;
     }
