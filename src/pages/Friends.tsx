@@ -1,38 +1,64 @@
 import {
   Component,
+  createEffect,
   createResource,
   createSignal,
   For,
   Match,
   Show,
   Switch,
+  useContext,
 } from "solid-js";
 import FriendMap from "../components/maps/FriendMap";
 import Status from "../components/Status";
 
-import { loadFriendStatuses, loadMyStatus } from "../util/queries";
 import UpdateStatusForm from "../components/forms/UpdateStatusForm";
 import AddFriendForm from "../components/forms/AddFriendForm";
+import { loadStatuses } from "../util/queries";
+import { createStore } from "solid-js/store";
+import { AuthContext } from "../context/auth";
 
 const Friends: Component = () => {
+  const session = useContext(AuthContext);
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
-  const [myStatus, { refetch: refetchMyStatus }] = createResource(loadMyStatus);
-  const [friendStatuses, { refetch: refetchFriendStatuses }] =
-    createResource(loadFriendStatuses);
+  const [loadedStatuses, { refetch }] = createResource(loadStatuses);
+  const [statuses, setStatuses] = createStore<FriendStatus[]>([]);
+  createEffect(() => {
+    if (loadedStatuses.state === "ready") {
+      const returnedValue = loadedStatuses();
+      if (returnedValue) {
+        setStatuses(returnedValue);
+      }
+    }
+  });
 
   const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
   const [friendFilter, setFriendFilter] = createSignal("");
 
   const filteredFriends = () => {
+    const friends = statuses.filter(
+      (status) => status.user_id !== session()?.user.id
+    );
     const ff = friendFilter().toLowerCase();
     const regex = new RegExp(ff, "i");
-    return (
-      friendStatuses()?.filter((name) => name.profiles.username.match(regex)) ||
-      []
-    );
+    return friends.filter((name) => name.profiles.username.match(regex)) || [];
   };
+
+  const myStatus = () =>
+    statuses.find((status) => status.user_id === session()?.user.id) || null;
+
+  const addStatusButton = (
+    <button
+      class="w-full h-20 rounded
+  bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+      onClick={() => setShowScreen("UpdateStatus")}
+      disabled={showScreen() === "UpdateStatus"}
+    >
+      Add status
+    </button>
+  );
 
   return (
     <main class="grid grid-cols-12 gap-4 flex-grow">
@@ -41,31 +67,22 @@ const Friends: Component = () => {
           border-r flex flex-col space-y-5 p-4 "
       >
         <h2>Your Status</h2>
-        <Switch fallback={<p>Loading...</p>}>
-          <Match when={!myStatus()}>
-            <button
-              class="w-full h-20 rounded
+        <Show when={myStatus()} fallback={addStatusButton} keyed>
+          {(status) => {
+            return (
+              <>
+                <Status status={status} focus={focus} setFocus={setFocus} />
+                <button
+                  class="rounded w-fit p-2
               bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-              onClick={() => setShowScreen("UpdateStatus")}
-              disabled={showScreen() === "UpdateStatus"}
-            >
-              Add status
-            </button>
-          </Match>
-          <Match when={!myStatus.loading}>
-            <Status status={myStatus()} focus={focus} setFocus={setFocus} />
-            <button
-              class="rounded w-fit p-2
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-              onClick={() => setShowScreen("UpdateStatus")}
-            >
-              Edit status
-            </button>
-          </Match>
-          <Match when={myStatus.loading}>
-            <p>Loading...</p>
-          </Match>
-        </Switch>
+                  onClick={() => setShowScreen("UpdateStatus")}
+                >
+                  Edit status
+                </button>
+              </>
+            );
+          }}
+        </Show>
         <h2>Your Friends</h2>
         <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
           <form
@@ -116,13 +133,10 @@ const Friends: Component = () => {
       </aside>
       <Switch>
         <Match when={showScreen() === "Map"}>
-          <Show
-            when={!friendStatuses.loading && !myStatus.loading}
-            fallback={<p>Loading map...</p>}
-          >
+          <Show when={!loadedStatuses.loading} fallback={<p>Loading map...</p>}>
             <FriendMap
-              friends={friendStatuses() || []}
-              user={myStatus() || null}
+              friends={filteredFriends()}
+              user={myStatus()}
               focus={focus()}
               setFocus={setFocus}
             />
@@ -130,16 +144,13 @@ const Friends: Component = () => {
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>
           <UpdateStatusForm
-            myStatus={myStatus}
+            myStatus={myStatus()}
             setShowScreen={setShowScreen}
-            myStatusRefetch={refetchMyStatus}
+            refetch={refetch}
           />
         </Match>
         <Match when={showScreen() === "AddFriend"}>
-          <AddFriendForm
-            setShowScreen={setShowScreen}
-            refetchFriendStatuses={refetchFriendStatuses}
-          />
+          <AddFriendForm setShowScreen={setShowScreen} refetch={refetch} />
         </Match>
       </Switch>
     </main>

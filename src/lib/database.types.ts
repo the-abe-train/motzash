@@ -205,7 +205,7 @@ export interface Database {
       statuses: {
         Row: {
           city: string | null;
-          location: Json | null;
+          location: Coords | null;
           id: number;
           created_at: string | null;
           text: string | null;
@@ -213,7 +213,7 @@ export interface Database {
         };
         Insert: {
           city?: string | null;
-          location?: Json | null;
+          location?: Coords | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;
@@ -221,7 +221,7 @@ export interface Database {
         };
         Update: {
           city?: string | null;
-          location?: Json | null;
+          location?: Coords | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;

@@ -12,12 +12,10 @@ import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
 
-// TODO Reintroduce tags, which should be defined by database
-
 type Props = {
-  myStatus: Resource<MyStatus | null | undefined>;
+  myStatus: FriendStatus | null;
   setShowScreen: Setter<ScreenName>;
-  myStatusRefetch: () => any | Promise<any> | undefined | null;
+  refetch: () => any | Promise<any> | undefined | null;
 };
 
 const UpdateStatusForm: Component<Props> = (props) => {
@@ -30,7 +28,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
 
   // Start off with defaults
   createEffect(() => {
-    const returnedValue = props.myStatus();
+    const returnedValue = props.myStatus;
     if (returnedValue) {
       const { id, profiles, ...newStatus } = returnedValue;
       setNewStatus(newStatus);
@@ -38,7 +36,9 @@ const UpdateStatusForm: Component<Props> = (props) => {
   });
 
   const [loading, setLoading] = createSignal(false);
+  const [loading2, setLoading2] = createSignal(false);
   const [msg, setMsg] = createSignal("");
+
   async function updateLocation() {
     setLoading(true);
     setMsg("");
@@ -58,7 +58,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
     setLoading(false);
   }
 
-  const [loading2, setLoading2] = createSignal(false);
   const upsertStatus = async (e: Event) => {
     e.preventDefault();
     setLoading2(true);
@@ -73,7 +72,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
       return;
     }
     setLoading2(false);
-    props.myStatusRefetch();
+    props.refetch();
     props.setShowScreen("Map");
   };
 
@@ -90,7 +89,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
     console.log(count, "rows deleted.");
     if (error) console.error(error);
     setLoading2(false);
-    props.myStatusRefetch();
+    props.refetch();
     props.setShowScreen("Map");
   };
 

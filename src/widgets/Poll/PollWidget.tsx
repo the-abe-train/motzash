@@ -2,7 +2,9 @@ import {
   createEffect,
   createResource,
   createSignal,
+  For,
   on,
+  Show,
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
@@ -40,16 +42,16 @@ const PollWidget: WidgetComponent = (props) => {
 
   // TODO getting user id from the database constantly is probably very bad
   // I should almost definitely be storing it in context after all.
-  async function upsertVote(e: Event, voteText: string) {
+  async function upsertVote(e: Event) {
     e.preventDefault();
     const user_id = session()?.user.id || "";
     const { error } = await supabase.from("poll_votes").upsert(
       {
         widget_id: props.widget.id,
         user_id,
-        text: voteText,
+        text: newVote(),
       },
-      { onConflict: "text" }
+      { onConflict: "id" }
     );
     if (error) {
       console.error(error.message);
@@ -92,8 +94,43 @@ const PollWidget: WidgetComponent = (props) => {
   }
 
   return (
-    <div class="w-full">
+    <div class="w-full flex flex-col space-y-4">
       <h2 class="text-xl">{props.widget.name}</h2>
+      <div>
+        <h3 class="text-lg">Votes</h3>
+        <For each={votes}>
+          {(vote) => {
+            return <p>{vote.text}</p>;
+          }}
+        </For>
+      </div>
+      <div>
+        <h3 class="text-lg">Change vote</h3>
+        <form class="flex space-x-2 w-fit" onSubmit={upsertVote}>
+          <input
+            name="ingredient"
+            class="w-40"
+            value={newVote()}
+            onChange={(e) => setNewVote(e.currentTarget.value)}
+          />
+          <button
+            class="p-1 border border-black"
+            type="button"
+            onClick={deleteVote}
+          >
+            Remove
+          </button>
+          <button class="p-1 border border-black" type="submit">
+            Submit
+          </button>
+        </form>
+      </div>
+      <Show when={props.widget.user_id === session()?.user.id}>
+        <h3 class="text-lg">Delete poll</h3>
+        <button onClick={deletePoll} class="w-fit border border-black">
+          Delete
+        </button>
+      </Show>
     </div>
   );
 };

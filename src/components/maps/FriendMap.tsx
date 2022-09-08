@@ -4,7 +4,7 @@ import { getMapCentre } from "../../util/location";
 
 type Props = {
   friends: FriendStatus[];
-  user: MyStatus | null;
+  user: FriendStatus | null;
   focus: FriendStatus | MyStatus | null;
   setFocus: Setter<FriendStatus | MyStatus | null>;
 };
@@ -46,6 +46,7 @@ const FriendMap: Component<Props> = (props) => {
     // Friend markers
     props.friends.forEach((friendStatus) => {
       if (!friendStatus.location) return;
+
       const marker = new mapboxgl.Marker({
         color: "blue",
         draggable: false,

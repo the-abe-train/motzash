@@ -15,20 +15,20 @@ import {
   createRequest,
   deleteRequest,
   findFriendship,
-  getUser,
+  getUser as getUserProfile,
   loadRequestsToMe,
 } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 type Props = {
-  refetchFriendStatuses: () => any | Promise<any> | undefined | null;
+  refetch: () => any | Promise<any> | undefined | null;
   setShowScreen: Setter<ScreenName>;
 };
 
 const AddFriendForm: Component<Props> = (props) => {
   const session = useContext(AuthContext);
   const [data, { refetch }] = createResource(loadRequestsToMe);
-  const [friendRequests, setFriendRequests] = createStore<IFriendRequest[]>([]);
+  const [friendRequests, setFriendRequests] = createStore<FriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
@@ -36,7 +36,7 @@ const AddFriendForm: Component<Props> = (props) => {
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
-    const returnedValue = data() as IFriendRequest[];
+    const returnedValue = data();
     if (returnedValue) setFriendRequests(returnedValue);
   });
 
@@ -48,8 +48,6 @@ const AddFriendForm: Component<Props> = (props) => {
     setLoading(true);
 
     // User entered their own email address
-
-    const user_id = session()?.user.id || "";
     if (friendEmail() === session()?.user.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
@@ -57,8 +55,9 @@ const AddFriendForm: Component<Props> = (props) => {
     }
 
     // User doesn't have a username
-    const userData = await getUser({ id: user_id });
-    if (!userData?.username) {
+    const user_id = session()?.user.id || "";
+    const userProfile = await getUserProfile({ id: user_id });
+    if (!userProfile?.username) {
       setMsg(
         `You need a username to send a friend request.
         You can set your username in the Profile page.`
@@ -68,9 +67,9 @@ const AddFriendForm: Component<Props> = (props) => {
     }
 
     // Friend is not an existing user
-    const friendData = await getUser({ email: friendEmail() });
+    const friendData = await getUserProfile({ email: friendEmail() });
     if (!friendData) {
-      const userProfile = await getUser({ id: user_id });
+      const userProfile = await getUserProfile({ id: user_id });
       const res = await fetch("/api/inviteByEmail", {
         method: "POST",
         body: JSON.stringify({
@@ -79,7 +78,7 @@ const AddFriendForm: Component<Props> = (props) => {
         }),
       });
       if (res.ok) {
-        await createRequest({ email: friendEmail() });
+        await createRequest({ email: friendEmail() }, user_id);
         setMsg("New user invited to Motzash!");
       } else {
         setMsg("Something went wrong. Please contact Support.");
@@ -102,7 +101,7 @@ const AddFriendForm: Component<Props> = (props) => {
     }
 
     // Send friend request to existing user
-    const requestCreated = await createRequest({ id: friend_id });
+    const requestCreated = await createRequest({ id: friend_id }, user_id);
     if (!requestCreated) {
       setMsg("Error creating friend request. Please contact support");
       setLoading(false);
@@ -112,7 +111,7 @@ const AddFriendForm: Component<Props> = (props) => {
       method: "POST",
       body: JSON.stringify({
         friendEmail: friendEmail(),
-        username: userData?.username,
+        username: userProfile?.username,
       }),
     });
     if (res.ok) {
@@ -138,7 +137,7 @@ const AddFriendForm: Component<Props> = (props) => {
       setLoading2(false);
       return;
     }
-    props.refetchFriendStatuses();
+    props.refetch();
     setFriendRequests(idx, "accepted", true);
     console.log("Friend reqs", friendRequests);
     setLoading2(false);
@@ -176,9 +175,7 @@ const AddFriendForm: Component<Props> = (props) => {
     return;
   }
 
-  const FriendRequest: Component<IFriendRequest & { idx: number }> = (
-    props
-  ) => {
+  const FriendRequest: Component<FriendRequest & { idx: number }> = (props) => {
     return (
       <form
         action=""

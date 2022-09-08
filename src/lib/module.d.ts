@@ -102,8 +102,7 @@ declare global {
   }
 
   type Friendships = Database["public"]["Tables"]["friendships"]["Row"];
-  interface IFriendRequest extends Friendships {
-    friend: Database["public"]["Tables"]["profiles"]["Row"];
+  interface FriendRequest extends Friendships {
     requester: Database["public"]["Tables"]["profiles"]["Row"];
   }
 
