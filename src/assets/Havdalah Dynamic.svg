@@ -2,26 +2,26 @@
   viewBox="0 0 150 200" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
   <path id="es8mlFMKhEV2"
     d="M100.394125,-3.828902c0,0,0,80,0,80s0,50,0,50s0,10,0,10-29.908449,0-29.908449,0s0-10,0-10-.091551-50-.091551-50s.091551-80,.091551-80h29.908449Z"
-    transform="translate(-60.394125 53.828902)" fill="#feff67" stroke="#000" stroke-width="3" stroke-linejoin="round" />
+    transform="translate(-60.394125 53.828902)" fill="#feff67" stroke="#000" stroke-width="7" stroke-linejoin="round" />
   <path id="es8mlFMKhEV3"
     d="M100.099447,-3.707876c0,0,0,79.781834,0,79.781834s0,50.218166,0,50.218166s0,10,0,10h-28.270868c0,0,0-10,0-10s0-50.218166,0-50.218166s0-79.781834,0-79.781834q0,0,28.270868,0Z"
-    transform="matrix(1.061163 0 0 1 33.775311 53.707876)" fill="#feff67" stroke="#000" stroke-width="3"
+    transform="matrix(1.061163 0 0 1 33.775311 53.707876)" fill="#feff67" stroke="#000" stroke-width="7"
     stroke-linejoin="round" />
   <path id="es8mlFMKhEV4"
     d="M101.641394,-3.739991c0,0,0,84.489329,0,84.489329s0,45.510671,0,45.510671s0,10,0,10-29.999997,0-29.999997,0s0-10,0-10s0-45.510671,0-45.510671s0-84.489329,0-84.489329s9.999999,0,29.999997,0Z"
-    transform="translate(-11.641396 53.739991)" fill="#ff6" stroke="#000" stroke-width="3" stroke-linejoin="round" />
+    transform="translate(-11.641396 53.739991)" fill="#ff6" stroke="#000" stroke-width="7" stroke-linejoin="round" />
   <path id="es8mlFMKhEV5" d="M68.516036,75.469939c0,0,0-80,0-80h30v0c0,0-.974359,80-.974359,80"
-    transform="translate(-58.516036 54.530061)" opacity="0" fill="#feff67" stroke="#000" stroke-width="3"
+    transform="translate(-58.516036 54.530061)" opacity="0" fill="#feff67" stroke="#000" stroke-width="7"
     stroke-linecap="square" stroke-linejoin="round" />
   <path id="es8mlFMKhEV6"
     d="M-37.496391,22.778727c0-8.591095,9.445652-24.444444,16.619434-24.444444c0,9.478688,13.380565,17.115249,13.380565,24.444444s-4.135968,15.555556-13.380565,15.555556-16.619434-6.964459-16.619434-15.555556Z"
-    transform="translate(147.496391 6.665717)" fill="#feff67" stroke="#000" stroke-width="3" />
+    transform="translate(147.496391 6.665717)" fill="#feff67" stroke="#000" stroke-width="7" />
   <path id="es8mlFMKhEV7"
     d="M-37.622858,22.778727c0-8.591095,9.52381-24.444444,16.666667-24.444444c0,9.478688,13.333333,17.115249,13.333333,24.444444s-4.128588,15.555556-13.333333,15.555556-16.666667-6.96446-16.666667-15.555556Z"
-    transform="translate(97.622858 6.665717)" fill="#feff67" stroke="#000" stroke-width="3" />
+    transform="translate(97.622858 6.665717)" fill="#feff67" stroke="#000" stroke-width="7" />
   <path id="es8mlFMKhEV8"
     d="M-37.622858,22.778727c0-8.591095,9.52381-24.444444,16.666667-24.444444c0,9.478688,13.333333,17.115249,13.333333,24.444444s-4.128588,15.555556-13.333333,15.555556-16.666667-6.96446-16.666667-15.555556Z"
-    transform="translate(47.622858 6.665717)" fill="#feff67" stroke="#000" stroke-width="3" />
+    transform="translate(47.622858 6.665717)" fill="#feff67" stroke="#000" stroke-width="7" />
   <script>
     <![CDATA[
     !function(t,n){"object"==typeof exports&&"undefined"!=typeof module?module.exports=n():"function"==typeof define&&define.amd?define(n):((t="undefined"!=typeof globalThis?globalThis:t||self).__SVGATOR_PLAYER__=t.__SVGATOR_PLAYER__||{},t.__SVGATOR_PLAYER__["7c8cb2ed"]=n())}(this,(function(){"use strict";function t(t,n){var e=Object.keys(t);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(t);n&&(r=r.filter((function(n){return Object.getOwnPropertyDescriptor(t,n).enumerable}))),e.push.apply(e,r)}return e}function n(n){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{};e%2?t(Object(r),!0).forEach((function(t){o(n,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(n,Object.getOwnPropertyDescriptors(r)):t(Object(r)).forEach((function(t){Object.defineProperty(n,t,Object.getOwnPropertyDescriptor(r,t))}))}return n}

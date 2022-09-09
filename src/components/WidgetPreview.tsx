@@ -14,7 +14,7 @@ const WidgetPreview: ParentComponent<Props> = (props) => {
   const c = children(() => props.children);
   return (
     <div
-      class="bg-blue-100 h-full cursor-pointer p-2"
+      class="bg-blue-100 h-full cursor-pointer p-2 col-span-4"
       onClick={() => props.setActiveMacro(props.macro)}
     >
       <h2 class="text-lg">{props.macro.name}</h2>

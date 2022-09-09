@@ -113,8 +113,8 @@ const Dashboard: Component = () => {
   // Widget        -> Widget
 
   return (
-    <main class="grid grid-cols-12 gap-4 flex-grow">
-      <aside class="col-span-3 border-r flex flex-col space-y-5 p-2">
+    <main class="grid grid-cols-12 gap-4 flex-grow p-2 container mx-auto">
+      <aside class="col-span-4 row-span-2 flex flex-col space-y-5 p-2">
         <Show
           when={location()}
           fallback={
@@ -128,7 +128,7 @@ const Dashboard: Component = () => {
       </aside>
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeMacro()}>
-          <div class="bg-green-100 col-span-9 grid grid-cols-2 grid-rows-2 p-4 gap-4">
+          <>
             <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
               <For each={widgetsReduced()}>
                 {(macro) => {
@@ -146,7 +146,7 @@ const Dashboard: Component = () => {
                   );
                 }}
               </For>
-              <div class="w-full flex flex-col items-center justify-around py-4 px-8">
+              <div class="w-full flex flex-col items-center justify-around py-4 px-8 col-span-4">
                 <Link href="/friends" class="w-full">
                   <button
                     class="w-full p-8 rounded-xl
@@ -157,7 +157,7 @@ const Dashboard: Component = () => {
                 </Link>
               </div>
             </Show>
-          </div>
+          </>
         </Match>
         <Match when={activeMacro()} keyed>
           {(activeMacro) => {

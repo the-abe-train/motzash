@@ -3,6 +3,9 @@ import { Location } from "@hebcal/core";
 
 import { generateCalendar, findNextEvent } from "../util/datetime";
 
+import HavdalahCandles from "../assets/Havdalah Static.svg";
+import ShabbatCandles from "../assets/Candles Static.svg";
+
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
@@ -71,9 +74,9 @@ const Calendar: Component<Props> = (props) => {
         case "Candle lighting":
           return "orange";
         case "Havdalah":
-          return "yellow";
+          return "rgba(255, 107, 127, 1)";
         case "Shabbat Chazon":
-          return "yellow";
+          return "rgba(255, 107, 127, 1)";
         case "Fast begins":
           return "lightgreen";
         case "Fast ends":
@@ -87,99 +90,125 @@ const Calendar: Component<Props> = (props) => {
   }
 
   function chooseTextColour(day: CalendarDay) {
-    return day.date.month() === displayDay().month() ? "inherit" : "gray";
+    return day.date.month() === displayDay().month() ? "inherit" : "#666";
   }
 
   return (
     <>
-      <h1 class="text-xl">Candle Lighting</h1>
+      <h1 class="text-2xl font-header">Candle Lighting</h1>
       <p>
-        Get ready! {nextCandleLighting()?.event} starts{" "}
+        Get ready! {thisCandleLighting()?.event} starts{" "}
         {thisCandleLighting()?.day.calendar()}
       </p>
-      <div class="flex justify-around">
-        <div class="flex flex-col items-center">
-          <span>Candles</span>
-          <span>{thisCandleLighting()?.day.format("h:mm a")}</span>
+      <div class="flex justify-around bg-yellow1 p-3 border-2 border-black">
+        <div class="flex items-center space-x-2">
+          <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
+          <span class="font-header text-2xl lg:text-3xl">
+            {thisCandleLighting()?.day.format("h:mm a")}
+          </span>
         </div>
-        <div class="flex flex-col items-center">
-          <span>Havdalah</span>
-          <span>{thisHavdalah()?.day.format("h:mm a")}</span>
+        <div class="flex items-center space-x-2">
+          <img src={HavdalahCandles} alt="Havdalah candles" width={30} />
+          <span class="font-header text-2xl lg:text-3xl">
+            {thisHavdalah()?.day.format("h:mm a")}
+          </span>
         </div>
       </div>
-      <div class="p-2 bg-slate-100 flex flex-col space-y-3">
-        <h1 class="text-xl">Calendar</h1>
-        <div class="flex w-full justify-around">
-          <button
-            onClick={() => setDisplayDay((prev) => prev.subtract(1, "month"))}
+      <div class="p-2 flex flex-col space-y-3 w-full">
+        <h1 class="text-2xl font-header">Calendar</h1>
+        <div
+          class="bg-ghost flex flex-col space-y-4 py-2  w-full border-2 border-black
+        items-center"
+        >
+          <div class="flex w-full justify-center space-x-6 ">
+            <button
+              onClick={() => setDisplayDay((prev) => prev.subtract(1, "month"))}
+            >
+              &#8592;
+            </button>
+            <h2 class="text-center text-lg">
+              {displayDay().format("MMMM YYYY")}
+            </h2>
+            <button
+              onClick={() => setDisplayDay((prev) => prev.add(1, "month"))}
+            >
+              &#8594;
+            </button>
+          </div>
+          <div
+            class="bg-blue1 p-2 border-2 border-black max-w-[300px] w-max 
+          drop-shadow-big"
           >
-            &#8592;
-          </button>
-          <h2 class="text-center">{displayDay().format("MMMM YYYY")}</h2>
-          <button onClick={() => setDisplayDay((prev) => prev.add(1, "month"))}>
-            &#8594;
-          </button>
-        </div>
-        <table class="w-full p-2 border-2 border-gray-400">
-          <colgroup>
-            <col class="border" />
-            <col class="border" />
-            <col class="border" />
-            <col class="border" />
-            <col class="border" />
-            <col class="border" />
-            <col class="border" />
-          </colgroup>
-          <tbody>
-            <tr>
+            <div class="bg-blue1 flex justify-between px-4 pb-1 ">
               <For each={dayHeaders}>
                 {(day) => {
-                  return <th class="bg-gray-50">{day}</th>;
+                  return <span class="border-none font-bold">{day}</span>;
                 }}
               </For>
-            </tr>
-            <For each={weeks()}>
-              {(week) => {
-                return (
-                  <tr class="border">
-                    <For each={week}>
-                      {(day) => {
-                        return (
-                          <td
-                            style={{
-                              "font-weight": chooseWeight(day),
-                              "background-color": chooseBgColour(day),
-                              color: chooseTextColour(day),
-                            }}
-                            class="text-center cursor-pointer"
-                            onClick={() => setDisplayDay(day.date)}
-                          >
-                            {day.date.date()}
-                          </td>
-                        );
-                      }}
-                    </For>
-                  </tr>
-                );
-              }}
-            </For>
-          </tbody>
-        </table>
-        <Show when={nextCandleLighting()}>
+            </div>
+            <table
+              class="p-2 w-max
+          text-lg border-2 border-black bg-ghost"
+            >
+              <colgroup>
+                <col class="border border-black" />
+                <col class="border border-black" />
+                <col class="border border-black" />
+                <col class="border border-black" />
+                <col class="border border-black" />
+                <col class="border border-black" />
+                <col class="border border-black" />
+              </colgroup>
+              <tbody>
+                <For each={weeks()}>
+                  {(week) => {
+                    return (
+                      <tr class="border border-black">
+                        <For each={week}>
+                          {(day) => {
+                            return (
+                              <td
+                                style={{
+                                  "font-weight": chooseWeight(day),
+                                  "background-color": chooseBgColour(day),
+                                  color: chooseTextColour(day),
+                                }}
+                                class="text-center cursor-pointer px-[8px]"
+                                onClick={() => setDisplayDay(day.date)}
+                              >
+                                {day.date.date()}
+                              </td>
+                            );
+                          }}
+                        </For>
+                      </tr>
+                    );
+                  }}
+                </For>
+              </tbody>
+            </table>
+          </div>
+
           <p>
             {nextCandleLighting()?.event} starts{" "}
             {nextCandleLighting()?.day.format("DD/MM/YYYY")}
           </p>
-          <p>Candles: {nextCandleLighting()?.day.format("h:mm A")}</p>
-        </Show>
-        <p>Havdalah: {nextHavdalah()?.day.format("h:mm A")}</p>
-        <button
-          onClick={() => setDisplayDay(dayjs())}
-          class="p-2 border w-fit
-        bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-        >
-          Back to today
-        </button>
+          <div class="flex flex-wrap">
+            <span class="mr-3">
+              Candles: {nextCandleLighting()?.day.format("h:mm A")}
+            </span>
+            <span class="mr-3">
+              Havdalah: {nextHavdalah()?.day.format("h:mm A")}
+            </span>
+          </div>
+          <button
+            onClick={() => setDisplayDay(dayjs())}
+            class="p-2 border border-black rounded drop-shadow-small w-fit mx-auto
+        bg-blue1 hover:drop-shadow-none transition-all"
+          >
+            Back to today
+          </button>
+        </div>
       </div>
     </>
   );
