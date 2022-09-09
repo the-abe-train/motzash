@@ -9,11 +9,13 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
+import { HavdalahContext } from "../../context/havdalah";
 import { loadVotes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
   const session = useContext(AuthContext);
+  const havdalah = useContext(HavdalahContext);
   const myVoteDefault: Vote = {
     user_id: session()?.user.id,
     text: "",
@@ -57,8 +59,9 @@ const PollWidget: WidgetComponent = (props) => {
 
   async function upsertVote(e: Event) {
     e.preventDefault();
-    console.log("upserting vote:", myVote);
-    const { error } = await supabase.from("poll_votes").upsert(myVote);
+    const newVote = { ...myVote, havdalah };
+    console.log("New vote", newVote);
+    const { error } = await supabase.from("poll_votes").upsert(newVote);
     if (error) {
       console.error(error.message);
       setMsg("An error occurred, please contact support.");

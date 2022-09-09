@@ -2,12 +2,12 @@ import {
   Component,
   createEffect,
   createSignal,
-  Resource,
   Setter,
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
+import { HavdalahContext } from "../../context/havdalah";
 import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
@@ -22,6 +22,7 @@ type Props = {
 // board, that makes more sense for the upsert
 const UpdateStatusForm: Component<Props> = (props) => {
   const session = useContext(AuthContext);
+  const havdalah = useContext(HavdalahContext);
   const [newStatus, setNewStatus] = createStore<Status>({
     text: "",
     location: null,
@@ -64,7 +65,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
     e.preventDefault();
     setLoading2(true);
     const user_id = session()?.user.id || "";
-    const updates = { ...newStatus, user_id };
+    const updates = { ...newStatus, user_id, havdalah };
     const { data, error } = await supabase.from("statuses").upsert(updates, {
       onConflict: "user_id",
     });

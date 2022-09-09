@@ -1,4 +1,4 @@
-import { AuthSession, Subscription, User } from "@supabase/supabase-js";
+import { AuthSession, Subscription } from "@supabase/supabase-js";
 import {
   createContext,
   createEffect,

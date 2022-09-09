@@ -1,3 +1,5 @@
+import { greg } from "@hebcal/core";
+import dayjs from "dayjs";
 import {
   createEffect,
   createResource,
@@ -6,29 +8,35 @@ import {
   For,
   on,
   Show,
+  useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import { HavdalahContext } from "../../context/havdalah";
 import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const TodoWidget: WidgetComponent = (props) => {
+  const havdalah = useContext(HavdalahContext);
   const loadTheseTodos = async () => loadTodos(props.widget.id);
   const [loadedTodos, { refetch }] = createResource(loadTheseTodos);
   const [todos, setTodos] = createStore<Todo[]>([]);
 
   // Turn the async data into a store rather than a signal
   createEffect(
-    on(loadedTodos, () => {
+    on(loadedTodos, async () => {
       console.log("Running effect");
       const returnedValue = loadedTodos();
-      if (returnedValue) sortTodos({ newItems: returnedValue });
-      // if (returnedValue) setTodos(returnedValue);
+      if (returnedValue) {
+        const updatedValues = returnedValue.map((todo) => {
+          const expired = (todo.havdalah || 0) < greg.greg2abs(new Date());
+          console.log("Expired?", expired);
+          return { ...todo, is_complete: expired ? false : todo.is_complete };
+        });
+        console.log("Updated values", updatedValues);
+        sortTodos({ newItems: updatedValues });
+      }
     })
   );
-
-  createEffect(() => {
-    console.log("Todos", todos);
-  });
 
   // Instruction sorting
   const sortTodos = (change?: {
@@ -68,24 +76,19 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function createNewTask(e: Event) {
     e.preventDefault();
-    const { data, error } = await supabase
-      .from("todos")
-      .insert({
-        task: inputTodo(),
-        is_complete: false,
-        widget_id: props.widget.id,
-      })
-      .select();
-    if (data) {
-      sortTodos({ newItems: data });
-      setInputTodo("");
-      return;
-    }
+    const newTask = {
+      task: inputTodo(),
+      is_complete: false,
+      widget_id: props.widget.id,
+      havdalah,
+    };
+    sortTodos({ newItems: [newTask] });
+    const { error } = await supabase.from("todos").insert(newTask).select();
     if (error) {
       console.error(error.message);
+      refetch();
     }
     setInputTodo("");
-    refetch();
   }
 
   async function deleteTask(e: Event, item: Todo) {
@@ -112,7 +115,11 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function toggleComplete(e: Event, item: Todo, idx: number) {
     e.preventDefault();
-    const newTodo = { ...item, is_complete: !item.is_complete };
+    const newTodo = {
+      ...item,
+      is_complete: !item.is_complete,
+      havdalah,
+    };
     sortTodos({ changeItem: newTodo });
     const { error } = await supabase.from("todos").update(newTodo);
     if (error) {
@@ -138,6 +145,8 @@ const TodoWidget: WidgetComponent = (props) => {
   }
 
   const [inputTodo, setInputTodo] = createSignal("");
+
+  console.log("Rata Die today", greg.greg2abs(dayjs().toDate()));
 
   return (
     <ErrorBoundary

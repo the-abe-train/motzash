@@ -114,7 +114,7 @@ declare global {
   }
 
   type Profile = Database["public"]["Tables"]["profiles"]["Update"];
-  type Todo = Database["public"]["Tables"]["todos"]["Row"];
+  type Todo = Database["public"]["Tables"]["todos"]["Update"];
   type Vote = Database["public"]["Tables"]["poll_votes"]["Update"];
 
   // Cookbook

@@ -114,6 +114,7 @@ export interface Database {
           widget_id: number | null;
           task: string | null;
           is_complete: boolean | null;
+          havdalah: number | null;
         };
         Insert: {
           id?: number;
@@ -121,6 +122,7 @@ export interface Database {
           widget_id?: number | null;
           task?: string | null;
           is_complete?: boolean | null;
+          havdalah?: number | null;
         };
         Update: {
           id?: number;
@@ -128,6 +130,7 @@ export interface Database {
           widget_id?: number | null;
           task?: string | null;
           is_complete?: boolean | null;
+          havdalah?: number | null;
         };
       };
       poll_votes: {
@@ -137,6 +140,7 @@ export interface Database {
           text: string | null;
           widget_id: number | null;
           user_id: string | null;
+          havdalah: number | null;
         };
         Insert: {
           id?: number;
@@ -144,6 +148,7 @@ export interface Database {
           text?: string | null;
           widget_id?: number | null;
           user_id?: string | null;
+          havdalah?: number | null;
         };
         Update: {
           id?: number;
@@ -151,6 +156,7 @@ export interface Database {
           text?: string | null;
           widget_id?: number | null;
           user_id?: string | null;
+          havdalah?: number | null;
         };
       };
       friendships: {
@@ -206,6 +212,7 @@ export interface Database {
         Row: {
           city: string | null;
           location: Coords | null;
+          havdalah: number | null;
           id: number;
           created_at: string | null;
           text: string | null;
@@ -214,6 +221,7 @@ export interface Database {
         Insert: {
           city?: string | null;
           location?: Coords | null;
+          havdalah?: number | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;
@@ -222,6 +230,7 @@ export interface Database {
         Update: {
           city?: string | null;
           location?: Coords | null;
+          havdalah?: number | null;
           id?: number;
           created_at?: string | null;
           text?: string | null;

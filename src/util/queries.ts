@@ -1,5 +1,7 @@
+import { greg } from "@hebcal/core";
 import { useContext } from "solid-js";
 import { AuthContext } from "../context/auth";
+import { havdalahTimestamp } from "./datetime";
 import { supabase } from "./supabase";
 
 export const loadProfile = async () => {
@@ -114,11 +116,15 @@ export const loadVotes = async (widget_id: number) => {
   const { data, error } = await supabase
     .from("poll_votes")
     .select()
+    .gte("havdalah", greg.greg2abs(new Date()))
     .eq("widget_id", widget_id);
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
+  }
+  for (let vote of data) {
+    havdalahTimestamp(vote.havdalah || 0);
   }
   return data as Vote[];
 };
@@ -126,7 +132,8 @@ export const loadVotes = async (widget_id: number) => {
 export const loadStatuses = async () => {
   const { data, error } = await supabase
     .from("statuses")
-    .select("*, profiles (username)");
+    .select("*, profiles (username)")
+    .gte("havdalah", greg.greg2abs(new Date()));
   if (error) {
     if (error.code === "PGRST116") return null;
     return null;

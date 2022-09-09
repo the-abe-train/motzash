@@ -1,7 +1,7 @@
 import { Component, createMemo, createSignal, For, Show } from "solid-js";
 import { CalOptions, Location, HebrewCalendar, TimedEvent } from "@hebcal/core";
 
-import { findNextEvent } from "../util/datetime";
+import { generateCalendar, findNextEvent } from "../util/datetime";
 
 import dayjs from "dayjs";
 import calendarPlugin from "dayjs/plugin/calendar";
@@ -16,19 +16,9 @@ type Props = {
 };
 
 const Calendar: Component<Props> = (props) => {
-  // Create signal
   const [displayDay, setDisplayDay] = createSignal(dayjs());
 
-  // Derived/memoized signals
-  const cal = createMemo(() => {
-    // TODO check if this flag accounts for chag, or if I need a separate one
-    const calOptions: CalOptions = {
-      isHebrewYear: false,
-      candlelighting: true,
-    };
-    if (props.location) calOptions["location"] = props.location;
-    return HebrewCalendar.calendar(calOptions) as TimedEvent[];
-  });
+  const cal = generateCalendar(props.location);
 
   const weeks = createMemo(() => {
     const firstDayOfMonth = displayDay().date(0).weekday() + 1;
@@ -38,7 +28,7 @@ const Calendar: Component<Props> = (props) => {
       return [...Array(7)].map((_) => {
         markerDay = markerDay.add(1, "day");
         const date = markerDay;
-        const holidays = cal().filter((d) => {
+        const holidays = cal.filter((d) => {
           if (!d.eventTime) return false;
           return dayjs(d.eventTime).isSame(date, "date");
         });
@@ -48,19 +38,19 @@ const Calendar: Component<Props> = (props) => {
   });
 
   const thisCandleLighting = () => {
-    return findNextEvent(cal(), "Candle lighting");
+    return findNextEvent(cal, "Candle lighting");
   };
 
   const thisHavdalah = () => {
-    return findNextEvent(cal(), "Havdalah", thisCandleLighting()?.day);
+    return findNextEvent(cal, "Havdalah", thisCandleLighting()?.day);
   };
 
   const nextCandleLighting = () => {
-    return findNextEvent(cal(), "Candle lighting", displayDay());
+    return findNextEvent(cal, "Candle lighting", displayDay());
   };
 
   const nextHavdalah = () => {
-    return findNextEvent(cal(), "Havdalah", nextCandleLighting()?.day);
+    return findNextEvent(cal, "Havdalah", nextCandleLighting()?.day);
   };
 
   // Calendar styling
