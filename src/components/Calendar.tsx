@@ -1,5 +1,5 @@
 import { Component, createMemo, createSignal, For, Show } from "solid-js";
-import { CalOptions, Location, HebrewCalendar, TimedEvent } from "@hebcal/core";
+import { Location } from "@hebcal/core";
 
 import { generateCalendar, findNextEvent } from "../util/datetime";
 

@@ -8,15 +8,14 @@ import {
   For,
   on,
   Show,
-  useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { HavdalahContext } from "../../context/havdalah";
+import { useHavdalah } from "../../context/havdalah";
 import { loadTodos } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const TodoWidget: WidgetComponent = (props) => {
-  const havdalah = useContext(HavdalahContext);
+  const getHavdalah = useHavdalah();
   const loadTheseTodos = async () => loadTodos(props.widget.id);
   const [loadedTodos, { refetch }] = createResource(loadTheseTodos);
   const [todos, setTodos] = createStore<Todo[]>([]);
@@ -76,6 +75,7 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function createNewTask(e: Event) {
     e.preventDefault();
+    const havdalah = await getHavdalah();
     const newTask = {
       task: inputTodo(),
       is_complete: false,
@@ -115,6 +115,7 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function toggleComplete(e: Event, item: Todo, idx: number) {
     e.preventDefault();
+    const havdalah = await getHavdalah();
     const newTodo = {
       ...item,
       is_complete: !item.is_complete,
