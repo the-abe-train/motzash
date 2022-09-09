@@ -25,12 +25,16 @@ const CookbookWidget: WidgetComponent = (props) => {
 
   // Instruction sorting
   const sortInstrutions = (change?: {
-    new?: Instruction[];
-    delete?: number;
+    newItem?: Instruction[];
+    deleteItem?: number;
   }) => {
     setInstructions((prev) => {
-      const addedSteps = change?.new ? [...prev, ...change?.new] : prev;
-      const removedSteps = addedSteps.filter((i) => i.id !== change?.delete);
+      const addedSteps = change?.newItem
+        ? [...prev, ...change?.newItem]
+        : [...prev];
+      const removedSteps = addedSteps.filter(
+        (i) => i.id !== change?.deleteItem
+      );
       const sortedSteps = removedSteps.sort((a, z) => {
         if (a.step === z.step) return -1;
         return (a.step || 0) - (z.step || 0);
@@ -57,7 +61,7 @@ const CookbookWidget: WidgetComponent = (props) => {
           returnedValue.recipe_instructions
         ) {
           setIngredients(returnedValue.recipe_ingredients);
-          sortInstrutions({ new: returnedValue.recipe_instructions });
+          sortInstrutions({ newItem: returnedValue.recipe_instructions });
           setNewInstruction("step", instructions.length + 1);
           const { id, servings, prep_time } = returnedValue?.recipe_metadata[0];
           setMetadata({
@@ -106,7 +110,7 @@ const CookbookWidget: WidgetComponent = (props) => {
       refetch();
     }
     sortInstrutions({
-      new: [
+      newItem: [
         {
           ...newInstruction,
           id: 0,
@@ -192,7 +196,7 @@ const CookbookWidget: WidgetComponent = (props) => {
       refetch();
       return;
     }
-    sortInstrutions({ delete: inst.id });
+    sortInstrutions({ deleteItem: inst.id });
     updateMsg();
   }
 

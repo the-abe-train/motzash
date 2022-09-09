@@ -1,19 +1,42 @@
-import { createSignal, For, Show, useContext } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  For,
+  Show,
+  useContext,
+  on,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
+import { loadTodoLists } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
   const session = useContext(AuthContext);
-  const [storedWidgets, setStoredWidgets] = createStore(props.widgets);
+  const [loadedLists, { refetch }] = createResource(loadTodoLists, {
+    initialValue: [],
+  });
+  const [lists, setLists] = createStore(props.widgets);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
   const [msg, setMsg] = createSignal("");
+
+  createEffect(
+    on(loadedLists, () => {
+      if (loadedLists.state === "ready") {
+        const returnedValue = loadedLists();
+        if (returnedValue) setLists(returnedValue);
+        setMsg("");
+      }
+    })
+  );
 
   async function createNewWidget(e: Event) {
     e.preventDefault();
     setLoading(true);
     const user_id = session()?.user.id || "";
+
     const { data, error } = await supabase
       .from("widgets")
       .insert({
@@ -23,7 +46,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
       })
       .select();
     if (data) {
-      setStoredWidgets((prev) => (prev ? [...prev, ...data] : data));
+      setLists((prev) => (prev ? [...prev, ...data] : data));
       setInputName("");
       setLoading(false);
       setMsg("");
@@ -33,6 +56,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
       console.error(error.message);
       setMsg("Failed to create new widget.");
     }
+
     setLoading(false);
     setInputName("");
   }
@@ -40,7 +64,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   return (
     <div>
       <ul class="list-disc list-inside mx-2">
-        <For each={storedWidgets}>
+        <For each={lists}>
           {(widget) => {
             return (
               <li

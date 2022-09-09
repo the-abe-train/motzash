@@ -21,7 +21,6 @@ const Profile: Component = () => {
     username: "",
   });
 
-  // const sync = createSync(setNewProfile, loadProfile);
   const [profile, { refetch }] = createResource(loadProfile);
 
   // Start off with defaults

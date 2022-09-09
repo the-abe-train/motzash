@@ -36,6 +36,21 @@ export const loadWidgets = async () => {
   return data as Widget[];
 };
 
+export const loadTodoLists = async () => {
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
+  const { data, error } = await supabase
+    .from("widgets")
+    .select("*, profiles (username)")
+    .match({ user_id, type: "todo" });
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.log(error);
+    return null;
+  }
+  return data as Widget[];
+};
+
 export const loadTodos = async (widget_id: number) => {
   const { data, error } = await supabase
     .from("todos")

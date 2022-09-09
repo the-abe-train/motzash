@@ -4,8 +4,8 @@ import {
   createSignal,
   ErrorBoundary,
   For,
-  Match,
-  Switch,
+  on,
+  Show,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { loadTodos } from "../../util/queries";
@@ -14,16 +14,58 @@ import { supabase } from "../../util/supabase";
 const TodoWidget: WidgetComponent = (props) => {
   const loadTheseTodos = async () => loadTodos(props.widget.id);
   const [loadedTodos, { refetch }] = createResource(loadTheseTodos);
-  const [storedTodos, setStoredTodos] = createStore<Todo[]>([]);
+  const [todos, setTodos] = createStore<Todo[]>([]);
 
   // Turn the async data into a store rather than a signal
+  createEffect(
+    on(loadedTodos, () => {
+      console.log("Running effect");
+      const returnedValue = loadedTodos();
+      if (returnedValue) sortTodos({ newItems: returnedValue });
+      // if (returnedValue) setTodos(returnedValue);
+    })
+  );
+
   createEffect(() => {
-    const returnedValue = loadedTodos();
-    if (returnedValue) setStoredTodos(returnedValue);
+    console.log("Todos", todos);
   });
 
-  // TODO This function might feel slow for users.
-  // TODO replace 2 with actual widget ids
+  // Instruction sorting
+  const sortTodos = (change?: {
+    newItems?: Todo[];
+    deleteItem?: Todo;
+    changeItem?: Todo;
+  }) => {
+    console.log("Sorting todos");
+    setTodos((prev) => {
+      const newArray = change?.newItems
+        ? [...prev, ...change?.newItems]
+        : [...prev];
+      if (change?.deleteItem) {
+        const deleteIdx = newArray.findIndex(
+          (todo) => todo.id === change.deleteItem?.id
+        );
+        newArray.splice(deleteIdx, 1);
+      }
+      if (change?.changeItem) {
+        const changeIdx = newArray.findIndex(
+          (todo) => todo.id === change.changeItem?.id
+        );
+        newArray.splice(changeIdx, 1, change.changeItem);
+      }
+      const sorted = newArray.sort((a, z) => {
+        if (a.is_complete && !z.is_complete) {
+          return 1;
+        } else if (!a.is_complete && z.is_complete) {
+          return -1;
+        }
+        return 1;
+      });
+      console.log(sorted);
+      return sorted;
+    });
+  };
+
   async function createNewTask(e: Event) {
     e.preventDefault();
     const { data, error } = await supabase
@@ -35,7 +77,7 @@ const TodoWidget: WidgetComponent = (props) => {
       })
       .select();
     if (data) {
-      setStoredTodos((prev) => [...prev, ...data]);
+      sortTodos({ newItems: data });
       setInputTodo("");
       return;
     }
@@ -48,36 +90,51 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function deleteTask(e: Event, item: Todo) {
     e.preventDefault();
+    sortTodos({ deleteItem: item });
     const { error } = await supabase.from("todos").delete().eq("id", item.id);
     if (error) {
       console.error(error.message);
       refetch();
       return;
     }
-    setStoredTodos((prev) => prev.filter((i) => i.id !== item.id));
   }
 
-  // TODO make update task work.
-  async function updateTask(e: Event, item: Todo) {
+  async function changeName(e: Event, item: Todo) {
     e.preventDefault();
-    console.log("Task updated");
-    // const { error } = await supabase.from("todos").delete().eq("id", item.id);
-    // if (error) {
-    //   console.error(error.message);
-    //   refetch();
-    //   return;
-    // }
-    // setStoredTodos((prev) => prev.filter((i) => i.id !== item.id));
-  }
-
-  async function deleteTodoList(e: Event, item: Widget) {
-    e.preventDefault();
-    const { error } = await supabase.from("todos").delete().eq("id", item.id);
+    console.log("item", item);
+    const { error } = await supabase.from("todos").update(item);
     if (error) {
       console.error(error.message);
+      refetch();
       return;
     }
-    // setStoredWidgets((prev) => prev.filter((i) => i.id !== item.id));
+  }
+
+  async function toggleComplete(e: Event, item: Todo, idx: number) {
+    e.preventDefault();
+    const newTodo = { ...item, is_complete: !item.is_complete };
+    sortTodos({ changeItem: newTodo });
+    const { error } = await supabase.from("todos").update(newTodo);
+    if (error) {
+      console.error(error.message);
+      refetch();
+      return;
+    }
+  }
+
+  async function deleteTodoList(e: Event) {
+    e.preventDefault();
+    if (confirm("Are you sure you want to delete this recipe?")) {
+      const { error } = await supabase
+        .from("widgets")
+        .delete()
+        .eq("id", props.widget.id);
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      props.setActiveWidget(null);
+    }
   }
 
   const [inputTodo, setInputTodo] = createSignal("");
@@ -91,31 +148,43 @@ const TodoWidget: WidgetComponent = (props) => {
         </div>
       }
     >
-      <Switch>
-        <Match when={loadedTodos.loading}>
-          <p>Loading...</p>
-        </Match>
-        <Match when={!loadedTodos.loading}>
-          <h2></h2>
-          <div class="m-2 flex flex-col space-y-2">
-            <For each={storedTodos}>
-              {(item, idx) => {
-                return (
-                  <form
-                    onSubmit={(e) => updateTask(e, item)}
-                    class="flex space-x-2"
+      <h2 class="text-xl">{props.widget.name}</h2>
+      <Show when={loadedTodos.state === "ready"} fallback={<p>Loading...</p>}>
+        <div class="m-2 flex flex-col space-y-2">
+          <For each={todos}>
+            {(item, idx) => {
+              return (
+                <form
+                  onSubmit={(e) => changeName(e, item)}
+                  class="flex space-x-2"
+                >
+                  <input
+                    value={item.task || ""}
+                    class="bg-transparent"
+                    style={{
+                      "text-decoration-line": item.is_complete
+                        ? "line-through"
+                        : "inherit",
+                    }}
+                    onChange={(e) =>
+                      setTodos(idx(), "task", e.currentTarget.value)
+                    }
+                  />
+                  <button type="button" onClick={(e) => deleteTask(e, item)}>
+                    &#10006;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => toggleComplete(e, item, idx())}
                   >
-                    <input value={item.task || ""} class="bg-transparent" />
-                    <button type="button" onClick={(e) => deleteTask(e, item)}>
-                      &#10006;
-                    </button>
-                  </form>
-                );
-              }}
-            </For>
-          </div>
-        </Match>
-      </Switch>
+                    &#10004;
+                  </button>
+                </form>
+              );
+            }}
+          </For>
+        </div>
+      </Show>
       <form onSubmit={createNewTask}>
         <input
           class="border"
@@ -127,6 +196,9 @@ const TodoWidget: WidgetComponent = (props) => {
         />
         <button type="submit">Submit</button>
       </form>
+      <button class="bg-white p-1 my-20" onClick={deleteTodoList}>
+        Delete todo list
+      </button>
     </ErrorBoundary>
   );
 };

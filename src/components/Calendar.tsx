@@ -21,6 +21,7 @@ const Calendar: Component<Props> = (props) => {
 
   // Derived/memoized signals
   const cal = createMemo(() => {
+    // TODO check if this flag accounts for chag, or if I need a separate one
     const calOptions: CalOptions = {
       isHebrewYear: false,
       candlelighting: true,

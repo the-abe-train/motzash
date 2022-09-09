@@ -1,9 +1,11 @@
 import {
   Component,
+  createEffect,
   createResource,
   createSignal,
   For,
   Match,
+  on,
   onMount,
   Show,
   Switch,
@@ -31,18 +33,22 @@ import PollWidget from "../widgets/Poll/PollWidget";
 
 const Dashboard: Component = () => {
   const [location, setLocation] = createSignal<Location | null>(null);
-  const [widgets] = createResource(loadWidgets);
+  const [widgets, { refetch }] = createResource(loadWidgets);
+  const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
+  const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
 
   onMount(async () => {
     const newLocation = await getHebcalLocation();
     setLocation(newLocation);
   });
 
-  // TODO check if this flag accounts for chag, or if I need a separate one
-
-  // Widget grid
-  const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
-  const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
+  createEffect(
+    on(activeMacro, () => {
+      if (!activeMacro() && !activeWidget()) {
+        refetch();
+      }
+    })
+  );
 
   // All widgets categorized by type
   const widgetsReduced = () => {
