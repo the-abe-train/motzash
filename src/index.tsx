@@ -6,20 +6,18 @@ import "tailwindcss/tailwind.css";
 import "./index.css";
 import App from "./App";
 import { AuthProvider, loadSession } from "./context/auth";
-import { getHavdalah } from "./util/datetime";
-import { HavdalahContext } from "./context/havdalah";
+import { HavdalahProvider } from "./context/havdalah";
 
 // No clue how top level await works here. Vite???
 const session = await loadSession();
-const havdalah = await getHavdalah();
 
 render(
   () => (
     <Router>
       <AuthProvider value={session}>
-        <HavdalahContext.Provider value={havdalah}>
+        <HavdalahProvider value={null}>
           <App />
-        </HavdalahContext.Provider>
+        </HavdalahProvider>
       </AuthProvider>
     </Router>
   ),

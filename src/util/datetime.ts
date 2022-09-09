@@ -1,12 +1,5 @@
-import {
-  CalOptions,
-  HDate,
-  HebrewCalendar,
-  Location,
-  TimedEvent,
-} from "@hebcal/core";
+import { CalOptions, HebrewCalendar, Location, TimedEvent } from "@hebcal/core";
 import dayjs from "dayjs";
-import { getHebcalLocation } from "./location";
 
 export const generateCalendar = (location: Location | null) => {
   // TODO check if this flag accounts for chag, or if I need a separate one
@@ -31,18 +24,6 @@ export function findNextEvent(cal: TimedEvent[], type: string, prev = dayjs()) {
       event: nextEvent.linkedEvent?.desc || "Shabbat",
     };
   }
-}
-
-export async function getHavdalah() {
-  console.log("Running get havdalah");
-  const location = await getHebcalLocation();
-  const cal = generateCalendar(location);
-  const havdalahDay = cal.find((event) => {
-    const date = dayjs(event.eventTime);
-    return date.isAfter(dayjs()) && event.desc === "Havdalah";
-  });
-  const havdalahRd = havdalahDay?.getDate().abs();
-  return havdalahRd || null;
 }
 
 // TODO Get timestamp from havdalah Rata Die function

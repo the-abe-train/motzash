@@ -3,6 +3,8 @@ import { Routes, Route, Link } from "@solidjs/router";
 import About from "./pages/About";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { AuthContext } from "./context/auth";
+// import logo from "./assets/Havdalah Dynamic.svg";
+import Logo from "./assets/Havdalah Dynamic.svg";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Friends = lazy(() => import("./pages/Friends"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -14,7 +16,10 @@ const App: Component = () => {
     <div class="flex flex-col h-full justify-between">
       <header class="w-full px-4 bg-gray-100 h-fit">
         <nav class="flex w-full justify-between items-center h-14">
-          <span>Motzash</span>
+          <div class="flex space-x-2 items-center">
+            <object data={Logo} width={30}></object>
+            <span class="text-2xl">Motzash</span>
+          </div>
           <div class="flex space-x-10">
             <Link href="/">Dashboard</Link>
             <Link href="/friends">Friends</Link>
