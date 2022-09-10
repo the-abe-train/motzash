@@ -24,17 +24,15 @@ export const loadProfile = async () => {
 };
 
 export const loadWidgets = async () => {
-  const session = useContext(AuthContext);
-  const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("widgets")
-    .select("*, profiles (username)")
-    .eq("user_id", user_id);
+    .select("*, profiles (username)");
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
+  console.log(data);
   return data as Widget[];
 };
 
@@ -127,6 +125,22 @@ export const loadVotes = async (widget_id: number) => {
     havdalahTimestamp(vote.havdalah || 0);
   }
   return data as Vote[];
+};
+
+export const loadMyStatus = async () => {
+  const session = useContext(AuthContext);
+  const user_id = session()?.user.id || "";
+  const { data, error } = await supabase
+    .from("statuses")
+    .select("text, city")
+    .eq("user_id", user_id)
+    .gte("havdalah", greg.greg2abs(new Date()))
+    .single();
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    return null;
+  }
+  return data;
 };
 
 export const loadStatuses = async () => {

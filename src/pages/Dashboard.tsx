@@ -14,7 +14,7 @@ import { Link } from "@solidjs/router";
 import { Location } from "@hebcal/core";
 
 import { getHebcalLocation } from "../util/location";
-import { loadWidgets } from "../util/queries";
+import { loadMyStatus, loadWidgets } from "../util/queries";
 
 import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
@@ -34,6 +34,7 @@ import PollWidget from "../widgets/Poll/PollWidget";
 const Dashboard: Component = () => {
   const [location, setLocation] = createSignal<Location | null>(null);
   const [widgets, { refetch }] = createResource(loadWidgets);
+  const [myStatus] = createResource(loadMyStatus);
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
   const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
 
@@ -117,7 +118,7 @@ const Dashboard: Component = () => {
 
   return (
     <main
-      class="grid grid-cols-12 gap-6
+      class="grid grid-cols-6 md:grid-cols-12 gap-6
     py-2 px-4 container mx-auto bg-yellow2"
     >
       <Calendar location={location()} />
@@ -138,13 +139,22 @@ const Dashboard: Component = () => {
               }}
             </For>
             <div
-              class="w-full flex flex-col items-center justify-around 
-            py-4 px-8 col-span-4"
+              class="w-full flex flex-col items-center space-y-4 
+            py-4 md:px-8 col-span-6 lg:col-span-4"
             >
-              <Link href="/friends" class="w-full">
+              <h1 class="text-2xl font-header self-start">Status</h1>
+              <div
+                class="bg-ghost text-center border-2 border-black px-2 py-4
+              flex flex-col space-y-4"
+              >
+                <p class="text-lg">"{myStatus()?.text}"</p>
+                <p class="text-sm">{myStatus()?.city}</p>
+              </div>
+              <Link href="/friends">
                 <button
-                  class="w-full p-8 rounded-xl
-                bg-red-200 hover:bg-red-300 active:bg-red-400 disabled:bg-red-400"
+                  class="p-2 border border-black rounded drop-shadow-small 
+                  w-fit mx-auto
+                   bg-ghost hover:drop-shadow-none transition-all"
                 >
                   See Friend Map
                 </button>

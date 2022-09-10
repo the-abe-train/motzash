@@ -95,8 +95,8 @@ const Calendar: Component<Props> = (props) => {
 
   return (
     <div
-      class="md:col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
-    py-2 mx-2 lg:mx-4"
+      class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
+    py-2 md:mx-2 lg:mx-4"
     >
       <Show
         when={props.location}
@@ -111,6 +111,7 @@ const Calendar: Component<Props> = (props) => {
           <p>
             Get ready! {thisCandleLighting()?.event} starts on{" "}
             {dayjs().calendar(thisCandleLighting()?.day, {
+              lastWeek: "dddd [at] h:mm A",
               sameElse: "dddd [at] h:mm A",
             })}
           </p>
@@ -132,21 +133,23 @@ const Calendar: Component<Props> = (props) => {
         <div class="flex flex-col space-y-3 w-full">
           <h1 class="text-2xl font-header">Calendar</h1>
           <div
-            class="bg-ghost flex flex-col space-y-6 py-4 px-4 w-full border-2 border-black
+            class="bg-ghost flex flex-col space-y-5 py-4 px-4 w-full border-2 border-black
         items-center min-w-fit"
           >
-            <div class="flex w-full justify-center space-x-6 ">
+            <div class="flex w-full justify-center space-x-4 ">
               <button
+                class="text-2xl"
                 onClick={() =>
                   setDisplayDay((prev) => prev.subtract(1, "month"))
                 }
               >
                 &#8592;
               </button>
-              <h2 class="text-center text-lg">
+              <h2 class="text-center text-lg w-36 mt-[2px]">
                 {displayDay().format("MMMM YYYY")}
               </h2>
               <button
+                class="text-2xl"
                 onClick={() => setDisplayDay((prev) => prev.add(1, "month"))}
               >
                 &#8594;
@@ -183,11 +186,12 @@ const Calendar: Component<Props> = (props) => {
                               return (
                                 <td
                                   style={{
-                                    "font-weight": chooseWeight(day),
                                     "background-color": chooseBgColour(day),
                                     color: chooseTextColour(day),
                                   }}
-                                  class="text-center cursor-pointer px-[8px]"
+                                  class={`text-center cursor-pointer px-[7px] 
+                                  hover:font-bold 
+                                  font-${chooseWeight(day)}`}
                                   onClick={() => setDisplayDay(day.date)}
                                 >
                                   {day.date.date()}
