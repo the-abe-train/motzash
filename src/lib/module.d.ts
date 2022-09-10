@@ -41,6 +41,7 @@ declare global {
   type WidgetMacro = {
     name: string;
     type: MacroType;
+    colour: string;
     preview: WidgetPreviewComponent;
     macro: WidgetPreviewComponent;
     component: WidgetComponent;

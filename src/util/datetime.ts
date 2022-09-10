@@ -3,13 +3,17 @@ import dayjs from "dayjs";
 
 export const generateCalendar = (location: Location | null) => {
   // TODO check if this flag accounts for chag, or if I need a separate one
+  console.log("Generating calendar");
   const calOptions: CalOptions = {
     isHebrewYear: false,
     candlelighting: true,
     numYears: 1,
   };
-  if (location) calOptions["location"] = location;
-  return HebrewCalendar.calendar(calOptions) as TimedEvent[];
+  if (location) {
+    calOptions["location"] = location;
+    return HebrewCalendar.calendar(calOptions) as TimedEvent[];
+  }
+  return [];
 };
 
 export function findNextEvent(cal: TimedEvent[], type: string, prev = dayjs()) {

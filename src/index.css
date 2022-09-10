@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  min-height: 100vh;
-} */
-
 #root {
   height: 100vh;
+}
+
+html {
+  background-color: #fcfccf;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

@@ -1,16 +1,6 @@
-import { User } from "@supabase/supabase-js";
-import {
-  children,
-  createSignal,
-  onMount,
-  ParentComponent,
-  Setter,
-  Show,
-  useContext,
-} from "solid-js";
+import { children, ParentComponent, Setter, Show, useContext } from "solid-js";
 import { AuthContext } from "../context/auth";
 import Auth from "../pages/Auth";
-import { supabase } from "../util/supabase";
 
 type Props = {
   setActiveMacro: Setter<WidgetMacro | null>;
@@ -24,7 +14,10 @@ const Widget: ParentComponent<Props> = (props) => {
   const session = useContext(AuthContext);
 
   return (
-    <div class="bg-blue-100 h-full relative p-2">
+    <div
+      class="col-span-8 h-full relative p-2"
+      style={{ "background-color": props.activeMacro?.colour }}
+    >
       <div class="absolute top-2 right-2">
         <button
           class="border rounded bg-white mx-2 p-1"

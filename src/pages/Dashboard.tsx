@@ -56,6 +56,7 @@ const Dashboard: Component = () => {
       {
         name: "Cookbook",
         type: "cookbook",
+        colour: "#FFBC42",
         preview: CookbookPreview,
         macro: CookbookMacro,
         component: CookbookWidget,
@@ -64,6 +65,7 @@ const Dashboard: Component = () => {
       {
         name: "Todos",
         type: "todo",
+        colour: "#30C5FF",
         preview: TodoPreview,
         macro: TodoMacro,
         component: TodoWidget,
@@ -72,6 +74,7 @@ const Dashboard: Component = () => {
       {
         name: "Polls",
         type: "poll",
+        colour: "#FF6B7F",
         preview: PollPreview,
         macro: PollMacro,
         component: PollWidget,
@@ -113,81 +116,69 @@ const Dashboard: Component = () => {
   // Widget        -> Widget
 
   return (
-    <main class="grid grid-cols-12 gap-4 flex-grow p-2 container mx-auto">
-      <aside class="col-span-4 row-span-2 flex flex-col space-y-5 p-2">
-        <Show
-          when={location()}
-          fallback={
-            <p>
-              Please allow location permissions to view candle lighting times.
-            </p>
-          }
-        >
-          <Calendar location={location()} />
-        </Show>
-      </aside>
+    <main
+      class="grid grid-cols-12 gap-6
+    py-2 px-4 container mx-auto bg-yellow2"
+    >
+      <Calendar location={location()} />
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeMacro()}>
-          <>
-            <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
-              <For each={widgetsReduced()}>
-                {(macro) => {
-                  return (
-                    <WidgetPreview
-                      macro={macro}
-                      setActiveMacro={setActiveMacro}
-                    >
-                      {macro.preview({
-                        widgets: macro.widgets,
-                        setActiveWidget,
-                        isActive: false,
-                      })}
-                    </WidgetPreview>
-                  );
-                }}
-              </For>
-              <div class="w-full flex flex-col items-center justify-around py-4 px-8 col-span-4">
-                <Link href="/friends" class="w-full">
-                  <button
-                    class="w-full p-8 rounded-xl
+          <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
+            <For each={widgetsReduced()}>
+              {(macro) => {
+                return (
+                  <WidgetPreview macro={macro} setActiveMacro={setActiveMacro}>
+                    {macro.preview({
+                      widgets: macro.widgets,
+                      setActiveWidget,
+                      isActive: false,
+                    })}
+                  </WidgetPreview>
+                );
+              }}
+            </For>
+            <div
+              class="w-full flex flex-col items-center justify-around 
+            py-4 px-8 col-span-4"
+            >
+              <Link href="/friends" class="w-full">
+                <button
+                  class="w-full p-8 rounded-xl
                 bg-red-200 hover:bg-red-300 active:bg-red-400 disabled:bg-red-400"
-                  >
-                    See Friend Map
-                  </button>
-                </Link>
-              </div>
-            </Show>
-          </>
+                >
+                  See Friend Map
+                </button>
+              </Link>
+            </div>
+          </Show>
         </Match>
         <Match when={activeMacro()} keyed>
           {(activeMacro) => {
             return (
-              <div class="bg-green-100 col-span-9 p-4">
-                <Widget
-                  setActiveMacro={setActiveMacro}
-                  setActiveWidget={setActiveWidget}
-                  activeMacro={activeMacro}
-                  activeWidget={activeWidget()}
-                >
-                  <Switch fallback={<div>Loading...</div>}>
-                    <Match when={!activeWidget()}>
-                      {activeMacro.macro({
-                        widgets: activeMacro.widgets,
+              <Widget
+                setActiveMacro={setActiveMacro}
+                setActiveWidget={setActiveWidget}
+                activeMacro={activeMacro}
+                activeWidget={activeWidget()}
+              >
+                <Switch fallback={<div>Loading...</div>}>
+                  <Match when={!activeWidget()}>
+                    {activeMacro.macro({
+                      widgets: activeMacro.widgets,
+                      setActiveWidget,
+                      isActive: true,
+                    })}
+                  </Match>
+                  <Match when={activeWidget()} keyed>
+                    {(activeWidget) =>
+                      activeMacro.component({
+                        widget: activeWidget,
                         setActiveWidget,
-                        isActive: true,
-                      })}
-                    </Match>
-                    <Match when={activeWidget()} keyed>
-                      {(activeWidget) =>
-                        activeMacro.component({
-                          widget: activeWidget,
-                          setActiveWidget,
-                        })
-                      }
-                    </Match>
-                  </Switch>
-                </Widget>
-              </div>
+                      })
+                    }
+                  </Match>
+                </Switch>
+              </Widget>
             );
           }}
         </Match>
