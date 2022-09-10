@@ -96,7 +96,7 @@ const Calendar: Component<Props> = (props) => {
   return (
     <div
       class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
-    py-2 md:mx-2 lg:mx-4"
+    py-2 lg:mx-4"
     >
       <Show
         when={props.location}
@@ -156,10 +156,10 @@ const Calendar: Component<Props> = (props) => {
               </button>
             </div>
             <div
-              class="bg-blue1 p-2 border-2 border-black max-w-[300px] w-max 
+              class="bg-blue p-2 border-2 border-black max-w-[300px] w-max 
           drop-shadow-small"
             >
-              <div class="bg-blue1 flex justify-between px-4 pb-1 ">
+              <div class="bg-blue flex justify-between px-4 pb-1 ">
                 <For each={dayHeaders}>
                   {(day) => {
                     return <span class="border-none font-bold">{day}</span>;
@@ -224,7 +224,7 @@ const Calendar: Component<Props> = (props) => {
             <button
               onClick={() => setDisplayDay(dayjs())}
               class="p-2 border border-black rounded drop-shadow-small w-fit mx-auto
-        bg-blue1 hover:drop-shadow-none transition-all"
+        bg-blue hover:drop-shadow-none transition-all"
             >
               Back to today
             </button>

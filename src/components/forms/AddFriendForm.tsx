@@ -1,6 +1,7 @@
 import {
   Component,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
   For,
@@ -18,25 +19,26 @@ import {
   getUser as getUserProfile,
   loadRequestsToMe,
 } from "../../util/queries";
-import { supabase } from "../../util/supabase";
+import FriendRequestComponent from "../FriendRequest";
 
 type Props = {
-  refetch: () => any | Promise<any> | undefined | null;
+  refetchStatuses: () => any | Promise<any> | undefined | null;
   setShowScreen: Setter<ScreenName>;
 };
 
 const AddFriendForm: Component<Props> = (props) => {
   const session = useContext(AuthContext);
-  const [data, { refetch }] = createResource(loadRequestsToMe);
+  const [loadedRequests] = createResource(loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<FriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
-  const [loading2, setLoading2] = createSignal(false);
+
+  const user_id = createMemo(() => session()?.user.id || "");
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
-    const returnedValue = data();
+    const returnedValue = loadedRequests();
     if (returnedValue) setFriendRequests(returnedValue);
   });
 
@@ -55,8 +57,7 @@ const AddFriendForm: Component<Props> = (props) => {
     }
 
     // User doesn't have a username
-    const user_id = session()?.user.id || "";
-    const userProfile = await getUserProfile({ id: user_id });
+    const userProfile = await getUserProfile({ id: user_id() });
     if (!userProfile?.username) {
       setMsg(
         `You need a username to send a friend request.
@@ -69,7 +70,7 @@ const AddFriendForm: Component<Props> = (props) => {
     // Friend is not an existing user
     const friendData = await getUserProfile({ email: friendEmail() });
     if (!friendData) {
-      const userProfile = await getUserProfile({ id: user_id });
+      const userProfile = await getUserProfile({ id: user_id() });
       const res = await fetch("/api/inviteByEmail", {
         method: "POST",
         body: JSON.stringify({
@@ -78,7 +79,7 @@ const AddFriendForm: Component<Props> = (props) => {
         }),
       });
       if (res.ok) {
-        await createRequest({ email: friendEmail() }, user_id);
+        await createRequest({ email: friendEmail() }, user_id());
         setMsg("New user invited to Motzash!");
       } else {
         setMsg("Something went wrong. Please contact Support.");
@@ -89,7 +90,7 @@ const AddFriendForm: Component<Props> = (props) => {
 
     // Friendship request already exists
     const { id: friend_id } = friendData;
-    const existingReq = await findFriendship(user_id, friend_id);
+    const existingReq = await findFriendship(user_id(), friend_id);
     if (existingReq) {
       if (existingReq.accepted) {
         setMsg("Friendship already exists.");
@@ -101,7 +102,7 @@ const AddFriendForm: Component<Props> = (props) => {
     }
 
     // Send friend request to existing user
-    const requestCreated = await createRequest({ id: friend_id }, user_id);
+    const requestCreated = await createRequest({ id: friend_id }, user_id());
     if (!requestCreated) {
       setMsg("Error creating friend request. Please contact support");
       setLoading(false);
@@ -123,39 +124,6 @@ const AddFriendForm: Component<Props> = (props) => {
     return;
   };
 
-  async function acceptRequest(idx: number, requester_id: string) {
-    setLoading2(true);
-    const user_id = session()?.user.id || "";
-    const { error } = await supabase
-      .from("friendships")
-      .update({ accepted: true })
-      .match({ friend_id: user_id, requester_id });
-    if (error) {
-      setLoading2(false);
-      return;
-    }
-    props.refetch();
-    setFriendRequests(idx, "accepted", true);
-    console.log("Friend reqs", friendRequests);
-    setLoading2(false);
-  }
-
-  async function rejectRequest(idx: number, requester_id: string) {
-    setLoading2(true);
-    const user_id = session()?.user.id || "";
-    const { data, error } = await supabase
-      .from("friendships")
-      .delete()
-      .match({ friend_id: user_id, requester_id });
-    if (error) {
-      console.error(error);
-      setLoading2(false);
-      return;
-    }
-    setLoading2(false);
-    refetch();
-  }
-
   const [deleteEmail, setDeleteEmail] = createSignal("");
   const [msg2, setMsg2] = createSignal("");
   const [loading3, setLoading3] = createSignal(false);
@@ -172,59 +140,30 @@ const AddFriendForm: Component<Props> = (props) => {
     return;
   }
 
-  const FriendRequest: Component<FriendRequest & { idx: number }> = (props) => {
-    return (
-      <form
-        action=""
-        class="flex justify-between items-center bg-slate-100 p-5"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <p class="">{props.requester.username}</p>
-        <Switch>
-          <Match when={props.accepted}>
-            <p>Accepted!</p>
-          </Match>
-          <Match when={!props.accepted}>
-            <div class="flex space-x-4">
-              <button
-                disabled={loading2()}
-                class="w-fit p-2  border rounded bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                onClick={() => acceptRequest(props.idx, props.requester.id)}
-              >
-                Accept
-              </button>
-              <button
-                disabled={loading2()}
-                class="w-fit p-2  border rounded bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                onClick={() => rejectRequest(props.idx, props.requester.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </Match>
-        </Switch>
-      </form>
-    );
-  };
-
   return (
-    <div class="col-span-7">
-      <form onSubmit={sendRequest} class=" flex flex-col space-y-4 relative">
-        <button
-          class="absolute top-2 right-2
-      w-fit px-2  border rounded
-      bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-          onClick={() => props.setShowScreen(() => "Map")}
-          type="button"
-        >
-          X
-        </button>
-        <div class="flex flex-col space-y-2">
+    <div
+      class="col-span-6 lg:col-span-8 p-4 relative pt-8
+    flex flex-col space-y-4 justify-between max-w-lg"
+    >
+      <button
+        class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+        bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
+        onClick={() => props.setShowScreen(() => "Map")}
+        type="button"
+      >
+        Back to map
+      </button>
+      <form
+        onSubmit={sendRequest}
+        class="flex flex-col space-y-4 relative max-w-lg"
+      >
+        <h1 class="text-2xl font-header">Add a Friend</h1>
+        <div class="flex flex-col space-y-2 ">
           <label for="text">Enter your friend's email</label>
           <input
             type="email"
             name="text"
-            class="border w-1/2 px-2"
+            class="border border-black w-full px-2"
             value={friendEmail()}
             onChange={(e) => setFriendEmail(e.currentTarget.value)}
             required
@@ -233,16 +172,17 @@ const AddFriendForm: Component<Props> = (props) => {
         <button
           type="submit"
           disabled={loading()}
-          class="w-fit p-2  border rounded bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+          bg-blue hover:drop-shadow-none transition-all"
         >
           Send request
         </button>
+        <p>{msg()}</p>
       </form>
-      <p>{msg}</p>
       <div class="my-8">
-        <h2 class="text-lg mt-24">Friend requests</h2>
+        <h1 class="text-2xl font-header">Friend requests</h1>
         <Switch fallback={<p>Loading...</p>}>
-          <Match when={!friendRequests}>
+          <Match when={loadedRequests.state !== "ready"}>
             <p>Loading...</p>
           </Match>
           <Match when={friendRequests.length === 0}>
@@ -250,21 +190,34 @@ const AddFriendForm: Component<Props> = (props) => {
           </Match>
           <Match when={friendRequests.length > 0}>
             <For each={friendRequests}>
-              {(req, idx) => <FriendRequest {...req} idx={idx()} />}
+              {(friendRequest, idx) => {
+                const reqProps = {
+                  idx: idx(),
+                  friendRequest,
+                  allRequests: friendRequests,
+                  setFriendRequests,
+                  user_id: user_id(),
+                  refetchStatuses: props.refetchStatuses,
+                };
+                return <FriendRequestComponent {...reqProps} />;
+              }}
             </For>
           </Match>
         </Switch>
       </div>
       <form
+        class="flex flex-col space-y-2"
         action=""
-        class="flex space-x-4 items-center"
         onSubmit={removeFriendship}
       >
-        <label for="remove">Remove a friendship</label>
+        <h1 class="text-2xl font-header">Remove a Friendship</h1>
+        <label for="remove">
+          Enter the email of the friend who's connection you'd like to remove.
+        </label>
         <input
           type="email"
           name="text"
-          class="border w-1/2 px-2"
+          class="border border-black w-full px-2"
           value={deleteEmail()}
           onChange={(e) => setDeleteEmail(e.currentTarget.value)}
           required
@@ -277,8 +230,8 @@ const AddFriendForm: Component<Props> = (props) => {
         >
           Remove
         </button>
+        <p>{msg2()}</p>
       </form>
-      <p>{msg2}</p>
     </div>
   );
 };

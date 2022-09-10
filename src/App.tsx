@@ -1,4 +1,11 @@
-import { Component, lazy, useContext } from "solid-js";
+import {
+  Component,
+  createSignal,
+  lazy,
+  Match,
+  Switch,
+  useContext,
+} from "solid-js";
 import { Routes, Route, Link } from "@solidjs/router";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { AuthContext } from "./context/auth";
@@ -11,12 +18,13 @@ const About = lazy(() => import("./pages/About"));
 
 const App: Component = () => {
   const session = useContext(AuthContext);
+  const [open, setOpen] = createSignal(false);
 
   return (
     <div class="flex flex-col justify-between bg-yellow2 h-full">
       <header class="w-full h-fit border-b-2 border-black bg-yellow1">
         <nav
-          class="flex w-full px-4 md:px-8 justify-between items-center h-14 
+          class="flex w-full px-2 md:px-4 lg:px-6 justify-between items-center h-14 
         container mx-auto"
         >
           <div class="flex space-x-2 items-center">
@@ -37,11 +45,33 @@ const App: Component = () => {
               Profile
             </Link>
           </div>
-          <button class="w-10 h-9 relative md:hidden" name="hamburger-menu">
-            <span class="left-1/4 top-2 block absolute h-[2px] w-1/2 bg-black rounded transition-transform"></span>
-            <span class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-transform"></span>
-            <span class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-transform"></span>
-            <span class="left-1/4 top-6 block absolute h-[2px] w-1/2 bg-black rounded transition-transform"></span>
+          <button
+            class="w-10 h-9 relative md:hidden"
+            name="hamburger-menu"
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <span
+              class="left-1/2 top-2 block absolute h-[2px] bg-black rounded transition-all"
+              style={{
+                width: open() ? 0 : "50%",
+                transform: "translate(-50%, 0)",
+              }}
+            ></span>
+            <span
+              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-all"
+              style={{ rotate: open() ? "45deg" : "inherit" }}
+            ></span>
+            <span
+              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-all"
+              style={{ rotate: open() ? "-45deg" : "inherit" }}
+            ></span>
+            <span
+              class="left-1/2 top-6 block absolute h-[2px] bg-black rounded transition-all"
+              style={{
+                width: open() ? 0 : "50%",
+                transform: "translate(-50%, 0)",
+              }}
+            ></span>
           </button>
         </nav>
       </header>
@@ -55,7 +85,18 @@ const App: Component = () => {
       </Routes>
       <footer class="bg-black text-yellow2 h-fit w-full mt-6">
         <div class="h-20 flex w-full px-8 justify-between container mx-auto">
-          footer
+          <Link class="hover:font-bold" href="/">
+            Dashboard
+          </Link>
+          <Link class="hover:font-bold" href="/friends">
+            Friends
+          </Link>
+          <Link class="hover:font-bold" href="/about">
+            About
+          </Link>
+          <Link class="hover:font-bold" href="/profile">
+            Profile
+          </Link>
         </div>
       </footer>
     </div>

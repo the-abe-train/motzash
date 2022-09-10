@@ -12,8 +12,9 @@ module.exports = {
         yellow1: '#FFFF66',   // Baby Powder
         yellow2: "#FCFCCF",
         ghost: '#F8F4F9',
-        blue1: "#30C5FF",
-        coral: "rgba(255, 107, 127, 1)"
+        blue: "#30C5FF",
+        coral: "rgba(255, 107, 127, 1)",
+        orange: "#FFBC42"
       },
       dropShadow: {
         'big': "12px 12px 0px #000000",

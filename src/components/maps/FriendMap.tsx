@@ -78,7 +78,13 @@ const FriendMap: Component<Props> = (props) => {
     }
   });
 
-  return <div ref={mapContainer!} class="col-span-6 m-4"></div>;
+  return (
+    <div
+      ref={mapContainer!}
+      class="col-span-6 lg:col-span-8 my-4 h-80 md:h-full p-6
+      border-2 border-black"
+    />
+  );
 };
 
 export default FriendMap;

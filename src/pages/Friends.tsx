@@ -23,7 +23,8 @@ const Friends: Component = () => {
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
-  const [loadedStatuses, { refetch }] = createResource(loadStatuses);
+  const [loadedStatuses, { refetch: refetchStatuses }] =
+    createResource(loadStatuses);
   const [statuses, setStatuses] = createStore<FriendStatus[]>([]);
   createEffect(() => {
     if (loadedStatuses.state === "ready") {
@@ -51,8 +52,8 @@ const Friends: Component = () => {
 
   const addStatusButton = (
     <button
-      class="w-full h-20 rounded
-  bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+      class="p-2 h-20 w-full border border-black rounded drop-shadow-small 
+    mx-auto text-xl bg-blue hover:drop-shadow-none transition-all"
       onClick={() => setShowScreen("UpdateStatus")}
       disabled={showScreen() === "UpdateStatus"}
     >
@@ -60,80 +61,90 @@ const Friends: Component = () => {
     </button>
   );
 
+  const hideOnMobile = () => {
+    showScreen() === "Map" ? "inherit" : "hidden md:flex";
+  };
+
+  // TODO RESPONSIVE HIDE
   return (
-    <main class="grid grid-cols-12 gap-4 flex-grow">
-      <aside
-        class="col-span-5 lg:col-span-5 xl:col-span-4 
-          border-r flex flex-col space-y-5 p-4 "
-      >
-        <h2>Your Status</h2>
-        <Show when={myStatus()} fallback={addStatusButton} keyed>
-          {(status) => {
-            return (
-              <>
-                <Status status={status} focus={focus} setFocus={setFocus} />
-                <button
-                  class="rounded w-fit p-2
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                  onClick={() => setShowScreen("UpdateStatus")}
-                >
-                  Edit status
-                </button>
-              </>
-            );
-          }}
-        </Show>
-        <h2>Your Friends</h2>
-        <div class="flex flex-col space-y-3 max-h-[60vh] overflow-y-scroll">
-          <form
-            class="flex w-full space-x-2"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <input
-              type="text"
-              class="mx-2 border px-2 w-1/2"
-              placeholder="Filter by name"
-              value={friendFilter()}
-              onChange={(e) => setFriendFilter(e.currentTarget.value)}
-            />
-            <button
-              type="submit"
-              class="py-1 px-2 rounded
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-            >
-              Filter
-            </button>
-            <button
-              type="reset"
-              class="py-1 px-2 rounded
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-              onClick={() => setFriendFilter("")}
-            >
-              Clear
-            </button>
-          </form>
-          <For
-            each={filteredFriends()}
-            fallback={<p>No friend statuses to show.</p>}
-          >
+    <main
+      class="grid grid-cols-6 md:grid-cols-12 md:gap-6
+  py-2 px-4 container mx-auto bg-yellow2"
+    >
+      <Show when={showScreen() === "Map" || window.innerWidth > 768}>
+        <div class="col-span-6 lg:col-span-4 space-y-5 py-2">
+          <h1 class="text-2xl font-header">Your Status</h1>
+          <Show when={myStatus()} fallback={addStatusButton} keyed>
             {(status) => {
               return (
-                <Status status={status} focus={focus} setFocus={setFocus} />
+                <>
+                  <Status status={status} focus={focus} setFocus={setFocus} />
+                  <button
+                    class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+                         bg-blue hover:drop-shadow-none transition-all"
+                    onClick={() => setShowScreen("UpdateStatus")}
+                  >
+                    Edit status
+                  </button>
+                </>
               );
             }}
-          </For>
+          </Show>
+          <h1 class="text-2xl font-header">Your Friends</h1>
+          <div class="flex flex-col space-y-3 max-h-[60vh]">
+            <form
+              class="flex w-full space-x-4"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <input
+                type="text"
+                class="border border-black px-2 flex-grow"
+                placeholder="Filter by name"
+                value={friendFilter()}
+                onChange={(e) => setFriendFilter(e.currentTarget.value)}
+              />
+              <button
+                type="submit"
+                class="px-2 w-fit border border-black rounded drop-shadow-small 
+              bg-blue hover:drop-shadow-none transition-all"
+              >
+                Filter
+              </button>
+              <button
+                type="reset"
+                class="px-2 py-1 w-fit text-coral border border-coral rounded drop-shadow-small 
+              bg-yellow2 hover:drop-shadow-none transition-all"
+                onClick={() => setFriendFilter("")}
+              >
+                Clear
+              </button>
+            </form>
+            <For
+              each={filteredFriends()}
+              fallback={<p>No friend statuses to show.</p>}
+            >
+              {(status) => {
+                return (
+                  <Status status={status} focus={focus} setFocus={setFocus} />
+                );
+              }}
+            </For>
+          </div>
+          <button
+            class="p-2 h-20 w-full border border-black rounded drop-shadow-small 
+          mx-auto text-xl bg-blue hover:drop-shadow-none transition-all"
+            onClick={() => setShowScreen("AddFriend")}
+          >
+            Add friend
+          </button>
         </div>
-        <button
-          class="w-full h-20 rounded
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-          onClick={() => setShowScreen("AddFriend")}
-        >
-          Add friend
-        </button>
-      </aside>
+      </Show>
       <Switch>
         <Match when={showScreen() === "Map"}>
-          <Show when={!loadedStatuses.loading} fallback={<p>Loading map...</p>}>
+          <Show
+            when={loadedStatuses.state === "ready"}
+            fallback={<p>Loading map...</p>}
+          >
             <FriendMap
               friends={filteredFriends()}
               user={myStatus()}
@@ -146,11 +157,14 @@ const Friends: Component = () => {
           <UpdateStatusForm
             myStatus={myStatus()}
             setShowScreen={setShowScreen}
-            refetch={refetch}
+            refetch={refetchStatuses}
           />
         </Match>
         <Match when={showScreen() === "AddFriend"}>
-          <AddFriendForm setShowScreen={setShowScreen} refetch={refetch} />
+          <AddFriendForm
+            setShowScreen={setShowScreen}
+            refetchStatuses={refetchStatuses}
+          />
         </Match>
       </Switch>
     </main>

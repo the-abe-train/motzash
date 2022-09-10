@@ -17,12 +17,13 @@ const Status: Component<Props> = (props) => {
 
   return (
     <div
-      class="p-2 mx-2 rounded flex flex-col space-y-3"
-      style={{ background: isFocused() ? "lightblue" : "rgb(243 244 246)" }}
+      class="p-2 flex flex-col space-y-3 
+      border-2 border-black"
+      style={{ background: isFocused() ? "#FFBC42" : "#FFFF66" }}
       onClick={() => props.setFocus(status)}
     >
       <p class="text-sm">{props.status?.profiles?.username}</p>
-      <p>{props.status?.text}</p>
+      <p class="text-lg">"{props.status?.text}"</p>
       <p class="text-sm">{props.status?.city}</p>
     </div>
   );

@@ -100,44 +100,47 @@ const UpdateStatusForm: Component<Props> = (props) => {
   return (
     <form
       onSubmit={upsertStatus}
-      class="col-span-7 flex flex-col space-y-4 p-4 relative"
+      class="col-span-6 lg:col-span-8 flex flex-col space-y-4 p-4 relative pt-8"
     >
       <button
-        class="absolute top-2 right-2 w-fit px-2  border rounded
-      bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
+        class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+      bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
         onClick={() => props.setShowScreen(() => "Map")}
       >
-        X
+        Back to map
       </button>
-      <div class="flex flex-col space-y-2">
-        <label for="text">What are you up to on Shabbos?</label>
-        <input
-          type="text"
-          name="text"
-          class="border w-1/2 px-2"
-          value={newStatus.text || ""}
-          required
-          onChange={(e) => setNewStatus("text", e.currentTarget.value)}
-        />
-      </div>
-      <button
-        class="w-fit p-2  border rounded
-          bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-        onClick={updateLocation}
-        type="button"
-        disabled={loading()}
-      >
-        Get GPS location
-      </button>
-      <div class="flex space-x-4">
-        <label for="city">City/town:</label>
-        <input
-          name="city"
-          class="border px-2"
-          type="text"
-          value={newStatus.city || ""}
-          onChange={(e) => setNewStatus("city", e.currentTarget.value)}
-        />
+      <div class="flex flex-col md:flex-row md:space-x-5">
+        <div class="flex flex-col space-y-2">
+          <label for="text">What are you up to on Shabbat?</label>
+          <input
+            type="text"
+            name="text"
+            class="border border-black w-full md:w-80 md:h-full px-2"
+            value={newStatus.text || ""}
+            required
+            onChange={(e) => setNewStatus("text", e.currentTarget.value)}
+          />
+        </div>
+        <div class="flex flex-col space-y-2">
+          <label for="city">Where are you going to be on Shabbat?</label>
+          <input
+            name="city"
+            class="border border-black w-full md:w-80 px-2"
+            type="text"
+            value={newStatus.city || ""}
+            required
+            onChange={(e) => setNewStatus("city", e.currentTarget.value)}
+          />
+          <button
+            class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+                    bg-blue hover:drop-shadow-none transition-all"
+            onClick={updateLocation}
+            type="button"
+            disabled={loading()}
+          >
+            Get GPS location
+          </button>
+        </div>
       </div>
       <p>{msg}</p>
       <p>Drag the marker below to show where you're going to be on Shabbat!</p>
@@ -145,15 +148,15 @@ const UpdateStatusForm: Component<Props> = (props) => {
       <div class="flex space-x-4">
         <button
           type="submit"
-          class="w-fit p-2  border rounded
-    bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+          bg-blue hover:drop-shadow-none transition-all"
           disabled={loading2()}
         >
           Update status
         </button>
         <button
-          class="w-fit p-2  border rounded
-          hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          class="px-2 py-1 w-fit text-coral border border-coral rounded drop-shadow-small 
+                bg-yellow2 hover:drop-shadow-none transition-all"
           onClick={deleteStatus}
           disabled={loading2()}
         >

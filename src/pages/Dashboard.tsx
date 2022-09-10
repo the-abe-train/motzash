@@ -145,7 +145,7 @@ const Dashboard: Component = () => {
               <h1 class="text-2xl font-header self-start">Status</h1>
               <div
                 class="bg-ghost text-center border-2 border-black px-2 py-4
-              flex flex-col space-y-4"
+              flex flex-col space-y-4 w-full"
               >
                 <p class="text-lg">"{myStatus()?.text}"</p>
                 <p class="text-sm">{myStatus()?.city}</p>
