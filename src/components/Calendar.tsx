@@ -7,53 +7,58 @@ import HavdalahCandles from "../assets/Havdalah Static.svg";
 import ShabbatCandles from "../assets/Candles Static.svg";
 
 import dayjs from "dayjs";
-import calendarPlugin from "dayjs/plugin/calendar";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(calendarPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
 
 type Props = {
-  location: Location | null;
+  location: Location | null | undefined;
 };
 
 const Calendar: Component<Props> = (props) => {
   const [displayDay, setDisplayDay] = createSignal(dayjs());
 
-  const cal = createMemo(() => generateCalendar(props.location));
+  const cal = createMemo(() => {
+    if (props.location) return generateCalendar(props.location);
+  });
 
   const weeks = createMemo(() => {
-    const firstDayOfMonth = displayDay().date(0).weekday() + 1;
-    const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
-    let markerDay = displayDay().date(0).subtract(firstDayOfMonth, "days");
-    return [...Array(numWeeks)].map((_) => {
-      return [...Array(7)].map((_) => {
-        markerDay = markerDay.add(1, "day");
-        const date = markerDay;
-        const holidays = cal().filter((d) => {
-          if (!d.eventTime) return false;
-          return dayjs(d.eventTime).isSame(date, "date");
+    if (cal()) {
+      const firstDayOfMonth = displayDay().date(0).weekday() + 1;
+      const numWeeks = firstDayOfMonth <= 4 ? 5 : 6;
+      let markerDay = displayDay().date(0).subtract(firstDayOfMonth, "days");
+      return [...Array(numWeeks)].map((_) => {
+        return [...Array(7)].map((_) => {
+          markerDay = markerDay.add(1, "day");
+          const date = markerDay;
+          const holidays = (cal() || []).filter((d) => {
+            if (!d.eventTime) return false;
+            return dayjs(d.eventTime).isSame(date, "date");
+          });
+          return { date, holidays } as CalendarDay;
         });
-        return { date, holidays } as CalendarDay;
       });
-    });
+    }
   });
 
   const thisCandleLighting = () => {
-    return findNextEvent(cal(), "Candle lighting");
+    if (cal()) return findNextEvent(cal() || [], "Candle lighting");
   };
 
   const thisHavdalah = () => {
-    return findNextEvent(cal(), "Havdalah", thisCandleLighting()?.day);
+    if (cal())
+      return findNextEvent(cal() || [], "Havdalah", thisCandleLighting()?.day);
   };
 
   const nextCandleLighting = () => {
-    return findNextEvent(cal(), "Candle lighting", displayDay());
+    if (cal())
+      return findNextEvent(cal() || [], "Candle lighting", displayDay());
   };
 
   const nextHavdalah = () => {
-    return findNextEvent(cal(), "Havdalah", nextCandleLighting()?.day);
+    if (cal())
+      return findNextEvent(cal() || [], "Havdalah", nextCandleLighting()?.day);
   };
 
   // Calendar styling
@@ -93,6 +98,8 @@ const Calendar: Component<Props> = (props) => {
     return day.date.month() === displayDay().month() ? "inherit" : "#666";
   }
 
+  console.log(thisCandleLighting());
+
   return (
     <div
       class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
@@ -106,30 +113,29 @@ const Calendar: Component<Props> = (props) => {
           </p>
         }
       >
-        <div class="flex flex-col space-y-3">
-          <h1 class="text-2xl font-header">Candle Lighting</h1>
-          <p>
-            Get ready! {thisCandleLighting()?.event} starts on{" "}
-            {dayjs().calendar(thisCandleLighting()?.day, {
-              lastWeek: "dddd [at] h:mm A",
-              sameElse: "dddd [at] h:mm A",
-            })}
-          </p>
-          <div class="flex justify-around bg-yellow1 p-3 border-2 border-black">
-            <div class="flex items-center space-x-2">
-              <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
-              <span class="font-header text-3xl">
-                {thisCandleLighting()?.day.format("h:mm a")}
-              </span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <img src={HavdalahCandles} alt="Havdalah candles" width={30} />
-              <span class="font-header text-3xl">
-                {thisHavdalah()?.day.format("h:mm a")}
-              </span>
+        <Show when={thisCandleLighting()} fallback={<p>Loading...</p>}>
+          <div class="flex flex-col space-y-3">
+            <h1 class="text-2xl font-header">Candle Lighting</h1>
+            <p>
+              Get ready! {thisCandleLighting()?.event} starts on{" "}
+              {thisCandleLighting()?.day.format("dddd [at] h:mm A")}
+            </p>
+            <div class="flex justify-around bg-yellow1 p-3 border-2 border-black">
+              <div class="flex items-center space-x-2">
+                <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
+                <span class="font-header text-3xl">
+                  {thisCandleLighting()?.day.format("h:mm a")}
+                </span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <img src={HavdalahCandles} alt="Havdalah candles" width={30} />
+                <span class="font-header text-3xl">
+                  {thisHavdalah()?.day.format("h:mm a")}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </Show>
         <div class="flex flex-col space-y-3 w-full">
           <h1 class="text-2xl font-header">Calendar</h1>
           <div
@@ -156,7 +162,7 @@ const Calendar: Component<Props> = (props) => {
               </button>
             </div>
             <div
-              class="bg-blue p-2 border-2 border-black max-w-[300px] w-max 
+              class="bg-blue p-2 border-2 border-black max-w-[300px] w-full 
           drop-shadow-small"
             >
               <div class="bg-blue flex justify-between px-4 pb-1 ">
@@ -166,7 +172,7 @@ const Calendar: Component<Props> = (props) => {
                   }}
                 </For>
               </div>
-              <table class="px-2 py-4 w-max text-lg border-2 border-black bg-ghost">
+              <table class="px-2 py-4 w-full text-lg border-2 border-black bg-ghost">
                 <colgroup>
                   <col class="border border-black" />
                   <col class="border border-black" />
@@ -189,7 +195,7 @@ const Calendar: Component<Props> = (props) => {
                                     "background-color": chooseBgColour(day),
                                     color: chooseTextColour(day),
                                   }}
-                                  class={`text-center cursor-pointer px-[7px] 
+                                  class={`text-center cursor-pointer w-max
                                   hover:font-bold 
                                   font-${chooseWeight(day)}`}
                                   onClick={() => setDisplayDay(day.date)}

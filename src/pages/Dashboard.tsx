@@ -32,7 +32,7 @@ import PollMacro from "../widgets/Poll/PollMacro";
 import PollWidget from "../widgets/Poll/PollWidget";
 
 const Dashboard: Component = () => {
-  const [location, setLocation] = createSignal<Location | null>(null);
+  const [location, setLocation] = createSignal<Location | null | undefined>();
   const [widgets, { refetch }] = createResource(loadWidgets);
   const [myStatus] = createResource(loadMyStatus);
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);

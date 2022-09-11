@@ -4,3 +4,4 @@ dist
 db.txt
 # Local Netlify folder
 .netlify
+issues.md
