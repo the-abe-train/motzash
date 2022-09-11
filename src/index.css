@@ -3,11 +3,14 @@
 @tailwind utilities;
 
 #root {
-  height: 100vh;
+  min-height: 100vh;
+  height: fit-content;
 }
 
 html {
   background-color: #fcfccf;
+  min-height: 100vh;
+  height: fit-content;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

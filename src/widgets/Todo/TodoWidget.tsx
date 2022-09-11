@@ -16,8 +16,7 @@ import { supabase } from "../../util/supabase";
 
 const TodoWidget: WidgetComponent = (props) => {
   const getHavdalah = useHavdalah();
-  const loadTheseTodos = async () => loadTodos(props.widget.id);
-  const [loadedTodos, { refetch }] = createResource(loadTheseTodos);
+  const [loadedTodos, { refetch }] = createResource(props.widget.id, loadTodos);
   const [todos, setTodos] = createStore<Todo[]>([]);
 
   // Turn the async data into a store rather than a signal

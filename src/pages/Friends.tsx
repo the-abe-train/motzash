@@ -61,16 +61,9 @@ const Friends: Component = () => {
     </button>
   );
 
-  const hideOnMobile = () => {
-    showScreen() === "Map" ? "inherit" : "hidden md:flex";
-  };
-
   // TODO RESPONSIVE HIDE
   return (
-    <main
-      class="grid grid-cols-6 md:grid-cols-12 md:gap-6
-  py-2 px-4 container mx-auto bg-yellow2"
-    >
+    <>
       <Show when={showScreen() === "Map" || window.innerWidth > 768}>
         <div class="col-span-6 lg:col-span-4 space-y-5 py-2">
           <h1 class="text-2xl font-header">Your Status</h1>
@@ -167,7 +160,7 @@ const Friends: Component = () => {
           />
         </Match>
       </Switch>
-    </main>
+    </>
   );
 };
 

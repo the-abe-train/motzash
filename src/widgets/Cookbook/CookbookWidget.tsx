@@ -47,8 +47,9 @@ const CookbookWidget: WidgetComponent = (props) => {
   };
 
   // Load recipe data
-  const [loadedRecipe, { refetch }] = createResource(async () =>
-    loadRecipe(props.widget.id)
+  const [loadedRecipe, { refetch }] = createResource(
+    props.widget.id,
+    loadRecipe
   );
   createEffect(
     on(loadedRecipe, () => {

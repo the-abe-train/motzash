@@ -4,10 +4,12 @@ import {
   createResource,
   createSignal,
   For,
+  lazy,
   Match,
   on,
   onMount,
   Show,
+  Suspense,
   Switch,
 } from "solid-js";
 import { Link } from "@solidjs/router";
@@ -16,7 +18,6 @@ import { Location } from "@hebcal/core";
 import { getHebcalLocation } from "../util/location";
 import { loadMyStatus, loadWidgets } from "../util/queries";
 
-import Calendar from "../components/Calendar";
 import WidgetPreview from "../components/WidgetPreview";
 import Widget from "../components/Widget";
 
@@ -30,18 +31,13 @@ import TodoWidget from "../widgets/Todo/TodoWidget";
 import PollPreview from "../widgets/Poll/PollPreview";
 import PollMacro from "../widgets/Poll/PollMacro";
 import PollWidget from "../widgets/Poll/PollWidget";
+import Calendar from "../components/Calendar";
 
 const Dashboard: Component = () => {
-  const [location, setLocation] = createSignal<Location | null | undefined>();
   const [widgets, { refetch }] = createResource(loadWidgets);
   const [myStatus] = createResource(loadMyStatus);
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
   const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
-
-  onMount(async () => {
-    const newLocation = await getHebcalLocation();
-    setLocation(newLocation);
-  });
 
   createEffect(
     on(activeMacro, () => {
@@ -117,11 +113,9 @@ const Dashboard: Component = () => {
   // Widget        -> Widget
 
   return (
-    <main
-      class="grid grid-cols-6 md:grid-cols-12 gap-6
-    py-2 px-4 container mx-auto bg-yellow2"
-    >
-      <Calendar location={location()} />
+    <>
+      <Calendar />
+
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeMacro()}>
           <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
@@ -193,7 +187,7 @@ const Dashboard: Component = () => {
           }}
         </Match>
       </Switch>
-    </main>
+    </>
   );
 };
 

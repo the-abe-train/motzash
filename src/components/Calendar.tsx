@@ -1,4 +1,11 @@
-import { Component, createMemo, createSignal, For, Show } from "solid-js";
+import {
+  Component,
+  createMemo,
+  createSignal,
+  For,
+  onMount,
+  Show,
+} from "solid-js";
 import { Location } from "@hebcal/core";
 
 import { generateCalendar, findNextEvent } from "../util/datetime";
@@ -9,18 +16,21 @@ import ShabbatCandles from "../assets/Candles Static.svg";
 import dayjs from "dayjs";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { getHebcalLocation } from "../util/location";
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
 
-type Props = {
-  location: Location | null | undefined;
-};
-
-const Calendar: Component<Props> = (props) => {
+const Calendar: Component = () => {
+  const [location, setLocation] = createSignal<Location | null | undefined>();
   const [displayDay, setDisplayDay] = createSignal(dayjs());
 
+  onMount(async () => {
+    const newLocation = await getHebcalLocation();
+    setLocation(newLocation);
+  });
+
   const cal = createMemo(() => {
-    if (props.location) return generateCalendar(props.location);
+    if (location()) return generateCalendar(location()!);
   });
 
   const weeks = createMemo(() => {
@@ -106,7 +116,7 @@ const Calendar: Component<Props> = (props) => {
     py-2 lg:mx-4"
     >
       <Show
-        when={props.location}
+        when={location}
         fallback={
           <p>
             Please allow location permissions to view candle lighting times.

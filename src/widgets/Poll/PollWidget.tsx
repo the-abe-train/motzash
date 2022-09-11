@@ -33,9 +33,7 @@ const PollWidget: WidgetComponent = (props) => {
   };
 
   // Load recipe data
-  const [loadedVotes, { refetch }] = createResource(async () =>
-    loadVotes(props.widget.id)
-  );
+  const [loadedVotes, { refetch }] = createResource(props.widget.id, loadVotes);
   createEffect(
     on(loadedVotes, () => {
       if (loadedVotes.state === "ready") {
