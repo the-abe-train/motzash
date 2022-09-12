@@ -239,7 +239,7 @@ const Calendar: Component = () => {
             </div>
             <button
               onClick={() => setDisplayDay(dayjs())}
-              class="p-2 border border-black rounded drop-shadow-small w-fit mx-auto
+              class="px-2 py-1 border border-black rounded drop-shadow-small w-fit mx-auto
         bg-blue hover:drop-shadow-none transition-all"
             >
               Back to today

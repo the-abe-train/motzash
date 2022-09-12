@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
-import { HavdalahContext, useHavdalah } from "../../context/havdalah";
+import { useHavdalah } from "../../context/havdalah";
 import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
@@ -109,7 +109,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
       >
         Back to map
       </button>
-      <div class="flex flex-col md:flex-row md:space-x-5">
+      <div class="flex flex-col lg:flex-row lg:space-x-5">
         <div class="flex flex-col space-y-2">
           <label for="text">What are you up to on Shabbat?</label>
           <input

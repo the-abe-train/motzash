@@ -67,7 +67,6 @@ const TodoWidget: WidgetComponent = (props) => {
         }
         return 1;
       });
-      console.log(sorted);
       return sorted;
     });
   };
@@ -162,6 +161,7 @@ const TodoWidget: WidgetComponent = (props) => {
         <div class="m-2 flex flex-col space-y-2">
           <For each={todos}>
             {(item, idx) => {
+              console.log("Rendering todos");
               return (
                 <form
                   onSubmit={(e) => changeName(e, item)}

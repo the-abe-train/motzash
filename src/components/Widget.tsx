@@ -14,34 +14,38 @@ const Widget: ParentComponent<Props> = (props) => {
   const session = useContext(AuthContext);
 
   return (
-    <div
-      class="col-span-8 h-full relative p-2"
-      style={{ "background-color": props.activeMacro?.colour }}
-    >
-      <div class="absolute top-2 right-2">
-        <button
-          class="border rounded bg-white mx-2 p-1"
-          onClick={() => {
-            props.setActiveMacro(null);
-            props.setActiveWidget(null);
-          }}
-        >
-          Dashboard
-        </button>
-        <Show when={props.activeWidget}>
+    <div class="col-span-6 lg:col-span-8 h-full py-2">
+      <h1 class="text-2xl font-header mb-2">{props.activeMacro?.name}</h1>
+      <div
+        class="relative p-4 pt-10 border-2 border-black"
+        style={{ "background-color": props.activeMacro?.colour }}
+      >
+        <div class="absolute top-2 right-2">
           <button
-            class="border rounded bg-white mx-2 p-1"
+            class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+                  bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
             onClick={() => {
+              props.setActiveMacro(null);
               props.setActiveWidget(null);
             }}
           >
-            {props.activeMacro?.name}
+            Dashboard
           </button>
+          <Show when={props.activeWidget}>
+            <button
+              class="border rounded bg-white mx-2 p-1"
+              onClick={() => {
+                props.setActiveWidget(null);
+              }}
+            >
+              {props.activeMacro?.name}
+            </button>
+          </Show>
+        </div>
+        <Show when={session()} fallback={<Auth />}>
+          {c()}
         </Show>
       </div>
-      <Show when={session()} fallback={<Auth />}>
-        {c()}
-      </Show>
     </div>
   );
 };
