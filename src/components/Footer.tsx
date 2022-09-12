@@ -1,4 +1,4 @@
-import Logo from "../assets/icons/Havdalah Static.svg";
+import Logo from "../assets/icons/Havdalah Static Footer.svg";
 import Twitter from "../assets/icons/Twitter.svg";
 import Github from "../assets/icons/Github.svg";
 import { Link } from "@solidjs/router";
