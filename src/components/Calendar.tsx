@@ -10,8 +10,8 @@ import { Location } from "@hebcal/core";
 
 import { generateCalendar, findNextEvent } from "../util/datetime";
 
-import HavdalahCandles from "../assets/Havdalah Static.svg";
-import ShabbatCandles from "../assets/Candles Static.svg";
+import HavdalahCandles from "../assets/icons/Havdalah Static.svg";
+import ShabbatCandles from "../assets/icons/Candles Static.svg";
 
 import dayjs from "dayjs";
 import weekdayPlugin from "dayjs/plugin/weekday";

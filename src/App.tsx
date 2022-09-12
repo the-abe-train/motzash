@@ -2,7 +2,7 @@ import { Component, createSignal, lazy, useContext } from "solid-js";
 import { Routes, Route, Link } from "@solidjs/router";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { AuthContext } from "./context/auth";
-import Logo from "./assets/Havdalah Dynamic.svg";
+import Logo from "./assets/icons/Havdalah Dynamic.svg";
 import Footer from "./components/Footer";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));

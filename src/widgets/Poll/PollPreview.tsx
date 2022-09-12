@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import Poll from "../../assets/Poll.svg";
+import Poll from "../../assets/icons/Poll.svg";
 
 const PollPreview: WidgetPreviewComponent = (props) => {
   const polls = props.widgets.filter((widget) => widget.type === "poll");

@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import Checkbox from "../../assets/Checkbox.svg";
+import Checkbox from "../../assets/icons/Checkbox.svg";
 
 const TodoPreview: WidgetPreviewComponent = (props) => {
   // In the design, this one has the number of items left to do for each list,

@@ -14,8 +14,8 @@ import { AuthContext } from "../../context/auth";
 import { loadAllRecipes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
-import StarSolid from "../../assets/Star Solid.svg";
-import StarEmpty from "../../assets/Star Empty.svg";
+import StarSolid from "../../assets/icons/Star Solid.svg";
+import StarEmpty from "../../assets/icons/Star Empty.svg";
 
 const CookbookMacro: WidgetPreviewComponent = (props) => {
   const session = useContext(AuthContext);

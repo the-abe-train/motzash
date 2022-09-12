@@ -1,6 +1,6 @@
-import Meat from "../../assets/Meat.svg";
-import Dairy from "../../assets/Dairy.svg";
-import Pareve from "../../assets/Pareve.svg";
+import Meat from "../../assets/icons/Meat.svg";
+import Dairy from "../../assets/icons/Dairy.svg";
+import Pareve from "../../assets/icons/Pareve.svg";
 import { For } from "solid-js";
 
 const CookbookPreview: WidgetPreviewComponent = (props) => {
