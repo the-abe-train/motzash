@@ -45,22 +45,26 @@ const App: Component = () => {
             onClick={() => setSidebarOpen((prev) => !prev)}
           >
             <span
-              class="left-1/2 top-2 block absolute h-[2px] bg-black rounded transition-all"
+              class="left-1/2 top-2 block absolute h-[2px] bg-black rounded 
+              transition-all"
               style={{
                 width: sidebarOpen() ? 0 : "50%",
                 transform: "translate(-50%, 0)",
               }}
             ></span>
             <span
-              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-all"
+              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black 
+              rounded transition-all"
               style={{ rotate: sidebarOpen() ? "45deg" : "inherit" }}
             ></span>
             <span
-              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black rounded transition-all"
+              class="left-1/4 top-4 block absolute h-[2px] w-1/2 bg-black 
+              rounded transition-all"
               style={{ rotate: sidebarOpen() ? "-45deg" : "inherit" }}
             ></span>
             <span
-              class="left-1/2 top-6 block absolute h-[2px] bg-black rounded transition-all"
+              class="left-1/2 top-6 block absolute h-[2px] bg-black rounded 
+              transition-all"
               style={{
                 width: sidebarOpen() ? 0 : "50%",
                 transform: "translate(-50%, 0)",
@@ -84,22 +88,6 @@ const App: Component = () => {
         </Routes>
       </main>
       <Footer />
-      {/* <footer class="bg-black text-yellow2 h-fit w-full mt-6 py-4">
-        <div class="h-20 flex px-8 space-x-4 flex-wrap container mx-auto">
-          <Link class="hover:font-bold" href="/">
-            Dashboard
-          </Link>
-          <Link class="hover:font-bold" href="/friends">
-            Friends
-          </Link>
-          <Link class="hover:font-bold" href="/about">
-            About
-          </Link>
-          <Link class="hover:font-bold" href="/profile">
-            Profile
-          </Link>
-        </div>
-      </footer> */}
     </div>
   );
 };

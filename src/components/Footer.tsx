@@ -7,13 +7,13 @@ export default () => {
   return (
     <footer class="bg-black text-yellow2 h-fit w-full mt-6 py-4">
       <div
-        class="flex flex-col px-4 space-x-4 flex-wrap container 
-        md:flex-row justify-between max-w-4xl 
+        class="flex flex-col px-4 md:space-x-4 flex-wrap container 
+        md:flex-row justify-between  
           md:px-4 w-full mx-auto items-center space-y-3 md:space-y-0"
       >
         <section
-          class="flex md:flex-col justify-center items-end 
-            md:items-center space-x-4 md:space-x-0 w-full md:w-max"
+          class="flex md:flex-col lg:flex-row justify-center items-end 
+            md:items-center space-x-4 md:space-x-0 lg:space-x-4 w-full md:w-max"
         >
           <div class="font-header text-xl space-x-1 flex items-center">
             <img class="inline" height={20} width={20} src={Logo} alt="logo" />
@@ -47,29 +47,19 @@ export default () => {
             </a>
           </p>
         </section>
-        <section>
-          <ul class="flex space-x-8 justify-items-center">
-            <li>
-              <Link class="hover:font-bold" href="/">
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link class="hover:font-bold" href="/friends">
-                Friends
-              </Link>
-            </li>
-            <li>
-              <Link class="hover:font-bold" href="/about">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link class="hover:font-bold" href="/profile">
-                Profile
-              </Link>
-            </li>
-          </ul>
+        <section class="space-x-4 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
+          <Link class="hover:font-bold" href="/">
+            Dashboard
+          </Link>
+          <Link class="hover:font-bold" href="/friends">
+            Friends
+          </Link>
+          <Link class="hover:font-bold" href="/about">
+            About
+          </Link>
+          <Link class="hover:font-bold" href="/profile">
+            Profile
+          </Link>
         </section>
       </div>
     </footer>

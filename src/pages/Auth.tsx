@@ -1,14 +1,13 @@
-// import { ApiError } from "@supabase/supabase-js";
 import { Component, createSignal } from "solid-js";
 import { supabase } from "../util/supabase";
+import "../styles/google.css";
 
 const Auth: Component = () => {
   const [loading, setLoading] = createSignal(false);
   const [email, setEmail] = createSignal("");
 
-  const handleLogin = async (e: Event) => {
+  const magicLinkLogin = async (e: Event) => {
     e.preventDefault();
-
     try {
       setLoading(true);
       console.log("email", email());
@@ -25,18 +24,38 @@ const Auth: Component = () => {
     }
   };
 
+  const googleOauthLogin = async (e: Event) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) {
+        console.error(error);
+        throw error;
+      }
+    } catch (error: any) {
+      console.error(error.error_description || error.message || "Login error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main class="flex-grow p-4">
-      <h1 class="text-xl">Sign-in form</h1>
+    <div class="col-span-6 lg:col-span-4">
+      <h1 class="font-header text-xl mb-1">Sign-in form</h1>
       <p>Sign in via magic link with your email below</p>
       {loading() ? (
         "Sending magic link..."
       ) : (
-        <form onSubmit={handleLogin} class="flex flex-col space-y-2 p-4">
-          <label for="email">Email</label>
+        <form
+          onSubmit={magicLinkLogin}
+          class="flex flex-col space-y-2 py-4 max-w-md"
+        >
           <input
             id="email"
-            class="border w-1/2 px-2 py-1"
+            class="px-2 py-1 flex-grow border border-black max-w-md"
             type="email"
             placeholder="Your email"
             value={email()}
@@ -44,15 +63,24 @@ const Auth: Component = () => {
           />
           <button
             type="submit"
-            class="w-fit p-2  border rounded
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
+            class="p-2 border border-black rounded drop-shadow-small 
+            w-fit mx-auto
+             bg-ghost hover:drop-shadow-none transition-all"
             aria-live="polite"
           >
             Send magic link
           </button>
         </form>
       )}
-    </main>
+
+      <button
+        type="button"
+        class="login-with-google-btn"
+        onClick={googleOauthLogin}
+      >
+        Sign in with Google
+      </button>
+    </div>
   );
 };
 

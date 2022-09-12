@@ -3,13 +3,14 @@ import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";
 import "tailwindcss/tailwind.css";
 
-import "./index.css";
+import "./styles/index.css";
 import App from "./App";
 import { AuthProvider, loadSession } from "./context/auth";
 import { HavdalahProvider } from "./context/havdalah";
 
 // No clue how top level await works here. Vite???
 const session = await loadSession();
+console.log("Sessoin", session);
 
 render(
   () => (

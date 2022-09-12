@@ -2,10 +2,18 @@ import { For } from "solid-js";
 import Poll from "../../assets/icons/Poll.svg";
 
 const PollPreview: WidgetPreviewComponent = (props) => {
-  const polls = props.widgets.filter((widget) => widget.type === "poll");
+  const fallback = (
+    <div
+      class="bg-white p-2 w-full flex space-x-2
+border border-black rounded"
+    >
+      <img src={Poll} alt="Poll" />
+      <p>Create new poll</p>
+    </div>
+  );
   return (
     <>
-      <For each={props.widgets.slice(0, 3)}>
+      <For each={props.widgets.slice(0, 3)} fallback={fallback}>
         {(widget) => {
           return (
             <div

@@ -113,7 +113,7 @@ const Calendar: Component = () => {
   return (
     <div
       class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
-    py-2 lg:mx-4"
+    py-2"
     >
       <Show
         when={location}

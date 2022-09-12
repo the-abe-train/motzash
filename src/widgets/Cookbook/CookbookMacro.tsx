@@ -3,10 +3,7 @@ import {
   createResource,
   createSignal,
   For,
-  Index,
-  Match,
   on,
-  Switch,
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";

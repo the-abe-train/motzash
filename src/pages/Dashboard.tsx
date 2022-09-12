@@ -4,18 +4,13 @@ import {
   createResource,
   createSignal,
   For,
-  lazy,
   Match,
   on,
-  onMount,
   Show,
-  Suspense,
   Switch,
 } from "solid-js";
 import { Link } from "@solidjs/router";
-import { Location } from "@hebcal/core";
 
-import { getHebcalLocation } from "../util/location";
 import { loadMyStatus, loadWidgets } from "../util/queries";
 
 import WidgetPreview from "../components/WidgetPreview";
@@ -137,13 +132,27 @@ const Dashboard: Component = () => {
             py-4 md:px-8 col-span-6 lg:col-span-4"
             >
               <h1 class="text-2xl font-header self-start">Status</h1>
-              <div
-                class="bg-ghost text-center border-2 border-black px-2 py-4
-              flex flex-col space-y-4 w-full"
-              >
-                <p class="text-lg">"{myStatus()?.text}"</p>
-                <p class="text-sm">{myStatus()?.city}</p>
-              </div>
+              <Link href="/friends" class="w-full">
+                <div
+                  class="bg-ghost text-center border-2 border-black px-2 
+                  py-4 flex flex-col space-y-4 w-full"
+                >
+                  <Show
+                    when={myStatus()}
+                    fallback={<p>Click to add Status.</p>}
+                    keyed
+                  >
+                    {(myStatus) => {
+                      return (
+                        <>
+                          <p class="text-lg">"{myStatus.text}"</p>
+                          <p class="text-sm">{myStatus.city}</p>
+                        </>
+                      );
+                    }}
+                  </Show>
+                </div>
+              </Link>
               <Link href="/friends">
                 <button
                   class="p-2 border border-black rounded drop-shadow-small 
