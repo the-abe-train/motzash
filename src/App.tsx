@@ -3,6 +3,7 @@ import { Routes, Route, Link } from "@solidjs/router";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { AuthContext } from "./context/auth";
 import Logo from "./assets/Havdalah Dynamic.svg";
+import Footer from "./components/Footer";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Friends = lazy(() => import("./pages/Friends"));
@@ -82,9 +83,9 @@ const App: Component = () => {
           </Route>
         </Routes>
       </main>
-
-      <footer class="bg-black text-yellow2 h-fit w-full mt-6">
-        <div class="h-20 flex w-full px-8 justify-between container mx-auto">
+      <Footer />
+      {/* <footer class="bg-black text-yellow2 h-fit w-full mt-6 py-4">
+        <div class="h-20 flex px-8 space-x-4 flex-wrap container mx-auto">
           <Link class="hover:font-bold" href="/">
             Dashboard
           </Link>
@@ -98,7 +99,7 @@ const App: Component = () => {
             Profile
           </Link>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };

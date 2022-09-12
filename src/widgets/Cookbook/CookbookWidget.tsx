@@ -220,7 +220,7 @@ const CookbookWidget: WidgetComponent = (props) => {
 
   return (
     <div class="w-full">
-      <h2 class="text-xl">{props.widget.name}</h2>
+      <h2 class="text-2xl font-header">{props.widget.name}</h2>
       <form
         class="flex space-x-1"
         onSubmit={(e) => updateMetadata(e, metadata)}
@@ -246,8 +246,8 @@ const CookbookWidget: WidgetComponent = (props) => {
         <button type="submit">&#8593;</button>
       </form>
       <div class="my-4">
-        <h3 class="text-lg my-2">Ingredients</h3>
-        <div class="flex space-x-2">
+        <h3 class="text-xl font-header my-1">Ingredients</h3>
+        <div class="flex space-x-2 font-bold">
           <span class="w-14">Amount</span>
           <span class="w-14">Unit</span>
           <span class="w-40">Ingredient</span>
@@ -297,10 +297,9 @@ const CookbookWidget: WidgetComponent = (props) => {
             );
           }}
         </For>
-        <h4 class="my-2">New Ingredient</h4>
-        <form onSubmit={createNewIngredient} class="flex space-x-2">
+        <form onSubmit={createNewIngredient} class="flex space-x-2 max-w-lg">
           <input
-            class="border w-14"
+            class="border w-14 border-black px-1"
             type="number"
             name="amount"
             required
@@ -310,7 +309,7 @@ const CookbookWidget: WidgetComponent = (props) => {
             }
           />
           <input
-            class="border w-14"
+            class="border w-14 border-black px-1"
             type="text"
             name="unit"
             required
@@ -318,7 +317,7 @@ const CookbookWidget: WidgetComponent = (props) => {
             onInput={(e) => setNewIngredient("unit", e.currentTarget.value)}
           />
           <input
-            class="border w-40"
+            class="border border-black w-40 px-1 flex-grow"
             type="text"
             name="ingredient"
             required
@@ -333,7 +332,7 @@ const CookbookWidget: WidgetComponent = (props) => {
         </form>
       </div>
       <div class="my-4">
-        <h3 class="text-lg my-2">Instructions</h3>
+        <h3 class="text-xl font-header my-1">Instructions</h3>
         <For each={instructions}>
           {(inst, idx) => {
             return (
@@ -343,7 +342,7 @@ const CookbookWidget: WidgetComponent = (props) => {
               >
                 <input
                   name="step"
-                  class="bg-transparent w-14"
+                  class="bg-transparent w-14 flex-grow"
                   value={inst.step || 0}
                   type="number"
                   onChange={(e) =>
@@ -373,10 +372,9 @@ const CookbookWidget: WidgetComponent = (props) => {
             );
           }}
         </For>
-        <h4 class="my-2">New Step</h4>
-        <form onSubmit={addInstruction} class="flex space-x-2">
+        <form onSubmit={addInstruction} class="flex space-x-2 max-w-lg">
           <input
-            class="border w-14"
+            class="border border-black w-14 px-1"
             type="number"
             name="step"
             min={1}
@@ -387,7 +385,7 @@ const CookbookWidget: WidgetComponent = (props) => {
             }
           />
           <textarea
-            class="border w-max"
+            class="border border-black flex-grow px-1"
             name="text"
             required
             value={newInstruction.text}

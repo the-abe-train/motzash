@@ -20,9 +20,9 @@ const Widget: ParentComponent<Props> = (props) => {
         class="relative p-4 pt-10 border-2 border-black"
         style={{ "background-color": props.activeMacro?.colour }}
       >
-        <div class="absolute top-2 right-2">
+        <div class="absolute top-2 right-4 flex space-x-4">
           <button
-            class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+            class="w-fit px-2 border border-black rounded
                   bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
             onClick={() => {
               props.setActiveMacro(null);
@@ -33,7 +33,8 @@ const Widget: ParentComponent<Props> = (props) => {
           </button>
           <Show when={props.activeWidget}>
             <button
-              class="border rounded bg-white mx-2 p-1"
+              class="w-fit px-2 border border-black rounded
+                          bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
               onClick={() => {
                 props.setActiveWidget(null);
               }}
