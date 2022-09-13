@@ -6,9 +6,15 @@ type Props = {
   isConnected: boolean;
 };
 
+const fallback = (
+  <div class="col-span-12 my-6">
+    <Auth inWidget={false} />
+  </div>
+);
+
 const ProtectedRoute: Component<Props> = (props) => {
   return (
-    <Show when={props.isConnected} fallback={<Auth />}>
+    <Show when={props.isConnected} fallback={fallback}>
       <Outlet />
     </Show>
   );

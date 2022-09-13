@@ -23,7 +23,7 @@ const Widget: ParentComponent<Props> = (props) => {
         <div class="absolute top-2 right-4 flex space-x-4">
           <button
             class="w-fit px-2 border border-black rounded
-                  bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
+                  bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
             onClick={() => {
               props.setActiveMacro(null);
               props.setActiveWidget(null);
@@ -34,7 +34,7 @@ const Widget: ParentComponent<Props> = (props) => {
           <Show when={props.activeWidget}>
             <button
               class="w-fit px-2 border border-black rounded
-                          bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
+                          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
               onClick={() => {
                 props.setActiveWidget(null);
               }}
@@ -43,7 +43,7 @@ const Widget: ParentComponent<Props> = (props) => {
             </button>
           </Show>
         </div>
-        <Show when={session()} fallback={<Auth />}>
+        <Show when={session()} fallback={<Auth inWidget={true} />}>
           {c()}
         </Show>
       </div>

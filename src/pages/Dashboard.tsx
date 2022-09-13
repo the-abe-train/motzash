@@ -110,7 +110,6 @@ const Dashboard: Component = () => {
   return (
     <>
       <Calendar />
-
       <Switch fallback={<div>Loading...</div>}>
         <Match when={!activeMacro()}>
           <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
