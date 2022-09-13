@@ -6,8 +6,8 @@ import nodemailer from "nodemailer";
 const handler: Handler = async (event, context) => {
   try {
     const supabaseUrl = process.env.VITE_SUPABASE_URL || "";
-    const supabaseAnonKey = process.env.SUPABASE_SERVICE_KEY || "";
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || "";
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
 
     const { friendEmail, username } = JSON.parse(event.body || "{}");
     console.log("Friend email:", friendEmail);

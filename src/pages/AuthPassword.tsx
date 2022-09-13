@@ -1,6 +1,5 @@
 import { Component, createSignal, Show } from "solid-js";
 import { supabase } from "../util/supabase";
-import "../styles/google.css";
 
 const AuthPassword: Component = () => {
   const [loading, setLoading] = createSignal(false);

@@ -1,3 +1,4 @@
+import { useNavigate } from "@solidjs/router";
 import {
   Component,
   Switch,
@@ -16,6 +17,7 @@ import { supabase } from "../util/supabase";
 const Profile: Component = () => {
   console.log("Loading profile");
   const user = useContext(AuthContext);
+  const navigate = useNavigate();
   const user_id = user()?.id;
   const [msg, setMsg] = createSignal("");
   const [newProfile, setNewProfile] = createStore<Profile>({
@@ -58,6 +60,21 @@ const Profile: Component = () => {
     setLoading(false);
   };
 
+  async function deleteUser() {
+    await supabase.auth.signOut();
+    const res = await fetch("/api/deleteUser", {
+      method: "POST",
+      body: JSON.stringify({
+        user_id: user()?.id,
+      }),
+    });
+    if (res.ok) {
+      navigate("/", { replace: true });
+    } else {
+      setMsg("Something went wrong. Please contact Support.");
+    }
+  }
+
   return (
     <main class="flex-grow p-4 space-y-4">
       <Show when={profile.state === "ready"} fallback={<p>Loading...</p>}>
@@ -91,6 +108,15 @@ const Profile: Component = () => {
           disabled={profile.loading || loading()}
         >
           Sign Out
+        </button>
+        <button
+          type="button"
+          class="w-max py-1 px-2 border border-black rounded my-6
+            bg-yellow2 text-coral border-coral drop-shadow-small hover:drop-shadow-none transition-all"
+          onClick={deleteUser}
+          disabled={profile.loading || loading()}
+        >
+          Delete account
         </button>
       </Show>
     </main>

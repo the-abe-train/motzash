@@ -35,12 +35,10 @@ export const loadWidgets = async () => {
 };
 
 export const loadTodoLists = async () => {
-  const user = useContext(AuthContext);
-  const user_id = user()?.id;
   const { data, error } = await supabase
     .from("widgets")
     .select("*, todos (*)")
-    .match({ user_id, type: "todo" });
+    .eq("type", "todo");
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);

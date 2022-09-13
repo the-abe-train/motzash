@@ -5,11 +5,12 @@ import Auth from "./Auth";
 
 const ProtectedRoute: Component = () => {
   const user = useContext(AuthContext);
+  console.log("Loading protected route");
 
   createEffect(() => {
     // Without this effect, the reactivity doesn't work.
     // I hate that, but it's the truth, what you gonna do.
-    console.log(user());
+    console.log(user()?.id);
   });
 
   const fallback = (
