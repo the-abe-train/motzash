@@ -85,13 +85,11 @@ const Friends: Component = () => {
           </Show>
           <h1 class="text-2xl font-header">Your Friends</h1>
           <div class="flex flex-col space-y-3 max-h-[60vh]">
-            <form
-              class="flex w-full space-x-4"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form class="flex space-x-4" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="text"
-                class="border border-black px-2 flex-grow"
+                name="filter"
+                class="border border-black px-2 w-full"
                 placeholder="Filter by name"
                 value={friendFilter()}
                 onChange={(e) => setFriendFilter(e.currentTarget.value)}

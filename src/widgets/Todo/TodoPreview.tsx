@@ -8,7 +8,7 @@ const TodoPreview: WidgetPreviewComponent = (props) => {
 
   const fallback = (
     <div
-      class="bg-white p-2 w-full flex space-x-2
+      class="bg-ghost p-2 w-full flex space-x-2
 border border-black rounded"
     >
       <img src={Checkbox} alt="Checkbox" />
@@ -22,7 +22,7 @@ border border-black rounded"
         {(widget) => {
           return (
             <div
-              class="bg-white p-2 w-full flex space-x-2
+              class="bg-ghost p-2 w-full flex space-x-2
             border border-black rounded"
             >
               <img src={Checkbox} alt="Checkbox" />

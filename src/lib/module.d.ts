@@ -115,8 +115,12 @@ declare global {
   }
 
   type Profile = Database["public"]["Tables"]["profiles"]["Update"];
+
+  // Todo lists
   type Todo = Database["public"]["Tables"]["todos"]["Update"];
-  type Vote = Database["public"]["Tables"]["poll_votes"]["Update"];
+  interface TodoList extends Widget {
+    todos: Todo[];
+  }
 
   // Cookbook
   type RecipeMetadata = Database["public"]["Tables"]["recipe_metadata"]["Row"];
@@ -126,5 +130,11 @@ declare global {
     recipe_metadata?: RecipeMetadata[];
     recipe_ingredients?: Ingredient[];
     recipe_instructions?: Instruction[];
+  }
+
+  // Polls
+  type Vote = Database["public"]["Tables"]["poll_votes"]["Update"];
+  interface Poll extends Widget {
+    poll_votes: Vote[];
   }
 }

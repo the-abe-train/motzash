@@ -31,20 +31,21 @@ const TodoWidget: WidgetComponent = (props) => {
           return { ...todo, is_complete: expired ? false : todo.is_complete };
         });
         console.log("Updated values", updatedValues);
-        sortTodos({ newItems: updatedValues });
+        sortTodos({ replacement: updatedValues });
       }
     })
   );
 
   // Instruction sorting
   const sortTodos = (change?: {
+    replacement?: Todo[];
     newItems?: Todo[];
     deleteItem?: Todo;
     changeItem?: Todo;
   }) => {
     console.log("Sorting todos");
     setTodos((prev) => {
-      const newArray = change?.newItems
+      let newArray = change?.newItems
         ? [...prev, ...change?.newItems]
         : [...prev];
       if (change?.deleteItem) {
@@ -58,6 +59,9 @@ const TodoWidget: WidgetComponent = (props) => {
           (todo) => todo.id === change.changeItem?.id
         );
         newArray.splice(changeIdx, 1, change.changeItem);
+      }
+      if (change?.replacement) {
+        newArray = [...change.replacement];
       }
       const sorted = newArray.sort((a, z) => {
         if (a.is_complete && !z.is_complete) {
@@ -156,12 +160,11 @@ const TodoWidget: WidgetComponent = (props) => {
         </div>
       }
     >
-      <h2 class="text-xl">{props.widget.name}</h2>
+      <h2 class="text-2xl font-header">{props.widget.name}</h2>
       <Show when={loadedTodos.state === "ready"} fallback={<p>Loading...</p>}>
         <div class="m-2 flex flex-col space-y-2">
           <For each={todos}>
             {(item, idx) => {
-              console.log("Rendering todos");
               return (
                 <form
                   onSubmit={(e) => changeName(e, item)}
@@ -194,18 +197,24 @@ const TodoWidget: WidgetComponent = (props) => {
           </For>
         </div>
       </Show>
-      <form onSubmit={createNewTask}>
+      <form onSubmit={createNewTask} class="flex max-w-md space-x-4">
         <input
-          class="border"
+          class="px-2 py-1 flex-grow border border-black"
           type="text"
           name="todo"
           required
           value={inputTodo()}
           onInput={(e) => setInputTodo(e.currentTarget.value)}
         />
-        <button type="submit">Submit</button>
+        <button
+          type="submit"
+          class="w-fit py-1 px-2 border border-black rounded
+          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        >
+          Submit
+        </button>
       </form>
-      <button class="bg-white p-1 my-20" onClick={deleteTodoList}>
+      <button class="bg-ghost p-1 my-20" onClick={deleteTodoList}>
         Delete todo list
       </button>
     </ErrorBoundary>

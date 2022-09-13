@@ -34,7 +34,7 @@ const Widget: ParentComponent<Props> = (props) => {
           <Show when={props.activeWidget}>
             <button
               class="w-fit px-2 border border-black rounded
-                          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
               onClick={() => {
                 props.setActiveWidget(null);
               }}

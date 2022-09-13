@@ -84,6 +84,8 @@ const PollWidget: WidgetComponent = (props) => {
       console.error(error.message);
       return;
     }
+    setMyVote("text", "");
+    setMyVote("id", 0);
     refetch();
   }
 
@@ -106,47 +108,54 @@ const PollWidget: WidgetComponent = (props) => {
 
   return (
     <div class="w-full flex flex-col space-y-4">
-      <h2 class="text-xl">{props.widget.name}</h2>
+      <h2 class="font-header text-2xl">{props.widget.name}</h2>
       <p>Poll created by {pollAuthor()}</p>
       <div>
-        <h3 class="text-lg">Votes</h3>
+        <h3 class="text-lg font-bold">Votes</h3>
         <For each={votes}>
           {(vote) => {
             return <p>{vote.text}</p>;
           }}
         </For>
       </div>
-      <div>
-        <h3 class="text-lg">Change vote</h3>
-        <form class="flex space-x-2 w-fit" onSubmit={upsertVote}>
+      <div class="">
+        <h3 class="text-lg font-bold">Change vote</h3>
+        <form onSubmit={upsertVote}>
           <input
             name="vote"
-            class="w-40 px-2"
+            class="px-2 py-1 border border-black w-full"
             value={myVote?.text || ""}
             onChange={(e) => setMyVote("text", e.currentTarget.value)}
             required
           />
-          <button
-            class="p-2 border border-black w-fit
-            bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-            type="button"
-            onClick={deleteVote}
-          >
-            Remove
-          </button>
-          <button
-            class="p-2 border border-black w-fit
-        bg-slate-200 hover:bg-slate-300 active:bg-slate-400"
-            type="submit"
-          >
-            Submit
-          </button>
+          <div class="my-1 space-x-2">
+            <Show when={myVote.id}>
+              <button
+                class="w-fit py-1 px-2 border border-black rounded
+           bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+                type="button"
+                onClick={deleteVote}
+              >
+                Remove
+              </button>
+            </Show>
+            <button
+              class="w-fit py-1 px-2 border border-black rounded
+         bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+              type="submit"
+            >
+              {myVote.id ? "Update" : "Submit"}
+            </button>
+          </div>
         </form>
       </div>
       <Show when={props.widget.user_id === session()?.user.id}>
-        <h3 class="text-lg">Delete poll</h3>
-        <button onClick={deletePoll} class="w-fit border border-black">
-          Delete
+        <button
+          onClick={deletePoll}
+          class="w-fit py-1 px-2 border border-black rounded
+          mt-8 bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        >
+          Delete poll
         </button>
       </Show>
       <p>{msg()}</p>

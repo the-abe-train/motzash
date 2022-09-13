@@ -256,7 +256,7 @@ const CookbookWidget: WidgetComponent = (props) => {
           {(ing, idx) => {
             return (
               <form
-                class="flex space-x-2 w-fit"
+                class="flex space-x-2 w-full"
                 onSubmit={(e) => updateIngredient(e, ing)}
               >
                 <input
@@ -283,7 +283,7 @@ const CookbookWidget: WidgetComponent = (props) => {
                 />
                 <input
                   name="ingredient"
-                  class="bg-transparent w-40"
+                  class="bg-transparent w-40 flex-grow"
                   value={ing.ingredient || ""}
                   onChange={(e) =>
                     setIngredients(idx(), "ingredient", e.currentTarget.value)
@@ -297,52 +297,58 @@ const CookbookWidget: WidgetComponent = (props) => {
             );
           }}
         </For>
-        <form onSubmit={createNewIngredient} class="flex space-x-2 max-w-lg">
-          <input
-            class="border w-14 border-black px-1"
-            type="number"
-            name="amount"
-            required
-            value={newIngredient.amount}
-            onInput={(e) =>
-              setNewIngredient("amount", parseFloat(e.currentTarget.value))
-            }
-          />
-          <input
-            class="border w-14 border-black px-1"
-            type="text"
-            name="unit"
-            required
-            value={newIngredient.unit}
-            onInput={(e) => setNewIngredient("unit", e.currentTarget.value)}
-          />
-          <input
-            class="border border-black w-40 px-1 flex-grow"
-            type="text"
-            name="ingredient"
-            required
-            value={newIngredient.ingredient}
-            onInput={(e) =>
-              setNewIngredient("ingredient", e.currentTarget.value)
-            }
-          />
-          <button type="submit" class="border p-1 bg-white w-fit">
+        <form onSubmit={createNewIngredient} class="w-full max-w-lg my-2">
+          <div class="flex w-full justify-between space-x-2">
+            <input
+              class="border w-14 border-black px-1"
+              type="number"
+              name="amount"
+              required
+              value={newIngredient.amount}
+              onInput={(e) =>
+                setNewIngredient("amount", parseFloat(e.currentTarget.value))
+              }
+            />
+            <input
+              class="border w-14 border-black px-1"
+              type="text"
+              name="unit"
+              required
+              value={newIngredient.unit}
+              onInput={(e) => setNewIngredient("unit", e.currentTarget.value)}
+            />
+            <input
+              class="border border-black w-40 px-1 flex-grow"
+              type="text"
+              name="ingredient"
+              required
+              value={newIngredient.ingredient}
+              onInput={(e) =>
+                setNewIngredient("ingredient", e.currentTarget.value)
+              }
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-fit py-1 px-2 border border-black rounded my-2
+          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+          >
             Add new
           </button>
         </form>
       </div>
-      <div class="my-4">
+      <div class="my-4 space-y-4">
         <h3 class="text-xl font-header my-1">Instructions</h3>
         <For each={instructions}>
           {(inst, idx) => {
             return (
               <form
-                class="flex space-x-2 w-fit"
+                class="flex space-x-2 w-full"
                 onSubmit={(e) => updateInstruction(e, inst)}
               >
                 <input
                   name="step"
-                  class="bg-transparent w-14 flex-grow"
+                  class="bg-transparent w-14"
                   value={inst.step || 0}
                   type="number"
                   onChange={(e) =>
@@ -353,9 +359,9 @@ const CookbookWidget: WidgetComponent = (props) => {
                     )
                   }
                 />
-                <input
-                  name="unit"
-                  class="bg-transparent w-full"
+                <textarea
+                  name="instruction"
+                  class="bg-transparent flex-grow min-h-fit"
                   value={inst.text || ""}
                   onChange={(e) =>
                     setInstructions(idx(), "text", e.currentTarget.value)
@@ -392,13 +398,21 @@ const CookbookWidget: WidgetComponent = (props) => {
             onChange={(e) => setNewInstruction("text", e.currentTarget.value)}
             minLength="10"
           />
-          <button type="submit" class="border p-1 bg-white w-max">
+          <button
+            type="submit"
+            class="w-fit py-1 px-2 border border-black rounded
+          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+          >
             Add new
           </button>
         </form>
       </div>
       <p class="my-8">{msg}</p>
-      <button class="bg-white p-1" onClick={deleteRecipe}>
+      <button
+        class="w-fit py-1 px-2 border border-black rounded
+          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        onClick={deleteRecipe}
+      >
         Delete recipe
       </button>
     </div>

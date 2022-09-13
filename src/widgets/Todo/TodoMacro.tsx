@@ -3,7 +3,6 @@ import {
   createResource,
   createSignal,
   For,
-  Show,
   useContext,
   on,
 } from "solid-js";
@@ -11,13 +10,14 @@ import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
 import { loadTodoLists } from "../../util/queries";
 import { supabase } from "../../util/supabase";
+import Checkbox from "../../assets/icons/Checkbox.svg";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
   const session = useContext(AuthContext);
   const [loadedLists, { refetch }] = createResource(loadTodoLists, {
     initialValue: [],
   });
-  const [lists, setLists] = createStore(props.widgets);
+  const [lists, setLists] = createStore<TodoList[]>([]);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
   const [msg, setMsg] = createSignal("");
@@ -45,59 +45,77 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
         type: "todo",
       })
       .select();
-    if (data) {
-      setLists((prev) => (prev ? [...prev, ...data] : data));
-      setInputName("");
-      setLoading(false);
-      setMsg("");
-      return;
-    }
     if (error) {
       console.error(error.message);
       setMsg("Failed to create new widget.");
     }
-
-    setLoading(false);
+    if (data) {
+      const newList = { ...data[0], todos: [] };
+      setLists((prev) => (prev ? [...prev, newList] : newList));
+    }
     setInputName("");
+    setLoading(false);
+    setMsg("");
   }
 
   return (
-    <div>
-      <ul class="list-disc list-inside mx-2">
-        <For each={lists}>
-          {(widget) => {
+    <div class="mx-2 space-y-8">
+      <div class="space-y-4">
+        <h2 class="font-header text-2xl">Lists</h2>
+        <For
+          each={lists}
+          fallback={
+            loadedLists.state === "ready" ? (
+              <p>No lists yet.</p>
+            ) : (
+              <p>Loading...</p>
+            )
+          }
+        >
+          {(todoList) => {
+            const tasksLeft = todoList.todos.filter(
+              (todo) => !todo.is_complete
+            ).length;
+            const tasksLeftString = `(${tasksLeft} task${
+              tasksLeft > 1 ? "s" : ""
+            } left)`;
             return (
-              <li
-                class="cursor-pointer"
-                onClick={() => props.setActiveWidget(widget)}
+              <div
+                class="cursor-pointer bg-ghost flex justify-between
+                  border border-black drop-shadow-small px-3 py-1
+                  hover:drop-shadow-none transition-all my-2"
+                onClick={() => props.setActiveWidget(todoList)}
               >
-                {widget.name}
-              </li>
+                <div class="space-x-2">
+                  <img src={Checkbox} class="inline" alt="checkbox" />
+                  <span>{todoList.name}</span>
+                </div>
+                <span>{tasksLeftString}</span>
+              </div>
             );
           }}
         </For>
-      </ul>
-      <Show when={props.isActive}>
-        <form
-          onSubmit={createNewWidget}
-          class="m-4 p-4 flex flex-col space-y-4"
-        >
+      </div>
+      <form onSubmit={createNewWidget} class="space-y-2">
+        <h2 class="font-header text-2xl mb-1">Create new list</h2>
+        <div class="flex max-w-md space-x-4">
           <input
             type="text"
             value={inputName()}
             onChange={(e) => setInputName(e.currentTarget.value)}
-            class="w-fit p-2"
+            required
+            class="px-2 py-1 flex-grow border border-black"
           />
           <button
-            class="w-fit p-2 border border-black rounded
-      bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+            class="w-fit py-1 px-2 border border-black rounded
+        bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
             disabled={loading()}
           >
-            Create new todo list
+            Add list
           </button>
-        </form>
-        <p>{msg()}</p>
-      </Show>
+        </div>
+      </form>
+      <p>{msg()}</p>
     </div>
   );
 };

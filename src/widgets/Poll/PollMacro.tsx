@@ -11,6 +11,7 @@ import { createStore } from "solid-js/store";
 import { AuthContext } from "../../context/auth";
 import { loadPolls } from "../../util/queries";
 import { supabase } from "../../util/supabase";
+import Poll from "../../assets/icons/Poll.svg";
 
 const PollMacro: WidgetPreviewComponent = (props) => {
   const session = useContext(AuthContext);
@@ -18,10 +19,9 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     initialValue: [],
   });
 
-  const [polls, setPolls] = createStore<UserWidget[]>([]);
+  const [polls, setPolls] = createStore<Poll[]>([]);
   const [newPoll, setNewPoll] = createSignal("");
-  const [msg, setMsg] = createSignal("Loading...");
-  const [loading, setLoading] = createSignal(true);
+  const [msg, setMsg] = createSignal("");
 
   createEffect(
     on(loadedPolls, () => {
@@ -35,7 +35,6 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   async function addPoll(e: Event) {
     e.preventDefault();
-    setLoading(true);
     const user_id = session()?.user.id || "";
     const { data, error } = await supabase
       .from("widgets")
@@ -45,7 +44,6 @@ const PollMacro: WidgetPreviewComponent = (props) => {
         type: "poll",
       })
       .select();
-    setLoading(false);
     if (error) {
       console.error(error.message);
       setMsg("Failed to create new widget.");
@@ -53,54 +51,75 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     if (data) props.setActiveWidget(data[0]);
   }
 
-  const myPoll = () => {
-    const myPollArray = polls.filter((poll) => {
-      return poll.id === props.widgets[0]?.id;
+  const myPoll = () =>
+    polls.find((poll) => {
+      return poll.user_id === session()?.user.id;
     });
-    if (myPollArray.length > 0) return myPollArray[0];
-    return null;
-  };
+
+  const fallback = () =>
+    loadedPolls.state === "ready" ? <p>No polls yet.</p> : <p>Loading...</p>;
 
   return (
-    <div class="flex flex-col space-y-4">
-      <h2 class="text-xl">My Poll</h2>
-      <Show when={!myPoll()}>
-        <form onSubmit={addPoll}>
-          <input
-            type="text"
-            value={newPoll()}
-            onChange={(e) => setNewPoll(e.currentTarget.value)}
-          />
-          <button>Create poll</button>
-        </form>
-      </Show>
-      <For each={polls}>
-        {(poll) => {
-          if (poll.id === props.widgets[0]?.id)
-            return (
-              <p
-                class="cursor-pointer"
-                onClick={() => props.setActiveWidget(poll)}
+    <div class="flex flex-col space-y-6">
+      <div class="space-y-3">
+        <h2 class="font-header text-2xl">My Poll</h2>
+        <Show
+          when={myPoll()}
+          keyed
+          fallback={
+            <form onSubmit={addPoll} class="flex w-full space-x-3">
+              <input
+                type="text"
+                required
+                value={newPoll()}
+                onChange={(e) => setNewPoll(e.currentTarget.value)}
+                class="px-2 py-1 flex-grow border border-black"
+              />
+              <button
+                class="w-fit py-1 px-2 border border-black rounded
+        bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
               >
-                {poll.name}
-              </p>
-            );
-        }}
-      </For>
-      <h2 class="text-xl">Friends' Polls</h2>
-      <For each={polls}>
-        {(poll) => {
-          if (poll.id !== props.widgets[0]?.id)
+                Create poll
+              </button>
+            </form>
+          }
+        >
+          {(myPoll) => {
             return (
-              <p
-                class="cursor-pointer"
-                onClick={() => props.setActiveWidget(poll)}
+              <div
+                class="cursor-pointer bg-ghost flex space-x-2
+              border border-black drop-shadow-small px-3 py-1
+              hover:drop-shadow-none transition-all my-2"
+                onClick={() => props.setActiveWidget(myPoll)}
               >
-                {poll.name}
-              </p>
+                <img src={Poll} alt="Poll" />
+                <span class="flex-grow">{myPoll.name}</span>
+                <span>({myPoll.poll_votes.length} votes)</span>
+              </div>
             );
-        }}
-      </For>
+          }}
+        </Show>
+      </div>
+      <div class="space-y-3">
+        <h2 class="font-header text-2xl">Friends' Polls</h2>
+        <For each={polls} fallback={fallback}>
+          {(poll) => {
+            if (poll.id !== props.widgets[0]?.id)
+              return (
+                <div
+                  class="cursor-pointer bg-ghost flex space-x-2
+              border border-black drop-shadow-small px-3 py-1
+              hover:drop-shadow-none transition-all my-2"
+                  onClick={() => props.setActiveWidget(poll)}
+                >
+                  <img src={Poll} alt="Poll" />
+                  <span class="flex-grow">{poll.name}</span>
+                  <span>({poll.poll_votes.length} votes)</span>
+                </div>
+              );
+          }}
+        </For>
+      </div>
       <p>{msg}</p>
     </div>
   );

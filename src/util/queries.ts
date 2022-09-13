@@ -41,14 +41,14 @@ export const loadTodoLists = async () => {
   const user_id = session()?.user.id || "";
   const { data, error } = await supabase
     .from("widgets")
-    .select("*, profiles (username)")
+    .select("*, todos (*)")
     .match({ user_id, type: "todo" });
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
-  return data as Widget[];
+  return data as TodoList[];
 };
 
 export const loadTodos = async (widget_id: number) => {
@@ -100,14 +100,15 @@ export const loadRecipe = async (widget_id: number) => {
 export const loadPolls = async () => {
   const { data, error } = await supabase
     .from("widgets")
-    .select("*, profiles (username)")
+    .select("*, poll_votes (id)")
     .eq("type", "poll");
   if (error) {
     if (error.code === "PGRST116") return null;
     console.log(error);
     return null;
   }
-  return data as UserWidget[];
+  console.log("Polls", data);
+  return data as Poll[];
 };
 
 export const loadVotes = async (widget_id: number) => {
