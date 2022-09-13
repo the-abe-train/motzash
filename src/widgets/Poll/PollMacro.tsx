@@ -8,13 +8,13 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { useAuth } from "../../context/auth2";
 import { loadPolls } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 import Poll from "../../assets/icons/Poll.svg";
 
 const PollMacro: WidgetPreviewComponent = (props) => {
-  const session = useContext(AuthContext);
+  const user_id = useAuth()?.user?.id;
   const [loadedPolls] = createResource(loadPolls, {
     initialValue: [],
   });
@@ -35,7 +35,6 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   async function addPoll(e: Event) {
     e.preventDefault();
-    const user_id = session?.user.id || "";
     const { data, error } = await supabase
       .from("widgets")
       .insert({
@@ -53,7 +52,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   const myPoll = () =>
     polls.find((poll) => {
-      return poll.user_id === session?.user.id;
+      return poll.user_id === user_id;
     });
 
   const fallback = () =>

@@ -16,8 +16,8 @@ const Sidebar = lazy(() => import("./components/Sidebar"));
 const App: Component = () => {
   // const [session, setSession] = createSignal<Session>();
   // onMount(async () => {
-  //   console.log("App level loading");
-  //   // const session = useContext(AuthContext);
+  console.log("App level loading");
+  //   // const user_id = useAuth()?.user?.id;
   //   const newSession = await loadSession();
   //   if (newSession) setSession(newSession);
   //   console.log("App mounted for user", session()?.user.email);

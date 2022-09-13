@@ -2,80 +2,42 @@ import { Subscription, User } from "@supabase/supabase-js";
 import {
   createContext,
   useContext,
-  createEffect,
   createSignal,
   onCleanup,
-  onMount,
-  children,
-  Accessor,
+  createEffect,
 } from "solid-js";
-import { createStore } from "solid-js/store";
 import { ContextProviderComponent } from "solid-js/types/reactive/signal";
 import { supabase } from "../util/supabase";
 
-type UserStore = {
-  user: User | null;
-};
+export const AuthContext = createContext<() => User | null>(() => null);
 
-// create a context for authentication
-export const AuthContext = createContext<UserStore>({ user: null });
+export function useAuth() {
+  const user = useContext(AuthContext) as () => User | null;
+  console.log("User updated:", user());
+  return user;
+}
 
-export const AuthProvider: ContextProviderComponent<UserStore> = (props) => {
-  // create state values for user data and loading
-  console.log("Props", props.value);
+// User signal is misleading. It doesn't update when signed out/in because the
+// object doesn't change, only its properties.
+
+export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
+  const [user, setUser] = createSignal<User | null>(props.value);
+
   let listener: Subscription | null;
-  const [user, setUser] = createStore<UserStore>(props.value);
-  // supabase.auth
-  //   .getSession()
-  //   .then((data) => setUser(data.data.session?.user || null));
-  const c = children(() => props.children);
 
-  console.log(user.user);
-
-  // onMount(async () => {
-  //   // get session data if there is an active session
-  //   console.log("Mounting context");
-  //   const session = await supabase.auth.getSession();
-  //   console.log("Mounted context");
-  //   setUser(session.data.session?.user ?? null);
-  // });
-
-  createEffect(() => {
-    // listen for changes to auth
-    listener = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Subscription updated");
-      // setUser(session?.user || null);
-      setUser("user", session?.user || null);
-    }).subscription;
-  });
-
-  // createEffect(() => {
-  //   console.log("Effect: User is changing!");
-  //   console.log(user.user?.id);
-  // });
+  listener = supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log("Subscription updated!");
+    setUser(session?.user ?? null);
+  }).subscription;
+  console.log("Subscription", listener);
 
   onCleanup(() => {
-    console.log("Cleaning up");
     listener?.unsubscribe();
   });
 
-  // create signUp, signIn, signOut functions
-  // const value = {
-  //   email: user()?.email,
-  // };
+  createEffect(() => console.log(user()));
 
-  // use a provider to pass down the value
-  return <AuthContext.Provider value={user}>{c()}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={user}>{props.children}</AuthContext.Provider>
+  );
 };
-
-export function useAuth() {
-  const a = useContext(AuthContext);
-  console.log(a);
-  return a;
-  // console.log(a);
-  // if (a) {
-  //   console.log("a", a());
-  //   return a;
-  // }
-  // return () => null;
-}

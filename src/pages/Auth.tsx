@@ -1,5 +1,6 @@
 import { Component, createSignal, Show } from "solid-js";
 import { supabase } from "../util/supabase";
+import AuthPassword from "./AuthPassword";
 // import "../styles/google.css";
 
 type Props = {
@@ -112,6 +113,7 @@ const Auth: Component<Props> = (props) => {
           <li>Add friends to your Motzash network</li>
         </ul>
       </div>
+      <AuthPassword />
     </div>
   );
 };

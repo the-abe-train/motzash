@@ -8,16 +8,16 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { useAuth } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { loadVotes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
-  const session = useContext(AuthContext);
+  const user_id = useAuth()?.user?.id;
   const getHavdalah = useHavdalah();
   const myVoteDefault: Vote = {
-    user_id: session?.user.id,
+    user_id,
     text: "",
     widget_id: props.widget.id,
   };
@@ -40,9 +40,7 @@ const PollWidget: WidgetComponent = (props) => {
         const returnedValue = loadedVotes();
         if (returnedValue) {
           setVotes(returnedValue);
-          const findMyVote = votes.find(
-            (vote) => vote.user_id === session?.user.id
-          );
+          const findMyVote = votes.find((vote) => vote.user_id === user_id);
           setMyVote(findMyVote || {});
         }
       }
@@ -75,7 +73,6 @@ const PollWidget: WidgetComponent = (props) => {
 
   async function deleteVote(e: Event) {
     e.preventDefault();
-    const user_id = session?.user.id || "";
     const { error } = await supabase
       .from("poll_votes")
       .delete()
@@ -149,7 +146,7 @@ const PollWidget: WidgetComponent = (props) => {
           </div>
         </form>
       </div>
-      <Show when={props.widget.user_id === session?.user.id}>
+      <Show when={props.widget.user_id === user_id}>
         <button
           onClick={deletePoll}
           class="w-fit py-1 px-2 border border-black rounded

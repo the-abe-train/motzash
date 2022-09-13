@@ -1,34 +1,31 @@
 import { Outlet } from "@solidjs/router";
-import {
-  Component,
-  createEffect,
-  createSignal,
-  Show,
-  useContext,
-} from "solid-js";
+import { Component, createEffect, Show, useContext } from "solid-js";
 import { AuthContext, useAuth } from "../context/auth2";
 import Auth from "./Auth";
 
 const ProtectedRoute: Component = () => {
-  const u = useContext(AuthContext);
-  console.log("U", u);
-  // const user = useAuth();
-  const [showUser, setShowUser] = createSignal("");
+  const auth = useAuth();
+  const user_id = auth()?.id;
+  const user = useContext(AuthContext);
+
+  createEffect(() => {
+    console.log(auth);
+    console.log(user_id);
+    console.log(user());
+  });
+
   const fallback = (
     <div class="col-span-12 my-6">
       <Auth inWidget={false} />
-      <button class="border p-2 bg-white" onClick={() => console.log(u?.user)}>
-        Show user
-      </button>
-      <p>{showUser()}</p>
     </div>
   );
 
   createEffect(() => {
-    console.log("Auth", u);
+    console.log("Protected route user:", user_id);
   });
+
   return (
-    <Show when={u.user} fallback={fallback}>
+    <Show when={user()?.id} fallback={fallback}>
       <Outlet />
     </Show>
   );

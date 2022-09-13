@@ -9,7 +9,7 @@ import {
   Show,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext, useAuth } from "../context/auth2";
+import { useAuth } from "../context/auth2";
 import { loadProfile } from "../util/queries";
 import { supabase } from "../util/supabase";
 
@@ -17,6 +17,7 @@ const Profile: Component = () => {
   console.log("Loading profile");
   // const user = useContext(AuthContext);
   const auth = useAuth();
+  const user_id = auth()?.id;
   const [msg, setMsg] = createSignal("");
   const [newProfile, setNewProfile] = createStore<Profile>({
     id: "",
@@ -24,11 +25,11 @@ const Profile: Component = () => {
     username: "",
   });
 
-  const [profile, { refetch }] = createResource(auth.user?.id, loadProfile);
+  const [profile, { refetch }] = createResource(user_id, loadProfile);
 
   // Start off with defaults
   createEffect(() => {
-    console.log(auth.user?.id);
+    console.log(user_id);
     const returnedValue = profile();
     if (returnedValue) setNewProfile(() => returnedValue);
   });
@@ -46,7 +47,7 @@ const Profile: Component = () => {
       let { error } = await supabase
         .from("profiles")
         .update(updates)
-        .match({ id: auth.user?.id });
+        .match({ id: user_id });
 
       if (error) {
         throw error;

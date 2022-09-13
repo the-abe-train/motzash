@@ -11,7 +11,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { useAuth } from "../../context/auth2";
 import {
   createRequest,
   deleteRequest,
@@ -27,14 +27,14 @@ type Props = {
 };
 
 const AddFriendForm: Component<Props> = (props) => {
-  const session = useContext(AuthContext);
+  const user = useAuth();
   const [loadedRequests] = createResource(loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<FriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
 
-  const user_id = createMemo(() => session?.user.id || "");
+  const user_id = createMemo(() => user?.user?.id || "");
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
@@ -50,7 +50,7 @@ const AddFriendForm: Component<Props> = (props) => {
     setLoading(true);
 
     // User entered their own email address
-    if (friendEmail() === session?.user.email) {
+    if (friendEmail() === user?.user?.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
       return;

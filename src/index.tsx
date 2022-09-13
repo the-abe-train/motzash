@@ -5,9 +5,8 @@ import "tailwindcss/tailwind.css";
 
 import "./styles/index.css";
 import App from "./App";
-// import { AuthProvider, loadSession } from "./context/auth";
 import { HavdalahProvider } from "./context/havdalah";
-import { AuthContext, AuthProvider } from "./context/auth2";
+import { AuthProvider } from "./context/auth2";
 import { supabase } from "./util/supabase";
 
 // No clue how top level await works here. Vite???
@@ -19,7 +18,7 @@ console.log(user);
 render(
   () => (
     <Router>
-      <AuthProvider value={{ user: user.data.user }}>
+      <AuthProvider value={user.data.user}>
         <HavdalahProvider value={null}>
           <App />
         </HavdalahProvider>

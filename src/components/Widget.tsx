@@ -1,5 +1,5 @@
 import { children, ParentComponent, Setter, Show, useContext } from "solid-js";
-import { AuthContext } from "../context/auth";
+import { useAuth } from "../context/auth2";
 import Auth from "../pages/Auth";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 const Widget: ParentComponent<Props> = (props) => {
   const c = children(() => props.children);
-  const session = useContext(AuthContext);
+  const user = useAuth();
 
   return (
     <div class="col-span-6 lg:col-span-8 h-full py-2">
@@ -43,7 +43,7 @@ const Widget: ParentComponent<Props> = (props) => {
             </button>
           </Show>
         </div>
-        <Show when={session()} fallback={<Auth inWidget={true} />}>
+        <Show when={user?.user} fallback={<Auth inWidget={true} />}>
           {c()}
         </Show>
       </div>
