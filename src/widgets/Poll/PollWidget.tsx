@@ -8,13 +8,14 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { useAuth } from "../../context/auth2";
+import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { loadVotes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const getHavdalah = useHavdalah();
   const myVoteDefault: Vote = {
     user_id,

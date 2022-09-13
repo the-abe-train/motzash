@@ -1,11 +1,9 @@
-import { Component, createSignal, lazy, onMount, useContext } from "solid-js";
+import { Component, createSignal, lazy } from "solid-js";
 import { Routes, Route, Link } from "@solidjs/router";
 import ProtectedRoute from "./pages/ProtectedRoute";
-import { AuthProvider } from "./context/auth2";
 import Logo from "./assets/icons/Havdalah Dynamic.svg";
 import Footer from "./components/Footer";
 import AuthPassword from "./pages/AuthPassword";
-import { Session } from "@supabase/supabase-js";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Friends = lazy(() => import("./pages/Friends"));
@@ -14,14 +12,7 @@ const About = lazy(() => import("./pages/About"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
 
 const App: Component = () => {
-  // const [session, setSession] = createSignal<Session>();
-  // onMount(async () => {
   console.log("App level loading");
-  //   // const user_id = useAuth()?.user?.id;
-  //   const newSession = await loadSession();
-  //   if (newSession) setSession(newSession);
-  //   console.log("App mounted for user", session()?.user.email);
-  // });
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
 
   return (

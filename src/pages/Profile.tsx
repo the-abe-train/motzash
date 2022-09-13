@@ -9,15 +9,14 @@ import {
   Show,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { useAuth } from "../context/auth2";
+import { AuthContext } from "../context/auth2";
 import { loadProfile } from "../util/queries";
 import { supabase } from "../util/supabase";
 
 const Profile: Component = () => {
   console.log("Loading profile");
-  // const user = useContext(AuthContext);
-  const auth = useAuth();
-  const user_id = auth()?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [msg, setMsg] = createSignal("");
   const [newProfile, setNewProfile] = createStore<Profile>({
     id: "",

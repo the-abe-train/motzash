@@ -19,7 +19,8 @@ import { createStore } from "solid-js/store";
 import { useAuth } from "../context/auth2";
 
 const Friends: Component = () => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase

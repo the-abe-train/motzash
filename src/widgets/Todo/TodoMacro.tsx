@@ -7,13 +7,14 @@ import {
   on,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { useAuth } from "../../context/auth2";
+import { AuthContext } from "../../context/auth2";
 import { loadTodoLists } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 import Checkbox from "../../assets/icons/Checkbox.svg";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [loadedLists, { refetch }] = createResource(loadTodoLists, {
     initialValue: [],
   });

@@ -1,5 +1,6 @@
 import { greg } from "@hebcal/core";
-import { useAuth } from "../context/auth2";
+import { useContext } from "solid-js";
+import { AuthContext } from "../context/auth2";
 import { havdalahTimestamp } from "./datetime";
 import { supabase } from "./supabase";
 
@@ -34,7 +35,8 @@ export const loadWidgets = async () => {
 };
 
 export const loadTodoLists = async () => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const { data, error } = await supabase
     .from("widgets")
     .select("*, todos (*)")
@@ -61,7 +63,8 @@ export const loadTodos = async (widget_id: number) => {
 };
 
 export const loadAllRecipes = async () => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const { data, error } = await supabase
     .from("widgets")
     .select("*, recipe_metadata (*)")
@@ -124,7 +127,8 @@ export const loadVotes = async (widget_id: number) => {
 };
 
 export const loadMyStatus = async () => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const { data, error } = await supabase
     .from("statuses")
     .select("text, city")
@@ -152,7 +156,8 @@ export const loadStatuses = async () => {
 
 // new_col_object:from_col (join_table_cols[])
 export const loadRequestsToMe = async () => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const { data, error } = await supabase
     .from("friendships")
     .select("*, requester:requester_id (id, username)")
@@ -222,7 +227,8 @@ export async function createRequest(friendInfo: Profile, user_id: string) {
 }
 
 export const deleteRequest = async (info: Profile) => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   let friend_id = info["id"];
   if (!friend_id) {
     const friend = await getUser(info);

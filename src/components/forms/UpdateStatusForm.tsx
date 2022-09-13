@@ -21,7 +21,8 @@ type Props = {
 // TODO I think "newStatus" can hold the id and user_id parameters across the
 // board, that makes more sense for the upsert
 const UpdateStatusForm: Component<Props> = (props) => {
-  const user_id = useAuth()?.user?.id;
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const getHavdalah = useHavdalah();
   const [newStatus, setNewStatus] = createStore<Status>({
     text: "",

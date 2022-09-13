@@ -1,16 +1,14 @@
 import { Outlet } from "@solidjs/router";
 import { Component, createEffect, Show, useContext } from "solid-js";
-import { AuthContext, useAuth } from "../context/auth2";
+import { AuthContext } from "../context/auth2";
 import Auth from "./Auth";
 
 const ProtectedRoute: Component = () => {
-  const auth = useAuth();
-  const user_id = auth()?.id;
   const user = useContext(AuthContext);
 
   createEffect(() => {
-    console.log(auth);
-    console.log(user_id);
+    // Without this effect, the reactivity doesn't work.
+    // I hate that, but it's the truth, what you gonna do.
     console.log(user());
   });
 
@@ -21,7 +19,7 @@ const ProtectedRoute: Component = () => {
   );
 
   createEffect(() => {
-    console.log("Protected route user:", user_id);
+    console.log("Protected route user:", user()?.id);
   });
 
   return (
