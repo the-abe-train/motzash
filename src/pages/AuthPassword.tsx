@@ -3,7 +3,7 @@ import { supabase } from "../util/supabase";
 
 const AuthPassword: Component = () => {
   const [loading, setLoading] = createSignal(false);
-  const [email, setEmail] = createSignal("abraham.train@gmail.com");
+  const [email, setEmail] = createSignal("admin@motzash.app");
   const [password, setPassword] = createSignal("penistown");
 
   const loginWithPassword = async (e: Event) => {
@@ -15,9 +15,20 @@ const AuthPassword: Component = () => {
         password: password(),
       });
       if (error) {
+        if (error.message === "Invalid login credentials") {
+          const { error } = await supabase.auth.signUp({
+            email: email(),
+            password: password(),
+          });
+        }
+        if (!error) {
+          return;
+        }
         console.error(error);
         throw error;
       }
+      console.error(error);
+      throw error;
     } catch (error: any) {
       alert(error.error_description || error.message || "Login error");
     } finally {

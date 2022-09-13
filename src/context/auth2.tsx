@@ -1,6 +1,9 @@
 import { Subscription, User } from "@supabase/supabase-js";
 import { createContext, createSignal, onCleanup, createEffect } from "solid-js";
-import { ContextProviderComponent } from "solid-js/types/reactive/signal";
+import {
+  ContextProviderComponent,
+  onMount,
+} from "solid-js/types/reactive/signal";
 import { supabase } from "../util/supabase";
 
 export const AuthContext = createContext<() => User | null>(() => null);
@@ -18,6 +21,13 @@ export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
     setUser(session?.user ?? null);
   }).subscription;
   console.log("Subscription", listener);
+
+  onMount(async () => {
+    console.log("Context mounting");
+    const newUser = await supabase.auth.getUser();
+    setUser(newUser.data.user);
+    console.log("User ID in mounted context:", user()?.id);
+  });
 
   onCleanup(() => {
     listener?.unsubscribe();
