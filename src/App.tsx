@@ -20,7 +20,7 @@ const App: Component = () => {
     // const session = useContext(AuthContext);
     const newSession = await loadSession();
     if (newSession) setSession(newSession);
-    console.log("Session", session);
+    console.log("App mounted session", session()?.access_token);
   });
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
 

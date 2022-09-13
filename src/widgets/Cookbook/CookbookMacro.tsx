@@ -44,7 +44,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
     setLoading(true);
     const name = newRecipeName();
     setNewRecipeName("");
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
     const recipeType = `${newRecipeType().toLowerCase()}_recipe` as WidgetType;
     const { data, error } = await supabase
       .from("widgets")

@@ -35,7 +35,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   async function addPoll(e: Event) {
     e.preventDefault();
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
     const { data, error } = await supabase
       .from("widgets")
       .insert({
@@ -53,7 +53,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   const myPoll = () =>
     polls.find((poll) => {
-      return poll.user_id === session()?.user.id;
+      return poll.user_id === session?.user.id;
     });
 
   const fallback = () =>

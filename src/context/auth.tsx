@@ -16,9 +16,7 @@ import { supabase } from "../util/supabase";
 // The benefit of using a context here is that it's a *reactive* context.
 // Thus when users sign in/out the app updates immediately.
 
-export const AuthContext = createContext<Accessor<AuthSession | null>>(
-  () => null
-);
+export const AuthContext = createContext<AuthSession | null>(null);
 
 export const loadSession = async () => {
   const { data, error } = await supabase.auth.getSession();
@@ -38,6 +36,7 @@ export const AuthProvider: ContextProviderComponent<AuthSession | null> = (
   let listener: Subscription | null;
 
   onMount(() => {
+    console.log("Auth context mounted with session", session()?.access_token);
     listener = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         setSession(session);
@@ -49,7 +48,10 @@ export const AuthProvider: ContextProviderComponent<AuthSession | null> = (
 
   createEffect(() => {
     const returnedValue = data();
-    if (returnedValue) setSession(returnedValue);
+    if (returnedValue) {
+      setSession(returnedValue);
+      console.log("Session set in context effect.");
+    }
     // console.log("Session updated.");
     // console.log("Session", session());
     // console.log("User:", session()?.user);
@@ -61,7 +63,7 @@ export const AuthProvider: ContextProviderComponent<AuthSession | null> = (
   });
 
   return (
-    <AuthContext.Provider value={session}>
+    <AuthContext.Provider value={session()}>
       {props.children}
     </AuthContext.Provider>
   );

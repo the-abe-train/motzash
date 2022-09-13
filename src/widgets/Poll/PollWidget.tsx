@@ -17,7 +17,7 @@ const PollWidget: WidgetComponent = (props) => {
   const session = useContext(AuthContext);
   const getHavdalah = useHavdalah();
   const myVoteDefault: Vote = {
-    user_id: session()?.user.id,
+    user_id: session?.user.id,
     text: "",
     widget_id: props.widget.id,
   };
@@ -41,7 +41,7 @@ const PollWidget: WidgetComponent = (props) => {
         if (returnedValue) {
           setVotes(returnedValue);
           const findMyVote = votes.find(
-            (vote) => vote.user_id === session()?.user.id
+            (vote) => vote.user_id === session?.user.id
           );
           setMyVote(findMyVote || {});
         }
@@ -75,7 +75,7 @@ const PollWidget: WidgetComponent = (props) => {
 
   async function deleteVote(e: Event) {
     e.preventDefault();
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
     const { error } = await supabase
       .from("poll_votes")
       .delete()
@@ -149,7 +149,7 @@ const PollWidget: WidgetComponent = (props) => {
           </div>
         </form>
       </div>
-      <Show when={props.widget.user_id === session()?.user.id}>
+      <Show when={props.widget.user_id === session?.user.id}>
         <button
           onClick={deletePoll}
           class="w-fit py-1 px-2 border border-black rounded

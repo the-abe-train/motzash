@@ -40,7 +40,7 @@ const Friends: Component = () => {
 
   const filteredFriends = () => {
     const friends = statuses.filter(
-      (status) => status.user_id !== session()?.user.id
+      (status) => status.user_id !== session?.user.id
     );
     const ff = friendFilter().toLowerCase();
     const regex = new RegExp(ff, "i");
@@ -48,7 +48,7 @@ const Friends: Component = () => {
   };
 
   const myStatus = () =>
-    statuses.find((status) => status.user_id === session()?.user.id) || null;
+    statuses.find((status) => status.user_id === session?.user.id) || null;
 
   const addStatusButton = (
     <button

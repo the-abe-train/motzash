@@ -35,7 +35,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   async function createNewWidget(e: Event) {
     e.preventDefault();
     setLoading(true);
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
 
     const { data, error } = await supabase
       .from("widgets")

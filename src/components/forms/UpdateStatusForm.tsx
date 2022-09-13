@@ -64,7 +64,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
   const upsertStatus = async (e: Event) => {
     e.preventDefault();
     setLoading2(true);
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
     const havdalah = await getHavdalah();
     const updates = { ...newStatus, user_id, havdalah };
     const { data, error } = await supabase.from("statuses").upsert(updates, {
@@ -84,7 +84,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
     e.preventDefault();
     setLoading2(true);
     console.log("Deleting status");
-    const user_id = session()?.user.id || "";
+    const user_id = session?.user.id || "";
     console.log(user_id);
     const { count, error } = await supabase
       .from("statuses")

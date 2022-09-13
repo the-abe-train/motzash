@@ -34,7 +34,7 @@ const AddFriendForm: Component<Props> = (props) => {
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
 
-  const user_id = createMemo(() => session()?.user.id || "");
+  const user_id = createMemo(() => session?.user.id || "");
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
@@ -50,7 +50,7 @@ const AddFriendForm: Component<Props> = (props) => {
     setLoading(true);
 
     // User entered their own email address
-    if (friendEmail() === session()?.user.email) {
+    if (friendEmail() === session?.user.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
       return;

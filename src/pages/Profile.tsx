@@ -42,7 +42,7 @@ const Profile: Component = () => {
       let { error } = await supabase
         .from("profiles")
         .update(updates)
-        .match({ id: session()?.user.id });
+        .match({ id: session?.user.id });
 
       if (error) {
         throw error;
