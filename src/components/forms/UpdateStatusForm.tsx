@@ -6,7 +6,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
@@ -21,7 +21,8 @@ type Props = {
 // TODO I think "newStatus" can hold the id and user_id parameters across the
 // board, that makes more sense for the upsert
 const UpdateStatusForm: Component<Props> = (props) => {
-  const session = useContext(AuthContext);
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const getHavdalah = useHavdalah();
   const [newStatus, setNewStatus] = createStore<Status>({
     text: "",
@@ -64,7 +65,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
   const upsertStatus = async (e: Event) => {
     e.preventDefault();
     setLoading2(true);
-    const user_id = session?.user.id || "";
+    if (!user_id) return;
     const havdalah = await getHavdalah();
     const updates = { ...newStatus, user_id, havdalah };
     const { data, error } = await supabase.from("statuses").upsert(updates, {
@@ -84,7 +85,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
     e.preventDefault();
     setLoading2(true);
     console.log("Deleting status");
-    const user_id = session?.user.id || "";
     console.log(user_id);
     const { count, error } = await supabase
       .from("statuses")

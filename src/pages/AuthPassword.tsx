@@ -4,14 +4,13 @@ import "../styles/google.css";
 
 const AuthPassword: Component = () => {
   const [loading, setLoading] = createSignal(false);
-  const [email, setEmail] = createSignal("");
-  const [password, setPassword] = createSignal("");
+  const [email, setEmail] = createSignal("abraham.train@gmail.com");
+  const [password, setPassword] = createSignal("penistown");
 
   const loginWithPassword = async (e: Event) => {
     e.preventDefault();
     try {
       setLoading(true);
-      console.log("email", email());
       const { error } = await supabase.auth.signInWithPassword({
         email: email(),
         password: password(),
@@ -55,7 +54,6 @@ const AuthPassword: Component = () => {
         class="flex flex-col space-y-2 py-4 max-w-md"
       >
         <input
-          id="email"
           class="px-2 py-1 flex-grow border border-black max-w-md"
           type="email"
           placeholder="Your email"
@@ -64,7 +62,6 @@ const AuthPassword: Component = () => {
           onChange={(e) => setEmail(e.currentTarget.value)}
         />
         <input
-          id="password"
           class="px-2 py-1 flex-grow border border-black max-w-md"
           type="password"
           required

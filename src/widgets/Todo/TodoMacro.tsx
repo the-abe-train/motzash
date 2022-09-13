@@ -7,13 +7,14 @@ import {
   on,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { AuthContext } from "../../context/auth2";
 import { loadTodoLists } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 import Checkbox from "../../assets/icons/Checkbox.svg";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
-  const session = useContext(AuthContext);
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [loadedLists, { refetch }] = createResource(loadTodoLists, {
     initialValue: [],
   });
@@ -35,7 +36,6 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   async function createNewWidget(e: Event) {
     e.preventDefault();
     setLoading(true);
-    const user_id = session?.user.id || "";
 
     const { data, error } = await supabase
       .from("widgets")

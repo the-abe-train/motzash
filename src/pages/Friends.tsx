@@ -16,10 +16,11 @@ import UpdateStatusForm from "../components/forms/UpdateStatusForm";
 import AddFriendForm from "../components/forms/AddFriendForm";
 import { loadStatuses } from "../util/queries";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../context/auth";
+import { AuthContext } from "../context/auth2";
 
 const Friends: Component = () => {
-  const session = useContext(AuthContext);
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
@@ -39,16 +40,14 @@ const Friends: Component = () => {
   const [friendFilter, setFriendFilter] = createSignal("");
 
   const filteredFriends = () => {
-    const friends = statuses.filter(
-      (status) => status.user_id !== session?.user.id
-    );
+    const friends = statuses.filter((status) => status.user_id !== user_id);
     const ff = friendFilter().toLowerCase();
     const regex = new RegExp(ff, "i");
     return friends.filter((name) => name.profiles.username.match(regex)) || [];
   };
 
   const myStatus = () =>
-    statuses.find((status) => status.user_id === session?.user.id) || null;
+    statuses.find((status) => status.user_id === user_id) || null;
 
   const addStatusButton = (
     <button

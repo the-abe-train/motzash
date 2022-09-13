@@ -7,7 +7,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { AuthContext } from "../../context/auth";
+import { AuthContext } from "../../context/auth2";
 import { loadAllRecipes } from "../../util/queries";
 import { supabase } from "../../util/supabase";
 
@@ -15,7 +15,8 @@ import StarSolid from "../../assets/icons/Star Solid.svg";
 import StarEmpty from "../../assets/icons/Star Empty.svg";
 
 const CookbookMacro: WidgetPreviewComponent = (props) => {
-  const session = useContext(AuthContext);
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [loadedRecipes, { refetch }] = createResource(loadAllRecipes, {
     initialValue: [],
   });
@@ -44,7 +45,6 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
     setLoading(true);
     const name = newRecipeName();
     setNewRecipeName("");
-    const user_id = session?.user.id || "";
     const recipeType = `${newRecipeType().toLowerCase()}_recipe` as WidgetType;
     const { data, error } = await supabase
       .from("widgets")
