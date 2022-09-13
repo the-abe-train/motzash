@@ -9,17 +9,16 @@ import { AuthProvider, loadSession } from "./context/auth";
 import { HavdalahProvider } from "./context/havdalah";
 
 // No clue how top level await works here. Vite???
+console.log("Index level loading.");
 const session = await loadSession();
-console.log("Sessoin", session);
+console.log("Session", session);
 
 render(
   () => (
     <Router>
-      <AuthProvider value={session}>
-        <HavdalahProvider value={null}>
-          <App />
-        </HavdalahProvider>
-      </AuthProvider>
+      <HavdalahProvider value={null}>
+        <App />
+      </HavdalahProvider>
     </Router>
   ),
   document.getElementById("root") as HTMLElement

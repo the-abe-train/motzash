@@ -55,19 +55,19 @@ const Profile: Component = () => {
   };
 
   return (
-    <main class="flex-grow p-4">
+    <main class="flex-grow p-4 space-y-4">
       <Switch>
         <Match when={profile.loading}>
           <p>Loading...</p>
         </Match>
         <Match when={!profile.loading}>
+          <div>Email: {profile()?.email || "no email set"}</div>
           <form onSubmit={updateProfile} class="flex flex-col space-y-3">
-            <div>Email: {profile()?.email || "no email set"}</div>
-            <div class="space-x-2">
+            <div>
               <label for="username">Name</label>
               <input
                 id="username"
-                class="border py-1 px-2"
+                class="px-2 py-1 flex-grow border border-black"
                 type="text"
                 value={newProfile.username || ""}
                 onChange={(e) =>
@@ -75,22 +75,20 @@ const Profile: Component = () => {
                 }
               />
             </div>
-            <div>
-              <button
-                type="submit"
-                class=" rounded p-2
-              bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
-                disabled={profile.loading || loading()}
-              >
-                Update profile
-              </button>
-            </div>
+            <button
+              type="submit"
+              class="w-max py-1 px-2 border border-black rounded
+                bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+              disabled={profile.loading || loading()}
+            >
+              Update profile
+            </button>
           </form>
           <p>{msg()}</p>
           <button
             type="button"
-            class=" rounded p-2 my-2
-        bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+            class="w-max py-1 px-2 border border-black rounded my-6
+            bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
             onClick={() => supabase.auth.signOut()}
             disabled={profile.loading || loading()}
           >

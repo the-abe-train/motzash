@@ -20,7 +20,6 @@ const AuthPassword: Component = () => {
         console.error(error);
         throw error;
       }
-      alert("Check your email for the login link!");
     } catch (error: any) {
       alert(error.error_description || error.message || "Login error");
     } finally {
