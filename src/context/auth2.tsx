@@ -1,9 +1,12 @@
 import { Subscription, User } from "@supabase/supabase-js";
-import { createContext, createSignal, onCleanup, createEffect } from "solid-js";
 import {
-  ContextProviderComponent,
+  createContext,
+  createSignal,
+  onCleanup,
+  createEffect,
   onMount,
-} from "solid-js/types/reactive/signal";
+} from "solid-js";
+import { ContextProviderComponent } from "solid-js/types/reactive/signal";
 import { supabase } from "../util/supabase";
 
 export const AuthContext = createContext<() => User | null>(() => null);
