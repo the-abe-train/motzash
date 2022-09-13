@@ -1,70 +1,66 @@
 import { AuthSession, Subscription } from "@supabase/supabase-js";
-import {
-  createContext,
-  createEffect,
-  createSignal,
-  onCleanup,
-  createResource,
-  onMount,
-} from "solid-js";
-import {
-  Accessor,
-  ContextProviderComponent,
-} from "solid-js/types/reactive/signal";
-import { supabase } from "../util/supabase";
+// import {
+//   createContext,
+//   createEffect,
+//   createSignal,
+//   onCleanup,
+//   createResource,
+//   onMount,
+//   useContext,
+// } from "solid-js";
+// import { ContextProviderComponent } from "solid-js/types/reactive/signal";
+// import { supabase } from "../util/supabase";
 
-// The benefit of using a context here is that it's a *reactive* context.
-// Thus when users sign in/out the app updates immediately.
+// // The benefit of using a context here is that it's a *reactive* context.
+// // Thus when users sign in/out the app updates immediately.
 
-export const AuthContext = createContext<AuthSession | null>(null);
+// export const loadSession = async () => {
+//   const { data, error } = await supabase.auth.getSession();
+//   if (error) return null;
+//   if (!data.session) return null;
+//   return data.session;
+// };
 
-export const loadSession = async () => {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) return null;
-  if (!data.session) return null;
-  return data.session;
-};
+// export const AuthContext = createContext<AuthSession>();
 
-export const AuthProvider: ContextProviderComponent<AuthSession | null> = (
-  props
-) => {
-  const [data, { mutate, refetch }] = createResource(loadSession);
-  // console.log(data());
+// export const AuthProvider: ContextProviderComponent<AuthSession | undefined> = (
+//   props
+// ) => {
+//   const [session, setSession] = createSignal<AuthSession | undefined>(
+//     props.value
+//   );
 
-  const [session, setSession] = createSignal<AuthSession | null>(null);
+//   const [data] = createResource(loadSession);
+//   createEffect(() => {
+//     const returnedValue = data();
+//     if (returnedValue) {
+//       setSession(returnedValue);
+//       console.log("Session set in context effect.");
+//     }
+//   });
 
-  let listener: Subscription | null;
+//   let listener: Subscription | null;
+//   onMount(() => {
+//     listener = supabase.auth.onAuthStateChange(async (_event, session) => {
+//       if (session) {
+//         setSession(session);
+//         return;
+//       }
+//     }).subscription;
+//   });
 
-  onMount(() => {
-    console.log("Auth context mounted with session", session()?.access_token);
-    listener = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        setSession(session);
-        return;
-      }
-      setSession(null);
-    }).subscription;
-  });
+//   onCleanup(() => {
+//     console.log("clean up");
+//     listener?.unsubscribe();
+//   });
 
-  createEffect(() => {
-    const returnedValue = data();
-    if (returnedValue) {
-      setSession(returnedValue);
-      console.log("Session set in context effect.");
-    }
-    // console.log("Session updated.");
-    // console.log("Session", session());
-    // console.log("User:", session()?.user);
-  });
+//   return (
+//     <AuthContext.Provider value={session()}>
+//       {props.children}
+//     </AuthContext.Provider>
+//   );
+// };
 
-  onCleanup(() => {
-    console.log("clean up");
-    listener?.unsubscribe();
-  });
-
-  return (
-    <AuthContext.Provider value={session()}>
-      {props.children}
-    </AuthContext.Provider>
-  );
-};
+// export function useEmail() {
+//   return useContext(AuthContext)?.user.email;
+// }

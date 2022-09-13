@@ -1,12 +1,10 @@
 import { greg } from "@hebcal/core";
 import { useContext } from "solid-js";
-import { AuthContext } from "../context/auth";
+// import { AuthContext } from "../context/auth";
 import { havdalahTimestamp } from "./datetime";
 import { supabase } from "./supabase";
 
-export const loadProfile = async () => {
-  const session = useContext(AuthContext);
-  const user_id = session?.user.id || "";
+export const loadProfile = async (user_id: string) => {
   let { data, error, status } = await supabase
     .from("profiles")
     .select("username, email")

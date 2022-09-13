@@ -1,6 +1,6 @@
 import { Component, createSignal, Show } from "solid-js";
 import { supabase } from "../util/supabase";
-import "../styles/google.css";
+// import "../styles/google.css";
 
 type Props = {
   inWidget: boolean;
