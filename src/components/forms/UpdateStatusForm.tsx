@@ -6,7 +6,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { useAuth } from "../../context/auth2";
+import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { getCity, getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";

@@ -16,7 +16,7 @@ import UpdateStatusForm from "../components/forms/UpdateStatusForm";
 import AddFriendForm from "../components/forms/AddFriendForm";
 import { loadStatuses } from "../util/queries";
 import { createStore } from "solid-js/store";
-import { useAuth } from "../context/auth2";
+import { AuthContext } from "../context/auth2";
 
 const Friends: Component = () => {
   const user = useContext(AuthContext);
