@@ -2,12 +2,12 @@ import {
   createEffect,
   createResource,
   createSignal,
-  For,
   on,
   Show,
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import BarChart from "../../components/BarChart";
 import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { loadVotes } from "../../util/queries";
@@ -19,13 +19,34 @@ const PollWidget: WidgetComponent = (props) => {
   const getHavdalah = useHavdalah();
   const myVoteDefault: Vote = {
     user_id,
-    text: "",
     widget_id: props.widget.id,
   };
 
   // Signals and stores
-  const [votes, setVotes] = createStore<Vote[]>([]);
-  const [myVote, setMyVote] = createStore<Vote>(myVoteDefault);
+  const [votes, setVotes] = createStore({
+    votes: [] as Vote[],
+    get tally() {
+      console.log("These votes", this.votes);
+      return this.votes.reduce((output, { text }) => {
+        console.log("Vote", text);
+        if (text) {
+          console.log("Vote text", text);
+          if (text in output) {
+            output[text] += 1;
+          } else {
+            output[text] = 1;
+          }
+        }
+        console.log("Output?", output);
+        return output;
+      }, {} as ChartData);
+    },
+    get myVote() {
+      return this.votes.find((vote) => vote.user_id === user_id);
+    },
+  });
+
+  const [newVote, setNewVote] = createStore<Vote>(myVoteDefault);
   const [msg, setMsg] = createSignal("");
   const pollAuthor = () => {
     return "profiles" in props.widget
@@ -40,9 +61,8 @@ const PollWidget: WidgetComponent = (props) => {
       if (loadedVotes.state === "ready") {
         const returnedValue = loadedVotes();
         if (returnedValue) {
-          setVotes(returnedValue);
-          const findMyVote = votes.find((vote) => vote.user_id === user_id);
-          setMyVote(findMyVote || {});
+          setVotes("votes", returnedValue);
+          if (votes.myVote) setNewVote(votes.myVote);
         }
       }
     })
@@ -61,8 +81,8 @@ const PollWidget: WidgetComponent = (props) => {
       setMsg("Please turn on location services to cast a vote.");
       return;
     }
-    const newVote = { ...myVote, havdalah };
-    const { error } = await supabase.from("poll_votes").upsert(newVote);
+    const upsert = { ...newVote, havdalah };
+    const { error } = await supabase.from("poll_votes").upsert(upsert);
     if (error) {
       console.error(error.message);
       setMsg("An error occurred, please contact support.");
@@ -82,8 +102,8 @@ const PollWidget: WidgetComponent = (props) => {
       console.error(error.message);
       return;
     }
-    setMyVote("text", "");
-    setMyVote("id", 0);
+    setNewVote("text", "");
+    setNewVote("id", 0);
     refetch();
   }
 
@@ -105,29 +125,31 @@ const PollWidget: WidgetComponent = (props) => {
   }
 
   return (
-    <div class="w-full flex flex-col space-y-4">
+    <div class="w-full flex flex-col space-y-4 max-w-lg ">
       <h2 class="font-header text-2xl">{props.widget.name}</h2>
       <p>Poll created by {pollAuthor()}</p>
       <div>
         <h3 class="text-lg font-bold">Votes</h3>
-        <For each={votes}>
-          {(vote) => {
-            return <p>{vote.text}</p>;
+        <Show when={votes.tally} keyed>
+          {(tally) => {
+            // Need the tally to be keyed or it won't re-reneder when the
+            // data updates.
+            return <BarChart data={tally} />;
           }}
-        </For>
+        </Show>
       </div>
-      <div class="">
+      <div class="max-w-md ">
         <h3 class="text-lg font-bold">Change vote</h3>
         <form onSubmit={upsertVote}>
           <input
             name="vote"
             class="px-2 py-1 border border-black w-full"
-            value={myVote?.text || ""}
-            onChange={(e) => setMyVote("text", e.currentTarget.value)}
+            value={votes.myVote?.text || ""}
+            onChange={(e) => setNewVote("text", e.currentTarget.value)}
             required
           />
           <div class="my-1 space-x-2">
-            <Show when={myVote.id}>
+            <Show when={votes.myVote?.id}>
               <button
                 class="w-fit py-1 px-2 border border-black rounded
            bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
@@ -142,7 +164,7 @@ const PollWidget: WidgetComponent = (props) => {
          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
               type="submit"
             >
-              {myVote.id ? "Update" : "Submit"}
+              {votes.myVote?.id ? "Update" : "Submit"}
             </button>
           </div>
         </form>

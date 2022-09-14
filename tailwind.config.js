@@ -13,7 +13,7 @@ module.exports = {
         yellow2: "#FCFCCF",
         ghost: '#F8F4F9',
         blue: "#30C5FF",
-        coral: "rgba(255, 107, 127, 1)",
+        coral: "#FF6B7F",
         orange: "#FFBC42"
       },
       dropShadow: {

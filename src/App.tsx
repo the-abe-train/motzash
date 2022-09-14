@@ -14,6 +14,19 @@ const Sidebar = lazy(() => import("./components/Sidebar"));
 const App: Component = () => {
   console.log("App level loading");
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
+  const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
+  const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
+  const dashboardProps = {
+    activeMacro,
+    setActiveMacro,
+    activeWidget,
+    setActiveWidget,
+  };
+
+  function resetDashboard() {
+    setActiveWidget(null);
+    setActiveMacro(null);
+  }
 
   return (
     <div class="flex flex-col justify-between bg-yellow2 h-full">
@@ -22,11 +35,16 @@ const App: Component = () => {
           class="flex justify-between items-center h-14 
         container w-full px-2 md:px-4 lg:px-6 mx-auto"
         >
-          <div class="flex space-x-2 items-center">
-            <object data={Logo} width={25}></object>
-            <span class="font-header text-3xl">Motzash</span>
-          </div>
-          <div class="md:flex space-x-10 text-lg hidden">
+          <Link href="/">
+            <div class="flex space-x-2 items-center" onClick={resetDashboard}>
+              <object data={Logo} width={25}></object>
+              <span class="font-header text-3xl">Motzash</span>
+            </div>
+          </Link>
+          <div
+            class="md:flex space-x-10 text-lg hidden"
+            onClick={resetDashboard}
+          >
             <Link class="hover:font-bold" href="/">
               Dashboard
             </Link>
@@ -74,14 +92,14 @@ const App: Component = () => {
         </nav>
       </header>
       <main
-        class="grid grid-cols-6 md:grid-cols-12 gap-6 relative
+        class="grid grid-cols-6 md:grid-cols-12 gap-6 lg:gap-y-0 relative
      bg-yellow2 min-h-screen overflow-x-hidden
      container w-full px-2 md:px-4 lg:px-6 mx-auto"
       >
         <Sidebar sidebarOpen={sidebarOpen()} setSidebarOpen={setSidebarOpen} />
 
         <Routes>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" element={<Dashboard {...dashboardProps} />} />
           <Route path="/signInWithPassword" component={AuthPassword} />
           <Route path="/about" component={About} />
           <Route path="" component={ProtectedRoute}>

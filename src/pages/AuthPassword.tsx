@@ -3,7 +3,7 @@ import { supabase } from "../util/supabase";
 
 const AuthPassword: Component = () => {
   const [loading, setLoading] = createSignal(false);
-  const [email, setEmail] = createSignal("admin@motzash.app");
+  const [email, setEmail] = createSignal("abe.train@the-abe-train.com");
   const [password, setPassword] = createSignal("penistown");
 
   const loginWithPassword = async (e: Event) => {
@@ -52,6 +52,22 @@ const AuthPassword: Component = () => {
       email: email(),
       password: password(),
     });
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+    console.log(data);
+  };
+
+  const signUp = async () => {
+    const { error, data } = await supabase.auth.signUp({
+      email: email(),
+      password: password(),
+    });
+    if (error) {
+      console.error(error);
+      throw error;
+    }
     console.log(data);
   };
 
@@ -89,6 +105,13 @@ const AuthPassword: Component = () => {
           </button>
         </div>
       </form>
+      <button
+        onClick={signUp}
+        class="p-2 border border-black rounded drop-shadow-small 
+            w-fit bg-ghost hover:drop-shadow-none transition-all"
+      >
+        Sign up
+      </button>
       <button
         onClick={resetPassword}
         class="p-2 border border-black rounded drop-shadow-small 

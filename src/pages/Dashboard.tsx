@@ -1,4 +1,5 @@
 import {
+  Accessor,
   Component,
   createEffect,
   createResource,
@@ -6,6 +7,7 @@ import {
   For,
   Match,
   on,
+  Setter,
   Show,
   Switch,
 } from "solid-js";
@@ -28,15 +30,20 @@ import PollMacro from "../widgets/Poll/PollMacro";
 import PollWidget from "../widgets/Poll/PollWidget";
 import Calendar from "../components/Calendar";
 
-const Dashboard: Component = () => {
+type Props = {
+  activeMacro: Accessor<WidgetMacro | null>;
+  setActiveMacro: Setter<WidgetMacro | null>;
+  activeWidget: Accessor<Widget | null>;
+  setActiveWidget: Setter<Widget | null>;
+};
+
+const Dashboard: Component<Props> = (props) => {
   const [widgets, { refetch }] = createResource(loadWidgets);
   const [myStatus] = createResource(loadMyStatus);
-  const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
-  const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);
 
   createEffect(
-    on(activeMacro, () => {
-      if (!activeMacro() && !activeWidget()) {
+    on(props.activeMacro, () => {
+      if (!props.activeMacro() && !props.activeWidget()) {
         refetch();
       }
     })
@@ -55,7 +62,7 @@ const Dashboard: Component = () => {
         widgets: [],
       },
       {
-        name: "Todos",
+        name: "To-do lists",
         type: "todo",
         colour: "#30C5FF",
         preview: TodoPreview,
@@ -111,15 +118,18 @@ const Dashboard: Component = () => {
     <>
       <Calendar />
       <Switch fallback={<div>Loading...</div>}>
-        <Match when={!activeMacro()}>
+        <Match when={!props.activeMacro()}>
           <Show when={widgetsReduced()} fallback={<p>Loading...</p>}>
             <For each={widgetsReduced()}>
               {(macro) => {
                 return (
-                  <WidgetPreview macro={macro} setActiveMacro={setActiveMacro}>
+                  <WidgetPreview
+                    macro={macro}
+                    setActiveMacro={props.setActiveMacro}
+                  >
                     {macro.preview({
                       widgets: macro.widgets,
-                      setActiveWidget,
+                      setActiveWidget: props.setActiveWidget,
                       isActive: false,
                     })}
                   </WidgetPreview>
@@ -164,28 +174,28 @@ const Dashboard: Component = () => {
             </div>
           </Show>
         </Match>
-        <Match when={activeMacro()} keyed>
+        <Match when={props.activeMacro()} keyed>
           {(activeMacro) => {
             return (
               <Widget
-                setActiveMacro={setActiveMacro}
-                setActiveWidget={setActiveWidget}
+                setActiveMacro={props.setActiveMacro}
+                setActiveWidget={props.setActiveWidget}
                 activeMacro={activeMacro}
-                activeWidget={activeWidget()}
+                activeWidget={props.activeWidget()}
               >
                 <Switch fallback={<div>Loading...</div>}>
-                  <Match when={!activeWidget()}>
+                  <Match when={!props.activeWidget()}>
                     {activeMacro.macro({
                       widgets: activeMacro.widgets,
-                      setActiveWidget,
+                      setActiveWidget: props.setActiveWidget,
                       isActive: true,
                     })}
                   </Match>
-                  <Match when={activeWidget()} keyed>
+                  <Match when={props.activeWidget()} keyed>
                     {(activeWidget) =>
                       activeMacro.component({
                         widget: activeWidget,
-                        setActiveWidget,
+                        setActiveWidget: props.setActiveWidget,
                       })
                     }
                   </Match>

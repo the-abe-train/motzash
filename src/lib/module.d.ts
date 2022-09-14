@@ -48,6 +48,13 @@ declare global {
     widgets: Widget[];
   };
 
+  type ChartData = Record<string, number>;
+
+  // type ChartData = {
+  //   labels: string[];
+  //   values: number[];
+  // };
+
   // API
   type Geoname = {
     adminCode1: string;

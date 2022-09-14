@@ -163,7 +163,7 @@ const TodoWidget: WidgetComponent = (props) => {
       <h2 class="text-2xl font-header">{props.widget.name}</h2>
       <Show when={loadedTodos.state === "ready"} fallback={<p>Loading...</p>}>
         <div class="m-2 flex flex-col space-y-2">
-          <For each={todos}>
+          <For each={todos} fallback={<p>Add a task using the form below!</p>}>
             {(item, idx) => {
               return (
                 <form
@@ -214,8 +214,12 @@ const TodoWidget: WidgetComponent = (props) => {
           Submit
         </button>
       </form>
-      <button class="bg-ghost p-1 my-20" onClick={deleteTodoList}>
-        Delete todo list
+      <button
+        class="mt-16 w-fit px-2 border border-black rounded
+      bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        onClick={deleteTodoList}
+      >
+        Delete list
       </button>
     </ErrorBoundary>
   );

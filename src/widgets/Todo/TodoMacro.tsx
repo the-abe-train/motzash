@@ -15,9 +15,7 @@ import Checkbox from "../../assets/icons/Checkbox.svg";
 const TodoMacro: WidgetPreviewComponent = (props) => {
   const user = useContext(AuthContext);
   const user_id = user()?.id;
-  const [loadedLists, { refetch }] = createResource(loadTodoLists, {
-    initialValue: [],
-  });
+  const [loadedLists, { refetch }] = createResource(loadTodoLists);
   const [lists, setLists] = createStore<TodoList[]>([]);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
@@ -32,6 +30,9 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
       }
     })
   );
+
+  const fallback = () =>
+    loadedLists.state === "ready" ? <p>No lists yet.</p> : <p>Loading...</p>;
 
   async function createNewWidget(e: Event) {
     e.preventDefault();
@@ -62,22 +63,13 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
     <div class="mx-2 space-y-8">
       <div class="space-y-4">
         <h2 class="font-header text-2xl">Lists</h2>
-        <For
-          each={lists}
-          fallback={
-            loadedLists.state === "ready" ? (
-              <p>No lists yet.</p>
-            ) : (
-              <p>Loading...</p>
-            )
-          }
-        >
+        <For each={lists} fallback={fallback}>
           {(todoList) => {
             const tasksLeft = todoList.todos.filter(
               (todo) => !todo.is_complete
             ).length;
             const tasksLeftString = `(${tasksLeft} task${
-              tasksLeft > 1 ? "s" : ""
+              tasksLeft !== 1 ? "s" : ""
             } left)`;
             return (
               <div

@@ -20,7 +20,15 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     initialValue: [],
   });
 
-  const [polls, setPolls] = createStore<Poll[]>([]);
+  const [polls, setPolls] = createStore({
+    polls: [] as Poll[],
+    get myPoll() {
+      return this.polls.find((poll) => poll.user_id === user_id);
+    },
+    get othersPolls() {
+      return this.polls.filter((poll) => poll.user_id !== user_id);
+    },
+  });
   const [newPoll, setNewPoll] = createSignal("");
   const [msg, setMsg] = createSignal("");
 
@@ -28,7 +36,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     on(loadedPolls, () => {
       if (loadedPolls.state === "ready") {
         const returnedValue = loadedPolls();
-        if (returnedValue) setPolls(returnedValue);
+        if (returnedValue) setPolls("polls", returnedValue);
         setMsg("");
       }
     })
@@ -51,20 +59,15 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     if (data) props.setActiveWidget(data[0]);
   }
 
-  const myPoll = () =>
-    polls.find((poll) => {
-      return poll.user_id === user_id;
-    });
-
   const fallback = () =>
-    loadedPolls.state === "ready" ? <p>No polls yet.</p> : <p>Loading...</p>;
+    loadedPolls.state !== "ready" ? <p>Loading...</p> : <p>No polls yet.</p>;
 
   return (
     <div class="flex flex-col space-y-6">
       <div class="space-y-3">
         <h2 class="font-header text-2xl">My Poll</h2>
         <Show
-          when={myPoll()}
+          when={polls.myPoll}
           keyed
           fallback={
             <form onSubmit={addPoll} class="flex w-full space-x-3">
@@ -102,7 +105,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
       </div>
       <div class="space-y-3">
         <h2 class="font-header text-2xl">Friends' Polls</h2>
-        <For each={polls} fallback={fallback}>
+        <For each={polls.othersPolls} fallback={fallback}>
           {(poll) => {
             if (poll.id !== props.widgets[0]?.id)
               return (
