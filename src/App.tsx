@@ -91,23 +91,27 @@ const App: Component = () => {
           </button>
         </nav>
       </header>
-      <main
-        class="grid grid-cols-6 md:grid-cols-12 gap-6 lg:gap-y-0 relative
-     bg-yellow2 min-h-screen overflow-x-hidden
+      <div class="min-h-screen ">
+        <main
+          class="grid grid-cols-6 md:grid-cols-12 gap-6 lg:gap-y-0 relative
+     bg-yellow2 overflow-x-hidden
      container w-full px-2 md:px-4 lg:px-6 mx-auto"
-      >
-        <Sidebar sidebarOpen={sidebarOpen()} setSidebarOpen={setSidebarOpen} />
-
-        <Routes>
-          <Route path="/" element={<Dashboard {...dashboardProps} />} />
-          <Route path="/signInWithPassword" component={AuthPassword} />
-          <Route path="/about" component={About} />
-          <Route path="" component={ProtectedRoute}>
-            <Route path="/friends" component={Friends} />
-            <Route path="/profile" component={Profile} />
-          </Route>
-        </Routes>
-      </main>
+        >
+          <Sidebar
+            sidebarOpen={sidebarOpen()}
+            setSidebarOpen={setSidebarOpen}
+          />
+          <Routes>
+            <Route path="/" element={<Dashboard {...dashboardProps} />} />
+            <Route path="/signInWithPassword" component={AuthPassword} />
+            <Route path="/about" component={About} />
+            <Route path="" component={ProtectedRoute}>
+              <Route path="/friends" component={Friends} />
+              <Route path="/profile" component={Profile} />
+            </Route>
+          </Routes>
+        </main>
+      </div>
       <Footer />
     </div>
   );
