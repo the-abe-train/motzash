@@ -146,8 +146,7 @@ export const loadStatuses = async () => {
     .select("*, profiles (username)")
     .gte("havdalah", greg.greg2abs(new Date()));
   if (error) {
-    if (error.code === "PGRST116") return null;
-    return null;
+    return [];
   }
   return data as FriendStatus[];
 };

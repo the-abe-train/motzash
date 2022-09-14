@@ -155,7 +155,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
           Update status
         </button>
         <button
-          class="px-2 py-1 w-fit text-coral border border-coral rounded drop-shadow-small 
+          class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
                 bg-yellow2 hover:drop-shadow-none transition-all"
           onClick={deleteStatus}
           disabled={loading2()}

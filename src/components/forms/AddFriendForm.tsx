@@ -48,6 +48,7 @@ const AddFriendForm: Component<Props> = (props) => {
     // Manage form
     e.preventDefault();
     setLoading(true);
+    setMsg("Sending request...");
 
     // User entered their own email address
     if (friendEmail() === user()?.email) {
@@ -225,7 +226,8 @@ const AddFriendForm: Component<Props> = (props) => {
         />
         <button
           type="submit"
-          class="w-fit px-2 py-1 border rounded bg-slate-200 hover:bg-slate-300 active:bg-slate-400 disabled:bg-slate-400"
+          class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
+          bg-yellow2 hover:drop-shadow-none transition-all"
           disabled={loading3()}
         >
           Remove

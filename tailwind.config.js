@@ -14,6 +14,7 @@ module.exports = {
         ghost: '#F8F4F9',
         blue: "#30C5FF",
         coral: "#FF6B7F",
+        coral2: "#A80016",
         orange: "#FFBC42"
       },
       dropShadow: {

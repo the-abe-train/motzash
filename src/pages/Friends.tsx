@@ -24,30 +24,34 @@ const Friends: Component = () => {
   const [showScreen, setShowScreen] = createSignal<ScreenName>("Map");
 
   // Get data from Supabase
-  const [loadedStatuses, { refetch: refetchStatuses }] =
-    createResource(loadStatuses);
-  const [statuses, setStatuses] = createStore<FriendStatus[]>([]);
+  const [loadedStatuses, { refetch }] = createResource(loadStatuses);
+  const [statuses, setStatuses] = createStore({
+    statuses: [] as FriendStatus[],
+    get myStatus() {
+      return this.statuses.find((status) => status.user_id === user_id) || null;
+    },
+    get filteredStatuses() {
+      const friends = this.statuses.filter(
+        (status) => status.user_id !== user_id
+      );
+      const ff = friendFilter().toLowerCase();
+      const regex = new RegExp(ff, "i");
+      return (
+        friends.filter((name) => name.profiles.username.match(regex)) || []
+      );
+    },
+  });
   createEffect(() => {
     if (loadedStatuses.state === "ready") {
       const returnedValue = loadedStatuses();
       if (returnedValue) {
-        setStatuses(returnedValue);
+        setStatuses("statuses", returnedValue);
       }
     }
   });
 
   const [focus, setFocus] = createSignal<FriendStatus | MyStatus | null>(null);
   const [friendFilter, setFriendFilter] = createSignal("");
-
-  const filteredFriends = () => {
-    const friends = statuses.filter((status) => status.user_id !== user_id);
-    const ff = friendFilter().toLowerCase();
-    const regex = new RegExp(ff, "i");
-    return friends.filter((name) => name.profiles.username.match(regex)) || [];
-  };
-
-  const myStatus = () =>
-    statuses.find((status) => status.user_id === user_id) || null;
 
   const addStatusButton = (
     <button
@@ -60,13 +64,12 @@ const Friends: Component = () => {
     </button>
   );
 
-  // TODO RESPONSIVE HIDE
   return (
     <>
       <Show when={showScreen() === "Map" || window.innerWidth > 768}>
         <div class="col-span-6 lg:col-span-4 space-y-5 py-2">
           <h1 class="text-2xl font-header">Your Status</h1>
-          <Show when={myStatus()} fallback={addStatusButton} keyed>
+          <Show when={statuses.myStatus} fallback={addStatusButton} keyed>
             {(status) => {
               return (
                 <>
@@ -102,7 +105,7 @@ const Friends: Component = () => {
               </button>
               <button
                 type="reset"
-                class="px-2 py-1 w-fit text-coral border border-coral rounded drop-shadow-small 
+                class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
               bg-yellow2 hover:drop-shadow-none transition-all"
                 onClick={() => setFriendFilter("")}
               >
@@ -110,7 +113,7 @@ const Friends: Component = () => {
               </button>
             </form>
             <For
-              each={filteredFriends()}
+              each={statuses.filteredStatuses}
               fallback={<p>No friend statuses to show.</p>}
             >
               {(status) => {
@@ -136,8 +139,8 @@ const Friends: Component = () => {
             fallback={<p>Loading map...</p>}
           >
             <FriendMap
-              friends={filteredFriends()}
-              user={myStatus()}
+              friends={statuses.filteredStatuses}
+              user={statuses.myStatus}
               focus={focus()}
               setFocus={setFocus}
             />
@@ -145,15 +148,15 @@ const Friends: Component = () => {
         </Match>
         <Match when={showScreen() === "UpdateStatus"}>
           <UpdateStatusForm
-            myStatus={myStatus()}
+            myStatus={statuses.myStatus}
             setShowScreen={setShowScreen}
-            refetch={refetchStatuses}
+            refetch={refetch}
           />
         </Match>
         <Match when={showScreen() === "AddFriend"}>
           <AddFriendForm
             setShowScreen={setShowScreen}
-            refetchStatuses={refetchStatuses}
+            refetchStatuses={refetch}
           />
         </Match>
       </Switch>
