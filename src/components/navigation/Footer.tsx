@@ -1,6 +1,6 @@
-import Logo from "../assets/icons/Havdalah Static Footer.svg";
-import Twitter from "../assets/icons/Twitter.svg";
-import Github from "../assets/icons/Github.svg";
+import Logo from "../../assets/icons/Havdalah Static Footer.svg";
+import Twitter from "../../assets/icons/Twitter.svg";
+import Github from "../../assets/icons/Github.svg";
 import { Link } from "@solidjs/router";
 
 export default () => {
@@ -48,16 +48,24 @@ export default () => {
           </p>
         </section>
         <section class="space-x-4 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
-          <Link class="hover:font-bold" href="/">
+          <Link class="hover:font-bold" href="/" data-cy="footer-dashboard">
             Dashboard
           </Link>
-          <Link class="hover:font-bold" href="/friends">
+          <Link
+            class="hover:font-bold"
+            href="/friends"
+            data-cy="footer-friends"
+          >
             Friends
           </Link>
-          <Link class="hover:font-bold" href="/about">
+          <Link class="hover:font-bold" href="/about" data-cy="footer-about">
             About
           </Link>
-          <Link class="hover:font-bold" href="/profile">
+          <Link
+            class="hover:font-bold"
+            href="/profile"
+            data-cy="footer-profile"
+          >
             Profile
           </Link>
         </section>

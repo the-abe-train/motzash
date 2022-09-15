@@ -8,9 +8,15 @@ import App from "./App";
 import { SpaceTimeProvider } from "./context/havdalah";
 import { AuthProvider } from "./context/auth2";
 import { supabase } from "./util/supabase";
+import { UserResponse } from "@supabase/supabase-js";
 
 // No clue how top level await works here. Vite???
-const user = await supabase.auth.getUser();
+let user: UserResponse;
+try {
+  user = await supabase.auth.getUser();
+} catch (e) {
+  console.log("User not authenticated.");
+}
 
 render(
   () => (
