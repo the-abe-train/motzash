@@ -1,4 +1,6 @@
 import { createClient, Session } from "@supabase/supabase-js";
+import { useContext } from "solid-js";
+import { AuthContext } from "../../src/context/auth2";
 
 type Props = {
   user: string;
@@ -6,20 +8,21 @@ type Props = {
   key: string;
 };
 
-export async function getUserSession({ user, url, key }: Props) {
+export async function getUserSession({ user: username, url, key }: Props) {
   const supabase = createClient(url, key);
+  // const contextUser = useContext(AuthContext);
 
   // cache session data for each user name
   const sessions = {} as Record<string, Session | null>;
   // Create a session for the user if it doesn't exist already.
-  if (!sessions[user]) {
+  if (!sessions[username]) {
     const { data } = await supabase.auth.signInWithPassword({
-      email: `${user}@example.com`,
+      email: `${username}@example.com`,
       password: "password",
     });
 
-    sessions[user] = data.session;
+    sessions[username] = data.session;
   }
 
-  return sessions[user];
+  return sessions[username];
 }

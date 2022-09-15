@@ -29,15 +29,15 @@ const AuthPassword: Component = () => {
         password: password(),
       });
       if (error) {
-        if (error.message === "Invalid login credentials") {
-          const { error } = await supabase.auth.signUp({
-            email: email(),
-            password: password(),
-          });
-        }
-        if (!error) {
-          return;
-        }
+        // if (error.message === "Invalid login credentials") {
+        //   const { error } = await supabase.auth.signUp({
+        //     email: email(),
+        //     password: password(),
+        //   });
+        // }
+        // if (!error) {
+        //   return;
+        // }
         console.error(error);
         throw error;
       }
@@ -110,6 +110,7 @@ const AuthPassword: Component = () => {
             class="p-2 border border-black rounded drop-shadow-small 
             w-fit bg-ghost hover:drop-shadow-none disabled:drop-shadow-none transition-all"
             aria-live="polite"
+            data-cy="sign-in-btn"
           >
             Sign in
           </button>
