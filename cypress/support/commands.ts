@@ -25,13 +25,31 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(user: string): Chainable<void>;
+      drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>;
+      dismiss(
+        subject: string,
+        options?: Partial<TypeOptions>
+      ): Chainable<Element>;
+      // visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
+    }
+  }
+}
+
+Cypress.Commands.add("login", (user) => {
+  cy.task("getUserSession", {
+    user,
+    url: Cypress.env("SUPABASE_URL"),
+    key: Cypress.env("SUPABASE_ANON_KEY"),
+  }).then((sessionData) => {
+    localStorage.setItem(
+      "sb-localhost-auth-token",
+      JSON.stringify(sessionData)
+    );
+  });
+});
+
+export default {};

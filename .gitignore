@@ -5,3 +5,4 @@ db.txt
 .netlify
 issues.md
 dev-dist/
+cypress.env.json
