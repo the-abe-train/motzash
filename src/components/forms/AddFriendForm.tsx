@@ -35,8 +35,6 @@ const AddFriendForm: Component<Props> = (props) => {
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
 
-  console.log("user id", user_id());
-
   // Turn the async data into a store rather than a signal
   createEffect(() => {
     const returnedValue = loadedRequests();
@@ -119,7 +117,6 @@ const AddFriendForm: Component<Props> = (props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
       setMsg("Friend request sent!");
     }
     setLoading(false);

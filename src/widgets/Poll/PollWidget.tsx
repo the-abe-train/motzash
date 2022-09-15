@@ -27,18 +27,14 @@ const PollWidget: WidgetComponent = (props) => {
   const [votes, setVotes] = createStore({
     votes: [] as Vote[],
     get tally() {
-      console.log("These votes", this.votes);
       return this.votes.reduce((output, { text }) => {
-        console.log("Vote", text);
         if (text) {
-          console.log("Vote text", text);
           if (text in output) {
             output[text] += 1;
           } else {
             output[text] = 1;
           }
         }
-        console.log("Output?", output);
         return output;
       }, {} as ChartData);
     },

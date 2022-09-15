@@ -1,6 +1,4 @@
 import { greg } from "@hebcal/core";
-import { useContext } from "solid-js";
-import { AuthContext } from "../context/auth2";
 import { havdalahTimestamp } from "./datetime";
 import { supabase } from "./supabase";
 
@@ -11,11 +9,9 @@ export const loadProfile = async (user_id: string) => {
     .eq("id", user_id)
     .single();
   if (error && status !== 406) {
-    console.log(error);
     throw error;
   }
   if (!data || error) {
-    console.log(error);
     throw error;
   }
   return data;
@@ -27,10 +23,10 @@ export const loadWidgets = async () => {
     .select("*, profiles (username)");
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
-  console.log(data);
+  data;
   return data as Widget[];
 };
 
@@ -41,7 +37,7 @@ export const loadTodoLists = async () => {
     .eq("type", "todo");
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
   return data as TodoList[];
@@ -54,7 +50,7 @@ export const loadTodos = async (widget_id: number) => {
     .eq("widget_id", widget_id);
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
   return data as Todo[];
@@ -68,7 +64,7 @@ export const loadAllRecipes = async (user_id: string) => {
     .in("type", ["meat_recipe", "dairy_recipe", "pareve_recipe"]);
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
   return data as Recipe[];
@@ -84,10 +80,10 @@ export const loadRecipe = async (widget_id: number) => {
     .single();
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
-  console.log(data);
+  data;
   return data as Recipe;
 };
 
@@ -98,10 +94,9 @@ export const loadPolls = async () => {
     .eq("type", "poll");
   if (error) {
     if (error.code === "PGRST116") return null;
-    console.log(error);
+
     return null;
   }
-  console.log("Polls", data);
   return data as Poll[];
 };
 
@@ -201,7 +196,6 @@ export async function createRequest(friendInfo: Profile, user_id: string) {
     console.log("Cannot create friendship, no friend id found.");
     return false;
   }
-  console.log("Sending friend request to", friend_id, "from", user_id);
   const { error } = await supabase.from("friendships").insert({
     requester_id: user_id,
     friend_id,
@@ -219,8 +213,6 @@ export const deleteRequest = async (user_id: string, info: Profile) => {
     const friend = await getUser(info);
     friend_id = friend?.id;
   }
-  console.log("user id", user_id);
-  console.log("friend id", friend_id);
   const { error, count } = await supabase
     .from("friendships")
     .delete()

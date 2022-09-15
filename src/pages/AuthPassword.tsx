@@ -44,7 +44,6 @@ const AuthPassword: Component = () => {
       console.error(error);
       throw error;
     }
-    console.log(data);
   };
 
   const updatePassword = async () => {
@@ -56,7 +55,6 @@ const AuthPassword: Component = () => {
       console.error(error);
       throw error;
     }
-    console.log(data);
   };
 
   const signUp = async () => {
@@ -68,7 +66,6 @@ const AuthPassword: Component = () => {
       console.error(error);
       throw error;
     }
-    console.log(data);
   };
 
   return (

@@ -10,10 +10,7 @@ import { AuthProvider } from "./context/auth2";
 import { supabase } from "./util/supabase";
 
 // No clue how top level await works here. Vite???
-console.log("Index level loading.");
 const user = await supabase.auth.getUser();
-console.log(user);
-// console.log("Session", session?.user.email);
 
 render(
   () => (

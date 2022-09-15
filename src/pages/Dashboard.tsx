@@ -55,7 +55,6 @@ const Dashboard: Component<Props> = (props) => {
 
   // All widgets categorized by type
   const widgetsReduced = createMemo(() => {
-    console.log("Calculating widgets reduced");
     const widgetMacros = [
       {
         name: "Cookbook",

@@ -5,11 +5,11 @@ import Auth from "./Auth";
 
 const ProtectedRoute: Component = () => {
   const user = useContext(AuthContext);
-  console.log("Loading protected route");
 
   createEffect(() => {
     // Without this effect, the reactivity doesn't work.
     // I hate that, but it's the truth, what you gonna do.
+    // TODO I think user needs to be a store to fix this
     console.log(user()?.id);
   });
 
@@ -18,10 +18,6 @@ const ProtectedRoute: Component = () => {
       <Auth inWidget={false} />
     </div>
   );
-
-  createEffect(() => {
-    console.log("Protected route user:", user()?.id);
-  });
 
   return (
     <Show when={user()?.id} fallback={fallback}>

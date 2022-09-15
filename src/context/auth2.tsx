@@ -20,16 +20,12 @@ export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
   let listener: Subscription | null;
 
   listener = supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log("Subscription updated!");
     setUser(session?.user ?? null);
   }).subscription;
-  console.log("Subscription", listener);
 
   onMount(async () => {
-    console.log("Context mounting");
     const newUser = await supabase.auth.getUser();
     setUser(newUser.data.user);
-    console.log("User ID in mounted context:", user()?.id);
   });
 
   onCleanup(() => {

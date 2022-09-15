@@ -12,7 +12,6 @@ const About = lazy(() => import("./pages/About"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
 
 const App: Component = () => {
-  console.log("App level loading");
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [activeMacro, setActiveMacro] = createSignal<WidgetMacro | null>(null);
   const [activeWidget, setActiveWidget] = createSignal<Widget | null>(null);

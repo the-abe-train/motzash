@@ -5,8 +5,6 @@ import {
   BarController,
   CategoryScale,
   LinearScale,
-  FontSpec,
-  ScaleOptionsByType,
 } from "chart.js";
 
 type Props = {
@@ -14,7 +12,6 @@ type Props = {
 };
 
 const BarChart: Component<Props> = (props) => {
-  console.log(props.data);
   let canvas: HTMLCanvasElement;
   onMount(() => {
     const ctx = canvas.getContext("2d");

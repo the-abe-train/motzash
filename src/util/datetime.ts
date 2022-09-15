@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 
 export const generateCalendar = (location: Location | null) => {
   // TODO check if this flag accounts for chag, or if I need a separate one
-  console.log("Generating calendar");
   const calOptions: CalOptions = {
     isHebrewYear: false,
     candlelighting: true,

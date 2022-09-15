@@ -15,7 +15,6 @@ import { loadProfile } from "../util/queries";
 import { supabase } from "../util/supabase";
 
 const Profile: Component = () => {
-  console.log("Loading profile");
   const user = useContext(AuthContext);
   const navigate = useNavigate();
   const user_id = user()?.id;
@@ -30,7 +29,6 @@ const Profile: Component = () => {
 
   // Start off with defaults
   createEffect(() => {
-    console.log(user_id);
     const returnedValue = profile();
     if (returnedValue) setNewProfile(() => returnedValue);
   });

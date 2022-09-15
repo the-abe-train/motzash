@@ -68,8 +68,6 @@ export function latLngMidpoint(coords: Coords[]) {
     return set.lat && set.lng;
   }) as Coords[];
 
-  console.log("Real coords", realCoords);
-
   // Convert lat/lng (must be in radians) to Cartesian coordinates for each location.
   const cartesians = realCoords.map(({ lat, lng }) => {
     const radLat = degToRad(lat);
@@ -80,8 +78,6 @@ export function latLngMidpoint(coords: Coords[]) {
       z: Math.sin(radLat),
     };
   });
-
-  console.log("Cartesians", cartesians);
 
   // Compute average x, y and z coordinates.
   const avg = cartesians.reduce(
@@ -95,8 +91,6 @@ export function latLngMidpoint(coords: Coords[]) {
     { x: 0, y: 0, z: 0 }
   );
 
-  console.log("Average point", avg);
-
   // Convert average x, y, z coordinate to latitude and longitude.
   const hyp = Math.sqrt(avg.x ** 2 + avg.y ** 2);
   const resultRad = {
@@ -104,7 +98,6 @@ export function latLngMidpoint(coords: Coords[]) {
     lng: Math.atan2(avg.y, avg.x),
   };
   const output = { lat: radToDeg(resultRad.lat), lng: radToDeg(resultRad.lng) };
-  console.log("output", output);
 
   return output;
 }

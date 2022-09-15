@@ -86,7 +86,6 @@ const Calendar: Component = () => {
 
   function chooseBgColour(day: CalendarDay) {
     const regex = /^[^:]*/;
-    // console.log(day.date.date(), day.holidays);
     if (!day.holidays) return "white";
     for (let h of day.holidays) {
       const holiday = h.desc.match(regex);
@@ -113,8 +112,6 @@ const Calendar: Component = () => {
   function chooseTextColour(day: CalendarDay) {
     return day.date.month() === displayDay().month() ? "inherit" : "#666";
   }
-
-  console.log(thisCandleLighting());
 
   const getLocationButton = (
     <>

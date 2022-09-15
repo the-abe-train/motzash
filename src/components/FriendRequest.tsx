@@ -27,7 +27,6 @@ const FriendRequestComponent: Component<Props> = (props) => {
     }
     props.refetchStatuses();
     props.setFriendRequests(idx, "accepted", true);
-    console.log("Friend reqs", props.allRequests);
     setLoading2(false);
   }
 

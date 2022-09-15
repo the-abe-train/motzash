@@ -91,7 +91,6 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
           | undefined;
         if (metadata && recipe_id === recipe.id) {
           const newMetadata = { ...metadata, favourite: newValue };
-          console.log("New metadata", newMetadata);
           return { ...recipe, recipe_metadata: [newMetadata] };
         }
         return { ...recipe };
@@ -148,7 +147,6 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
                         src={isFavourite ? StarSolid : StarEmpty}
                         alt="Star"
                         onClick={(e) => {
-                          console.log("Current setting:", isFavourite);
                           setFavourite(metadata.id, !isFavourite, recipe.id);
                           e.stopPropagation();
                         }}

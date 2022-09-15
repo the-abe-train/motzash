@@ -15,7 +15,6 @@ const Auth: Component<Props> = (props) => {
     e.preventDefault();
     try {
       setLoading(true);
-      console.log("email", email());
       const { error } = await supabase.auth.signInWithOtp({ email: email() });
       if (error) {
         console.error(error);

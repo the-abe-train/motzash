@@ -22,15 +22,12 @@ const TodoWidget: WidgetComponent = (props) => {
   // Turn the async data into a store rather than a signal
   createEffect(
     on(loadedTodos, async () => {
-      console.log("Running effect");
       const returnedValue = loadedTodos();
       if (returnedValue) {
         const updatedValues = returnedValue.map((todo) => {
           const expired = (todo.havdalah || 0) < greg.greg2abs(new Date());
-          console.log("Expired?", expired);
           return { ...todo, is_complete: expired ? false : todo.is_complete };
         });
-        console.log("Updated values", updatedValues);
         sortTodos({ replacement: updatedValues });
       }
     })
@@ -43,7 +40,6 @@ const TodoWidget: WidgetComponent = (props) => {
     deleteItem?: Todo;
     changeItem?: Todo;
   }) => {
-    console.log("Sorting todos");
     setTodos((prev) => {
       let newArray = change?.newItems
         ? [...prev, ...change?.newItems]
@@ -111,7 +107,6 @@ const TodoWidget: WidgetComponent = (props) => {
 
   async function changeName(e: Event, item: Todo) {
     e.preventDefault();
-    console.log("item", item);
     const { error } = await supabase.from("todos").update(item);
     if (error) {
       console.error(error.message);
@@ -128,7 +123,6 @@ const TodoWidget: WidgetComponent = (props) => {
       is_complete: !item.is_complete,
       havdalah,
     };
-    console.log("Toggling todo:", newTodo);
     sortTodos({ changeItem: newTodo });
     const { error } = await supabase.from("todos").update(newTodo);
     if (error) {
@@ -154,8 +148,6 @@ const TodoWidget: WidgetComponent = (props) => {
   }
 
   const [inputTodo, setInputTodo] = createSignal("");
-
-  console.log("Rata Die today", greg.greg2abs(dayjs().toDate()));
 
   return (
     <ErrorBoundary

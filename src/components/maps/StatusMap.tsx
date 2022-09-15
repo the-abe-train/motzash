@@ -42,7 +42,6 @@ const FriendMap: Component<Props> = (props) => {
   createEffect(() => {
     try {
       if (props.newStatus.location) {
-        console.log("Changing pin location");
         const { lat, lng } = props.newStatus.location;
         marker.setLngLat([lng, lat]);
       }

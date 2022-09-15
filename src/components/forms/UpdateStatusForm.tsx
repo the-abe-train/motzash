@@ -61,7 +61,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
   }
 
   const upsertStatus = async (e: Event) => {
-    console.log("Clicked button");
     e.preventDefault();
     setLoading2(true);
     setMsg("");
@@ -77,7 +76,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
       setLoading2(false);
       return;
     }
-    console.log("Updating status");
 
     const havdalah = await getHavdalah();
     const updates = { ...newStatus, user_id, havdalah };
@@ -97,13 +95,10 @@ const UpdateStatusForm: Component<Props> = (props) => {
   const deleteStatus = async (e: Event) => {
     e.preventDefault();
     setLoading2(true);
-    console.log("Deleting status");
-    console.log(user_id);
     const { count, error } = await supabase
       .from("statuses")
       .delete()
       .eq("user_id", user_id || "");
-    console.log(count, "rows deleted.");
     if (error) console.error(error);
     setLoading2(false);
     props.refetch();
