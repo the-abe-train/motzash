@@ -10,6 +10,7 @@ import {
   Setter,
   Show,
   Switch,
+  useContext,
 } from "solid-js";
 import { Link } from "@solidjs/router";
 
@@ -29,6 +30,7 @@ import PollPreview from "../widgets/Poll/PollPreview";
 import PollMacro from "../widgets/Poll/PollMacro";
 import PollWidget from "../widgets/Poll/PollWidget";
 import Calendar from "../components/Calendar";
+import { AuthContext } from "../context/auth2";
 
 type Props = {
   activeMacro: Accessor<WidgetMacro | null>;
@@ -38,8 +40,10 @@ type Props = {
 };
 
 const Dashboard: Component<Props> = (props) => {
+  const user = useContext(AuthContext);
+  const user_id = user()?.id;
   const [widgets, { refetch }] = createResource(loadWidgets);
-  const [myStatus] = createResource(loadMyStatus);
+  const [myStatus] = createResource(user_id, loadMyStatus);
 
   createEffect(
     on(props.activeMacro, () => {

@@ -28,13 +28,14 @@ type Props = {
 
 const AddFriendForm: Component<Props> = (props) => {
   const user = useContext(AuthContext);
-  const [loadedRequests] = createResource(loadRequestsToMe);
+  const user_id = createMemo(() => user()?.id || "");
+  const [loadedRequests] = createResource(user_id(), loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<FriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
   const [msg, setMsg] = createSignal("");
   const [loading, setLoading] = createSignal(false);
 
-  const user_id = createMemo(() => user()?.id || "");
+  console.log("user id", user_id());
 
   // Turn the async data into a store rather than a signal
   createEffect(() => {
@@ -131,7 +132,9 @@ const AddFriendForm: Component<Props> = (props) => {
   async function removeFriendship(e: Event) {
     e.preventDefault();
     setLoading3(true);
-    const requestDeleted = await deleteRequest({ email: deleteEmail() });
+    const requestDeleted = await deleteRequest(user_id(), {
+      email: deleteEmail(),
+    });
     if (requestDeleted) {
       setMsg2("Friendship deleted.");
     } else {
@@ -174,7 +177,7 @@ const AddFriendForm: Component<Props> = (props) => {
           type="submit"
           disabled={loading()}
           class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
-          bg-blue hover:drop-shadow-none transition-all"
+          bg-blue hover:drop-shadow-none disabled:drop-shadow-none transition-all"
         >
           Send request
         </button>
@@ -227,7 +230,7 @@ const AddFriendForm: Component<Props> = (props) => {
         <button
           type="submit"
           class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
-          bg-yellow2 hover:drop-shadow-none transition-all"
+          bg-yellow2 hover:drop-shadow-none  disabled:drop-shadow-none transition-all"
           disabled={loading3()}
         >
           Remove

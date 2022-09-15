@@ -31,7 +31,7 @@ export async function getCity({ lat, lng }: Coords) {
     body: JSON.stringify({ lat, lng }),
   });
   const { city } = await res.json();
-  return city;
+  return city as string;
 }
 
 async function getTimezone({ lat, lng }: Coords) {

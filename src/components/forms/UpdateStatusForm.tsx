@@ -6,6 +6,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import Filter from "bad-words";
 import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
 import { getCity, getLocation } from "../../util/location";
@@ -18,13 +19,12 @@ type Props = {
   refetch: () => any | Promise<any> | undefined | null;
 };
 
-// TODO I think "newStatus" can hold the id and user_id parameters across the
-// board, that makes more sense for the upsert
 const UpdateStatusForm: Component<Props> = (props) => {
   const user = useContext(AuthContext);
   const user_id = user()?.id;
   const getHavdalah = useHavdalah();
   const [newStatus, setNewStatus] = createStore<Status>({
+    user_id,
     text: "",
     location: null,
     city: "",
@@ -42,7 +42,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
   const [loading, setLoading] = createSignal(false);
   const [loading2, setLoading2] = createSignal(false);
   const [msg, setMsg] = createSignal("");
-
   async function updateLocation() {
     setLoading(true);
     setMsg("");
@@ -53,7 +52,6 @@ const UpdateStatusForm: Component<Props> = (props) => {
         return;
       }
       const city = await getCity(coords);
-      console.log(city);
       setNewStatus("location", coords);
       setNewStatus("city", city);
     } catch (e) {
@@ -63,9 +61,24 @@ const UpdateStatusForm: Component<Props> = (props) => {
   }
 
   const upsertStatus = async (e: Event) => {
+    console.log("Clicked button");
     e.preventDefault();
     setLoading2(true);
+    setMsg("");
     if (!user_id) return;
+    const filter = new Filter();
+    if (filter.isProfane(newStatus?.city || "")) {
+      setMsg("Please remove the profanity from the city name.");
+      setLoading2(false);
+      return;
+    }
+    if (filter.isProfane(newStatus?.text || "")) {
+      setMsg("Please remove the profanity from your status.");
+      setLoading2(false);
+      return;
+    }
+    console.log("Updating status");
+
     const havdalah = await getHavdalah();
     const updates = { ...newStatus, user_id, havdalah };
     const { data, error } = await supabase.from("statuses").upsert(updates, {
@@ -115,7 +128,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
           <input
             type="text"
             name="text"
-            class="border border-black w-full md:w-80 md:h-full px-2"
+            class="border border-black w-full md:w-80 px-2"
             value={newStatus.text || ""}
             required
             onChange={(e) => setNewStatus("text", e.currentTarget.value)}
@@ -149,14 +162,15 @@ const UpdateStatusForm: Component<Props> = (props) => {
         <button
           type="submit"
           class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
-          bg-blue hover:drop-shadow-none transition-all"
+          bg-blue hover:drop-shadow-none disabled:drop-shadow-none transition-all"
           disabled={loading2()}
         >
           Update status
         </button>
         <button
+          type="button"
           class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
-                bg-yellow2 hover:drop-shadow-none transition-all"
+                bg-yellow2 hover:drop-shadow-none disabled:drop-shadow-none  transition-all"
           onClick={deleteStatus}
           disabled={loading2()}
         >

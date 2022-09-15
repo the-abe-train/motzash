@@ -7,6 +7,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import Filter from "bad-words";
 import BarChart from "../../components/BarChart";
 import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
@@ -79,6 +80,11 @@ const PollWidget: WidgetComponent = (props) => {
     const havdalah = await getHavdalah();
     if (!havdalah) {
       setMsg("Please turn on location services to cast a vote.");
+      return;
+    }
+    const filter = new Filter();
+    if (filter.isProfane(newVote.text || "")) {
+      setMsg("Please remove the profanity from your vote.");
       return;
     }
     const upsert = { ...newVote, havdalah };

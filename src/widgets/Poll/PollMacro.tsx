@@ -8,6 +8,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import Filter from "bad-words";
 import { AuthContext } from "../../context/auth2";
 import { loadPolls } from "../../util/queries";
 import { supabase } from "../../util/supabase";
@@ -44,6 +45,11 @@ const PollMacro: WidgetPreviewComponent = (props) => {
 
   async function addPoll(e: Event) {
     e.preventDefault();
+    const filter = new Filter();
+    if (filter.isProfane(newPoll() || "")) {
+      setMsg("Please remove the profanity from the poll name.");
+      return;
+    }
     const { data, error } = await supabase
       .from("widgets")
       .insert({

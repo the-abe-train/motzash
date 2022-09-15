@@ -17,7 +17,7 @@ import StarEmpty from "../../assets/icons/Star Empty.svg";
 const CookbookMacro: WidgetPreviewComponent = (props) => {
   const user = useContext(AuthContext);
   const user_id = user()?.id;
-  const [loadedRecipes, { refetch }] = createResource(loadAllRecipes, {
+  const [loadedRecipes, { refetch }] = createResource(user_id, loadAllRecipes, {
     initialValue: [],
   });
 

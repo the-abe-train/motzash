@@ -103,7 +103,7 @@ const Profile: Component = () => {
         <button
           type="button"
           class="w-max py-1 px-2 border border-black rounded my-6
-            bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+            bg-ghost drop-shadow-small hover:drop-shadow-none disabled:drop-shadow-none transition-all"
           onClick={() => supabase.auth.signOut()}
           disabled={profile.loading || loading()}
         >
@@ -111,8 +111,9 @@ const Profile: Component = () => {
         </button>
         <button
           type="button"
-          class="w-max py-1 px-2 border border-black rounded my-6
-            bg-yellow2 text-coral border-coral drop-shadow-small hover:drop-shadow-none transition-all"
+          class="w-max py-1 px-2 border rounded my-6
+            bg-yellow2 text-coral border-coral drop-shadow-small 
+            hover:drop-shadow-none disabled:drop-shadow-none transition-all"
           onClick={deleteUser}
           disabled={profile.loading || loading()}
         >

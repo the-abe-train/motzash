@@ -92,16 +92,13 @@ const App: Component = () => {
           </button>
         </nav>
       </header>
-      <div class="min-h-screen ">
+      <div class="min-h-screen relative">
+        <Sidebar sidebarOpen={sidebarOpen()} setSidebarOpen={setSidebarOpen} />
         <main
           class="grid grid-cols-6 md:grid-cols-12 gap-6 lg:gap-y-0 relative
      bg-yellow2 overflow-x-hidden
      container w-full px-2 md:px-4 lg:px-6 mx-auto"
         >
-          <Sidebar
-            sidebarOpen={sidebarOpen()}
-            setSidebarOpen={setSidebarOpen}
-          />
           <Routes>
             <Route path="/" element={<Dashboard {...dashboardProps} />} />
             <Route path="/signInWithPassword" component={AuthPassword} />

@@ -60,9 +60,7 @@ export const loadTodos = async (widget_id: number) => {
   return data as Todo[];
 };
 
-export const loadAllRecipes = async () => {
-  const user = useContext(AuthContext);
-  const user_id = user()?.id;
+export const loadAllRecipes = async (user_id: string) => {
   const { data, error } = await supabase
     .from("widgets")
     .select("*, recipe_metadata (*)")
@@ -122,9 +120,7 @@ export const loadVotes = async (widget_id: number) => {
   return data as Vote[];
 };
 
-export const loadMyStatus = async () => {
-  const user = useContext(AuthContext);
-  const user_id = user()?.id;
+export const loadMyStatus = async (user_id: string) => {
   const { data, error } = await supabase
     .from("statuses")
     .select("text, city")
@@ -132,7 +128,6 @@ export const loadMyStatus = async () => {
     .gte("havdalah", greg.greg2abs(new Date()))
     .single();
   if (error) {
-    if (error.code === "PGRST116") return null;
     return null;
   }
   return data;
@@ -150,9 +145,7 @@ export const loadStatuses = async () => {
 };
 
 // new_col_object:from_col (join_table_cols[])
-export const loadRequestsToMe = async () => {
-  const user = useContext(AuthContext);
-  const user_id = user()?.id;
+export const loadRequestsToMe = async (user_id: string) => {
   const { data, error } = await supabase
     .from("friendships")
     .select("*, requester:requester_id (id, username)")
@@ -173,6 +166,7 @@ export async function getUser(info: Profile) {
     .eq(key, info[key])
     .single();
   if (error || !data) {
+    console.error("No user found with this info.", info);
     return null;
   }
   return data;
@@ -219,14 +213,14 @@ export async function createRequest(friendInfo: Profile, user_id: string) {
   return true;
 }
 
-export const deleteRequest = async (info: Profile) => {
-  const user = useContext(AuthContext);
-  const user_id = user()?.id;
+export const deleteRequest = async (user_id: string, info: Profile) => {
   let friend_id = info["id"];
   if (!friend_id) {
     const friend = await getUser(info);
     friend_id = friend?.id;
   }
+  console.log("user id", user_id);
+  console.log("friend id", friend_id);
   const { error, count } = await supabase
     .from("friendships")
     .delete()

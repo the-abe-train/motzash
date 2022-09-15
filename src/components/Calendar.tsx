@@ -117,35 +117,40 @@ const Calendar: Component = () => {
   console.log(thisCandleLighting());
 
   const getLocationButton = (
-    <button
-      class="flex justify-around bg-yellow1 p-3 border-2 border-black 
+    <>
+      <button
+        class="flex justify-around bg-yellow1 p-3 border-2 border-black 
 rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none
 disabled:drop-shadow-none transition-all"
-      onClick={getTimes}
-      disabled={loading()}
-    >
-      <div class="flex items-center space-x-2">
-        <img
-          src={ShabbatCandles}
-          alt="Shabbat candles"
-          width={30}
-          height={40}
-        />
-        <p>
-          <span class="text-center font-bold hidden sm:inline">Click</span>
-          <span class="text-center font-bold sm:hidden">Tap</span>{" "}
-          <span class="text-center font-bold">
-            to get Candle Lighting times using your live location!
-          </span>
-        </p>
-        <img
-          src={HavdalahCandles}
-          alt="Havdalah candles"
-          width={30}
-          height={40}
-        />
-      </div>
-    </button>
+        onClick={getTimes}
+        disabled={loading()}
+      >
+        <div class="flex items-center space-x-2">
+          <img
+            src={ShabbatCandles}
+            alt="Shabbat candles"
+            width={30}
+            height={40}
+          />
+          <p>
+            <span class="text-center font-bold hidden sm:inline">Click</span>
+            <span class="text-center font-bold sm:hidden">Tap</span>{" "}
+            <span class="text-center font-bold">
+              to get Candle Lighting times using your live location!
+            </span>
+          </p>
+          <img
+            src={HavdalahCandles}
+            alt="Havdalah candles"
+            width={30}
+            height={40}
+          />
+        </div>
+      </button>
+      <Show when={loading()}>
+        <p>Getting candle lighting times...</p>
+      </Show>
+    </>
   );
 
   return (
