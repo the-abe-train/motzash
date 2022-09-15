@@ -102,7 +102,7 @@ const Friends: Component = () => {
                 <button
                   type="submit"
                   class="px-2 w-fit border border-black rounded drop-shadow-small 
-              bg-blue hover:drop-shadow-none transition-all"
+              bg-ghost hover:drop-shadow-none transition-all"
                 >
                   Filter
                 </button>
