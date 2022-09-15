@@ -1,7 +1,5 @@
 import { Component, createSignal, Show } from "solid-js";
 import { supabase } from "../util/supabase";
-import AuthPassword from "./AuthPassword";
-// import "../styles/google.css";
 
 type Props = {
   inWidget: boolean;
@@ -69,8 +67,9 @@ const Auth: Component<Props> = (props) => {
           <div class="flex justify-around items-center">
             <button
               type="submit"
+              disabled={loading()}
               class="p-2 border border-black rounded drop-shadow-small 
-            w-fit bg-ghost hover:drop-shadow-none transition-all"
+              w-fit bg-ghost hover:drop-shadow-none disabled:drop-shadow-none transition-all"
               aria-live="polite"
             >
               Send magic link
@@ -85,9 +84,9 @@ const Auth: Component<Props> = (props) => {
             <button
               type="button"
               onClick={googleOauthLogin}
-              // class="login-with-google-btn"
+              disabled={loading()}
               class="p-2 border border-black rounded drop-shadow-small
-                          w-fit bg-ghost hover:drop-shadow-none transition-all"
+                          w-fit bg-ghost hover:drop-shadow-none disabled:drop-shadow-none transition-all"
             >
               <img
                 src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4="

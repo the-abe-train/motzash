@@ -44,7 +44,7 @@ const Widget: ParentComponent<Props> = (props) => {
             </button>
           </Show>
         </div>
-        <Show when={user()?.id} fallback={<Auth inWidget={true} />}>
+        <Show when={user?.id} fallback={<Auth inWidget={true} />}>
           <div class="my-4 lg:my-0">{c()}</div>
         </Show>
       </div>

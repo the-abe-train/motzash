@@ -21,7 +21,7 @@ type Props = {
 
 const UpdateStatusForm: Component<Props> = (props) => {
   const user = useContext(AuthContext);
-  const user_id = user()?.id;
+  const user_id = user?.id;
   const getHavdalah = useHavdalah();
   const [newStatus, setNewStatus] = createStore<Status>({
     user_id,

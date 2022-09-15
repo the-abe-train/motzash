@@ -10,7 +10,7 @@ const ProtectedRoute: Component = () => {
     // Without this effect, the reactivity doesn't work.
     // I hate that, but it's the truth, what you gonna do.
     // TODO I think user needs to be a store to fix this
-    console.log(user()?.id);
+    console.log(user.id);
   });
 
   const fallback = (
@@ -20,7 +20,7 @@ const ProtectedRoute: Component = () => {
   );
 
   return (
-    <Show when={user()?.id} fallback={fallback}>
+    <Show when={user.id} fallback={fallback}>
       <Outlet />
     </Show>
   );

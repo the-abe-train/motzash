@@ -17,7 +17,7 @@ import { supabase } from "../util/supabase";
 const Profile: Component = () => {
   const user = useContext(AuthContext);
   const navigate = useNavigate();
-  const user_id = user()?.id;
+  const user_id = user?.id;
   const [msg, setMsg] = createSignal("");
   const [newProfile, setNewProfile] = createStore<Profile>({
     id: "",
@@ -63,7 +63,7 @@ const Profile: Component = () => {
     const res = await fetch("/api/deleteUser", {
       method: "POST",
       body: JSON.stringify({
-        user_id: user()?.id,
+        user_id: user?.id,
       }),
     });
     if (res.ok) {

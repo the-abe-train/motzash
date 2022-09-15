@@ -14,7 +14,7 @@ import Checkbox from "../../assets/icons/Checkbox.svg";
 
 const TodoMacro: WidgetPreviewComponent = (props) => {
   const user = useContext(AuthContext);
-  const user_id = user()?.id;
+  const user_id = user?.id;
   const [loadedLists, { refetch }] = createResource(loadTodoLists);
   const [lists, setLists] = createStore<TodoList[]>([]);
   const [inputName, setInputName] = createSignal("");

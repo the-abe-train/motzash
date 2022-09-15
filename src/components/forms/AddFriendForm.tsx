@@ -28,7 +28,7 @@ type Props = {
 
 const AddFriendForm: Component<Props> = (props) => {
   const user = useContext(AuthContext);
-  const user_id = createMemo(() => user()?.id || "");
+  const user_id = createMemo(() => user?.id || "");
   const [loadedRequests] = createResource(user_id(), loadRequestsToMe);
   const [friendRequests, setFriendRequests] = createStore<FriendRequest[]>([]);
   const [friendEmail, setFriendEmail] = createSignal("");
@@ -50,7 +50,7 @@ const AddFriendForm: Component<Props> = (props) => {
     setMsg("Sending request...");
 
     // User entered their own email address
-    if (friendEmail() === user()?.email) {
+    if (friendEmail() === user?.email) {
       setMsg("You cannot send a request to yourself.");
       setLoading(false);
       return;

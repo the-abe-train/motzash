@@ -16,7 +16,7 @@ import Poll from "../../assets/icons/Poll.svg";
 
 const PollMacro: WidgetPreviewComponent = (props) => {
   const user = useContext(AuthContext);
-  const user_id = user()?.id;
+  const user_id = user?.id;
   const [loadedPolls] = createResource(loadPolls, {
     initialValue: [],
   });

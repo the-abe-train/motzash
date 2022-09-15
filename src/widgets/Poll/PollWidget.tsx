@@ -16,7 +16,7 @@ import { supabase } from "../../util/supabase";
 
 const PollWidget: WidgetComponent = (props) => {
   const user = useContext(AuthContext);
-  const user_id = user()?.id;
+  const user_id = user?.id;
   const getHavdalah = useHavdalah();
   const myVoteDefault: Vote = {
     user_id,

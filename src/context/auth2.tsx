@@ -1,31 +1,35 @@
 import { Subscription, User } from "@supabase/supabase-js";
-import {
-  createContext,
-  createSignal,
-  onCleanup,
-  createEffect,
-  onMount,
-} from "solid-js";
+import { createContext, onCleanup, onMount, createEffect } from "solid-js";
+import { createStore } from "solid-js/store";
 import { ContextProviderComponent } from "solid-js/types/reactive/signal";
 import { supabase } from "../util/supabase";
 
-export const AuthContext = createContext<() => User | null>(() => null);
+export const AuthContext = createContext<Partial<User>>({});
 
 // User signal is misleading. It doesn't update when signed out/in because the
 // object doesn't change, only its properties.
 
 export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
-  const [user, setUser] = createSignal<User | null>(props.value);
+  const [user, setUser] = createStore<Partial<User>>(props.value || {});
 
   let listener: Subscription | null;
 
   listener = supabase.auth.onAuthStateChange(async (event, session) => {
-    setUser(session?.user ?? null);
+    console.log("Auth state change");
+    console.log(event);
+    console.log(session?.user);
+    setUser(session?.user || { id: "" });
   }).subscription;
 
   onMount(async () => {
     const newUser = await supabase.auth.getUser();
-    setUser(newUser.data.user);
+    setUser(newUser.data.user || { id: "" });
+    console.log(user);
+  });
+
+  createEffect(() => {
+    console.log("User has changed");
+    console.log(user.id);
   });
 
   onCleanup(() => {
