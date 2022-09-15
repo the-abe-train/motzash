@@ -5,7 +5,7 @@ import "tailwindcss/tailwind.css";
 
 import "./styles/index.css";
 import App from "./App";
-import { HavdalahProvider } from "./context/havdalah";
+import { SpaceTimeProvider } from "./context/havdalah";
 import { AuthProvider } from "./context/auth2";
 import { supabase } from "./util/supabase";
 
@@ -19,9 +19,9 @@ render(
   () => (
     <Router>
       <AuthProvider value={user.data.user}>
-        <HavdalahProvider value={null}>
+        <SpaceTimeProvider value={{ location: null, havdalah: null }}>
           <App />
-        </HavdalahProvider>
+        </SpaceTimeProvider>
       </AuthProvider>
     </Router>
   ),

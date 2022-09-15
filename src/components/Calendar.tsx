@@ -16,29 +16,29 @@ import ShabbatCandles from "../assets/icons/Candles Static.svg";
 import dayjs from "dayjs";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { getHebcalLocation } from "../util/location";
+import { useLocation } from "../context/havdalah";
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
 
 const Calendar: Component = () => {
-  const [location, setLocation] = createSignal<Location | null | undefined>();
+  const [pageLocation, setPageLocation] = createSignal<Location | null>(null);
+  const { location: contextLocation, getLocation } = useLocation();
   const [displayDay, setDisplayDay] = createSignal(dayjs());
   const [loading, setLoading] = createSignal(false);
 
-  // onMount(async () => {
-  //   const newLocation = await getHebcalLocation();
-  //   setLocation(newLocation);
-  // });
+  onMount(() => {
+    setPageLocation(contextLocation());
+  });
 
   async function getTimes() {
     setLoading(true);
-    const newLocation = await getHebcalLocation();
-    setLocation(newLocation);
+    const newLocation = await getLocation();
+    setPageLocation(newLocation);
     setLoading(false);
   }
 
   const cal = createMemo(() => {
-    if (location()) return generateCalendar(location()!);
+    if (pageLocation()) return generateCalendar(pageLocation()!);
   });
 
   const weeks = createMemo(() => {
@@ -119,9 +119,10 @@ const Calendar: Component = () => {
   const getLocationButton = (
     <button
       class="flex justify-around bg-yellow1 p-3 border-2 border-black 
-rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none transition-all"
+rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none
+disabled:drop-shadow-none transition-all"
       onClick={getTimes}
-      disabled={loading() || !!location()}
+      disabled={loading()}
     >
       <div class="flex items-center space-x-2">
         <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
@@ -139,12 +140,12 @@ rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none transit
 
   return (
     <div
-      class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-5 
+      class="col-span-6 lg:col-span-4 row-span-2 flex flex-col space-y-10
     py-2"
     >
-      <h1 class="text-2xl font-header">Candle Lighting</h1>
-      <Show when={location()} fallback={getLocationButton}>
-        <Show when={thisCandleLighting()} fallback={<p>Loading...</p>}>
+      <div class="space-y-3">
+        <h1 class="text-2xl font-header">Candle Lighting</h1>
+        <Show when={pageLocation()} fallback={getLocationButton}>
           <div class="flex flex-col space-y-3">
             <p>
               Get ready! {thisCandleLighting()?.event} starts on{" "}
@@ -166,7 +167,7 @@ rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none transit
             </div>
           </div>
         </Show>
-      </Show>
+      </div>
       <div class="flex flex-col space-y-3 w-full">
         <h1 class="text-2xl font-header">Calendar</h1>
         <div

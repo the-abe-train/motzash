@@ -67,69 +67,73 @@ const Friends: Component = () => {
   return (
     <>
       <Show when={showScreen() === "Map" || window.innerWidth > 768}>
-        <div class="col-span-6 lg:col-span-4 space-y-5 py-2">
-          <h1 class="text-2xl font-header">Your Status</h1>
-          <Show when={statuses.myStatus} fallback={addStatusButton} keyed>
-            {(status) => {
-              return (
-                <>
-                  <Status status={status} focus={focus} setFocus={setFocus} />
-                  <button
-                    class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
-                         bg-blue hover:drop-shadow-none transition-all"
-                    onClick={() => setShowScreen("UpdateStatus")}
-                  >
-                    Edit status
-                  </button>
-                </>
-              );
-            }}
-          </Show>
-          <h1 class="text-2xl font-header">Your Friends</h1>
-          <div class="flex flex-col space-y-3 max-h-[60vh]">
-            <form class="flex space-x-4" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                name="filter"
-                class="border border-black px-2 w-full"
-                placeholder="Filter by name"
-                value={friendFilter()}
-                onChange={(e) => setFriendFilter(e.currentTarget.value)}
-              />
-              <button
-                type="submit"
-                class="px-2 w-fit border border-black rounded drop-shadow-small 
-              bg-blue hover:drop-shadow-none transition-all"
-              >
-                Filter
-              </button>
-              <button
-                type="reset"
-                class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
-              bg-yellow2 hover:drop-shadow-none transition-all"
-                onClick={() => setFriendFilter("")}
-              >
-                Clear
-              </button>
-            </form>
-            <For
-              each={statuses.filteredStatuses}
-              fallback={<p>No friend statuses to show.</p>}
-            >
+        <div class="col-span-6 lg:col-span-4 space-y-10 py-2">
+          <div class="space-y-4">
+            <h1 class="text-2xl font-header">Your Status</h1>
+            <Show when={statuses.myStatus} fallback={addStatusButton} keyed>
               {(status) => {
                 return (
-                  <Status status={status} focus={focus} setFocus={setFocus} />
+                  <>
+                    <Status status={status} focus={focus} setFocus={setFocus} />
+                    <button
+                      class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+                         bg-blue hover:drop-shadow-none transition-all"
+                      onClick={() => setShowScreen("UpdateStatus")}
+                    >
+                      Edit status
+                    </button>
+                  </>
                 );
               }}
-            </For>
+            </Show>
           </div>
-          <button
-            class="p-2 h-20 w-full border border-black rounded drop-shadow-small 
+          <div class="space-y-4">
+            <h1 class="text-2xl font-header">Your Friends</h1>
+            <div class="flex flex-col space-y-3 max-h-[60vh]">
+              <form class="flex space-x-4" onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="text"
+                  name="filter"
+                  class="border border-black px-2 w-full"
+                  placeholder="Filter by name"
+                  value={friendFilter()}
+                  onChange={(e) => setFriendFilter(e.currentTarget.value)}
+                />
+                <button
+                  type="submit"
+                  class="px-2 w-fit border border-black rounded drop-shadow-small 
+              bg-blue hover:drop-shadow-none transition-all"
+                >
+                  Filter
+                </button>
+                <button
+                  type="reset"
+                  class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
+              bg-yellow2 hover:drop-shadow-none transition-all"
+                  onClick={() => setFriendFilter("")}
+                >
+                  Clear
+                </button>
+              </form>
+              <For
+                each={statuses.filteredStatuses}
+                fallback={<p>No friend statuses to show.</p>}
+              >
+                {(status) => {
+                  return (
+                    <Status status={status} focus={focus} setFocus={setFocus} />
+                  );
+                }}
+              </For>
+            </div>
+            <button
+              class="p-2 h-20 w-full border border-black rounded drop-shadow-small 
           mx-auto text-xl bg-blue hover:drop-shadow-none transition-all"
-            onClick={() => setShowScreen("AddFriend")}
-          >
-            Add friend
-          </button>
+              onClick={() => setShowScreen("AddFriend")}
+            >
+              Add friend
+            </button>
+          </div>
         </div>
       </Show>
       <Switch>

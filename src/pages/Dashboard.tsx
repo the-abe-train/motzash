@@ -2,6 +2,7 @@ import {
   Accessor,
   Component,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
   For,
@@ -50,7 +51,8 @@ const Dashboard: Component<Props> = (props) => {
   );
 
   // All widgets categorized by type
-  const widgetsReduced = () => {
+  const widgetsReduced = createMemo(() => {
+    console.log("Calculating widgets reduced");
     const widgetMacros = [
       {
         name: "Cookbook",
@@ -105,7 +107,7 @@ const Dashboard: Component<Props> = (props) => {
       macro["widgets"] = categorizedWidgets[macro.type];
       return macro;
     });
-  };
+  });
 
   // Experimenting with the entire control flow from the dashboard page component
   // Using Match to show default, active macro, and active widget focuses

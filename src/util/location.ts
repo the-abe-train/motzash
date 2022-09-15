@@ -11,6 +11,10 @@ export function getLocation(): Promise<Coords | null> {
           res({ lat, lng });
         },
         (error) => {
+          if (error.PERMISSION_DENIED)
+            alert(
+              "Motzash isn't very helpful if you don't allow location sharing."
+            );
           console.error(error);
           res(null);
         }

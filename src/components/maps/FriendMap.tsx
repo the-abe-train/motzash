@@ -79,11 +79,13 @@ const FriendMap: Component<Props> = (props) => {
   });
 
   return (
-    <div
-      ref={mapContainer!}
-      class="col-span-6 lg:col-span-8 my-4 h-80 md:h-full p-6
-      border-2 border-black"
-    />
+    <div class="md:h-[35rem] col-span-6 lg:col-span-8 relative">
+      <div
+        ref={mapContainer!}
+        class="h-80 md:h-auto md:absolute top-0 bottom-0 left-0 right-0 my-4
+        border-2 border-black"
+      />
+    </div>
   );
 };
 

@@ -84,8 +84,13 @@ const TodoWidget: WidgetComponent = (props) => {
       widget_id: props.widget.id,
       havdalah,
     };
-    sortTodos({ newItems: [newTask] });
-    const { error } = await supabase.from("todos").insert(newTask).select();
+    const { data, error } = await supabase
+      .from("todos")
+      .insert(newTask)
+      .select();
+    if (data) {
+      sortTodos({ newItems: [data[0]] });
+    }
     if (error) {
       console.error(error.message);
       refetch();
@@ -123,6 +128,7 @@ const TodoWidget: WidgetComponent = (props) => {
       is_complete: !item.is_complete,
       havdalah,
     };
+    console.log("Toggling todo:", newTodo);
     sortTodos({ changeItem: newTodo });
     const { error } = await supabase.from("todos").update(newTodo);
     if (error) {
