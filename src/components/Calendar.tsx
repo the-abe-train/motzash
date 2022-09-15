@@ -125,7 +125,12 @@ disabled:drop-shadow-none transition-all"
       disabled={loading()}
     >
       <div class="flex items-center space-x-2">
-        <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
+        <img
+          src={ShabbatCandles}
+          alt="Shabbat candles"
+          width={30}
+          height={40}
+        />
         <p>
           <span class="text-center font-bold hidden sm:inline">Click</span>
           <span class="text-center font-bold sm:hidden">Tap</span>{" "}
@@ -133,7 +138,12 @@ disabled:drop-shadow-none transition-all"
             to get Candle Lighting times using your live location!
           </span>
         </p>
-        <img src={HavdalahCandles} alt="Havdalah candles" width={30} />
+        <img
+          src={HavdalahCandles}
+          alt="Havdalah candles"
+          width={30}
+          height={40}
+        />
       </div>
     </button>
   );
@@ -153,13 +163,23 @@ disabled:drop-shadow-none transition-all"
             </p>
             <div class="flex justify-around bg-yellow1 p-3 border-2 border-black">
               <div class="flex items-center space-x-2">
-                <img src={ShabbatCandles} alt="Shabbat candles" width={30} />
+                <img
+                  src={ShabbatCandles}
+                  alt="Shabbat candles"
+                  width={30}
+                  height={40}
+                />
                 <span class="font-header text-3xl">
                   {thisCandleLighting()?.day.format("h:mm a")}
                 </span>
               </div>
               <div class="flex items-center space-x-2">
-                <img src={HavdalahCandles} alt="Havdalah candles" width={30} />
+                <img
+                  src={HavdalahCandles}
+                  alt="Havdalah candles"
+                  width={30}
+                  height={40}
+                />
                 <span class="font-header text-3xl">
                   {thisHavdalah()?.day.format("h:mm a")}
                 </span>
@@ -245,21 +265,22 @@ disabled:drop-shadow-none transition-all"
               </tbody>
             </table>
           </div>
-
-          <div>
-            <p>
-              For {nextCandleLighting()?.event} on{" "}
-              {nextCandleLighting()?.day.format("DD/MM/YYYY")}
-            </p>
-            <div class="flex flex-wrap">
-              <span class="mr-3">
-                Candles: {nextCandleLighting()?.day.format("h:mm A")}
-              </span>
-              <span class="mr-3">
-                Havdalah: {nextHavdalah()?.day.format("h:mm A")}
-              </span>
+          <Show when={pageLocation()}>
+            <div>
+              <p>
+                For {nextCandleLighting()?.event} on{" "}
+                {nextCandleLighting()?.day.format("DD/MM/YYYY")}
+              </p>
+              <div class="flex flex-wrap">
+                <span class="mr-3">
+                  Candles: {nextCandleLighting()?.day.format("h:mm A")}
+                </span>
+                <span class="mr-3">
+                  Havdalah: {nextHavdalah()?.day.format("h:mm A")}
+                </span>
+              </div>
             </div>
-          </div>
+          </Show>
           <button
             onClick={() => setDisplayDay(dayjs())}
             class="border border-black rounded drop-shadow-small hover:drop-shadow-none transition-all

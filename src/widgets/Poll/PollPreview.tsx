@@ -20,7 +20,7 @@ border border-black rounded"
               class="bg-ghost p-2 w-full flex space-x-2
         border border-black rounded"
             >
-              <img src={Poll} alt="Poll" />
+              <img src={Poll} alt="Poll" height={24} />
               <p>{widget.name}</p>
             </div>
           );

@@ -25,6 +25,12 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
           },
+          {
+            src: "/mask.svg",
+            sizes: "150x150",
+            type: "image/svg",
+            purpose: "maskable",
+          },
         ],
         theme_color: "#FFFF66",
         background_color: "#FCFCCF",

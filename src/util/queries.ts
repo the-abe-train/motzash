@@ -114,8 +114,6 @@ export const loadVotes = async (widget_id: number) => {
     .gte("havdalah", greg.greg2abs(new Date()))
     .eq("widget_id", widget_id);
   if (error) {
-    if (error.code === "PGRST116") return null;
-    console.log(error);
     return null;
   }
   for (let vote of data) {
@@ -175,8 +173,6 @@ export async function getUser(info: Profile) {
     .eq(key, info[key])
     .single();
   if (error || !data) {
-    if (error.code === "PGRST116") return null;
-    console.error(error);
     return null;
   }
   return data;

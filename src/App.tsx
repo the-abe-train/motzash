@@ -37,7 +37,7 @@ const App: Component = () => {
         >
           <Link href="/">
             <div class="flex space-x-2 items-center" onClick={resetDashboard}>
-              <object data={Logo} width={25}></object>
+              <object data={Logo} width={25} aria-label="Motzash Logo"></object>
               <span class="font-header text-3xl">Motzash</span>
             </div>
           </Link>
@@ -61,6 +61,7 @@ const App: Component = () => {
           <button
             class="w-10 h-9 relative md:hidden"
             onClick={() => setSidebarOpen((prev) => !prev)}
+            aria-label="hamburger"
           >
             <span
               class="left-1/2 top-2 block absolute h-[2px] bg-black rounded 

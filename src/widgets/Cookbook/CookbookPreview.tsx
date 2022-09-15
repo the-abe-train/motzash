@@ -42,7 +42,7 @@ const CookbookPreview: WidgetPreviewComponent = (props) => {
             class="bg-ghost p-2 w-full flex space-x-2
       border border-black rounded"
           >
-            <img src={category.img} alt={category.name} />
+            <img src={category.img} alt={category.name} height={24} />
             <p>
               {category.name} ({cookbook[category.key]} recipes)
             </p>
