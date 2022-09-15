@@ -49,7 +49,7 @@ const Auth: Component<Props> = (props) => {
   return (
     <div>
       <h1 class="font-header text-2xl mb-1">Sign-in form</h1>
-      <p>Sign in with your email below</p>
+      <p>Sign-in/sign-up with your email below</p>
       {loading() ? (
         "Sending magic link..."
       ) : (
@@ -112,7 +112,6 @@ const Auth: Component<Props> = (props) => {
           <li>Add friends to your Motzash network</li>
         </ul>
       </div>
-      <AuthPassword />
     </div>
   );
 };

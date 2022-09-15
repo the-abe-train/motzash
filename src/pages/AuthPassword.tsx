@@ -102,7 +102,7 @@ const AuthPassword: Component = () => {
           </button>
         </div>
       </form>
-      <button
+      {/* <button
         onClick={signUp}
         class="p-2 border border-black rounded drop-shadow-small 
             w-fit bg-ghost hover:drop-shadow-none transition-all"
@@ -122,20 +122,7 @@ const AuthPassword: Component = () => {
         onClick={updatePassword}
       >
         Update password
-      </button>
-      <div class="my-4">
-        <h2 class="text-xl">Sign in to Motzash to:</h2>
-        <ul class="list-disc list-inside">
-          <li>Create Shabbat “todo” lists</li>
-          <li>Build cookbooks with your favourite recipes for Chag</li>
-          <li>Vote on activities, like board games and sports</li>
-          <li>
-            Update your status to show where you're going to be and what you're
-            getting up to
-          </li>
-          <li>Add friends to your Motzash network</li>
-        </ul>
-      </div>
+      </button> */}
     </div>
   );
 };
