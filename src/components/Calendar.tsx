@@ -121,6 +121,7 @@ rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none
 disabled:drop-shadow-none transition-all"
         onClick={getTimes}
         disabled={loading()}
+        data-cy="get-times-button"
       >
         <div class="flex items-center space-x-2">
           <img
@@ -171,7 +172,7 @@ disabled:drop-shadow-none transition-all"
                   width={30}
                   height={40}
                 />
-                <span class="font-header text-3xl">
+                <span class="font-header text-3xl" data-cy="candles-time">
                   {thisCandleLighting()?.day.format("h:mm a")}
                 </span>
               </div>
@@ -182,7 +183,7 @@ disabled:drop-shadow-none transition-all"
                   width={30}
                   height={40}
                 />
-                <span class="font-header text-3xl">
+                <span class="font-header text-3xl" data-cy="havdalah-time">
                   {thisHavdalah()?.day.format("h:mm a")}
                 </span>
               </div>
@@ -200,15 +201,20 @@ disabled:drop-shadow-none transition-all"
             <button
               class="text-2xl"
               onClick={() => setDisplayDay((prev) => prev.subtract(1, "month"))}
+              data-cy="prev-month"
             >
               &#8592;
             </button>
-            <h2 class="text-center text-lg w-36 mt-[2px]">
+            <h3
+              class="text-center text-lg font-bold w-36 mt-[2px]"
+              data-cy="month-name"
+            >
               {displayDay().format("MMMM YYYY")}
-            </h2>
+            </h3>
             <button
               class="text-2xl"
               onClick={() => setDisplayDay((prev) => prev.add(1, "month"))}
+              data-cy="next-month"
             >
               &#8594;
             </button>
@@ -287,6 +293,7 @@ disabled:drop-shadow-none transition-all"
             onClick={() => setDisplayDay(dayjs())}
             class="border border-black rounded drop-shadow-small hover:drop-shadow-none transition-all
                w-fit mx-auto bg-blue px-2 py-1 "
+            data-cy="back-to-today"
           >
             Back to today
           </button>

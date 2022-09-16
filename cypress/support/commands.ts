@@ -29,6 +29,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       login(user: string): Chainable<void>;
+      mockGeolocation(): Chainable<void>;
       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>;
       dismiss(
         subject: string,
@@ -49,6 +50,14 @@ Cypress.Commands.add("login", (user) => {
       "sb-localhost-auth-token",
       JSON.stringify(sessionData)
     );
+  });
+});
+
+Cypress.Commands.add("mockGeolocation", (latitude = 30, longitude = -98) => {
+  cy.window().then(($window) => {
+    cy.stub($window.navigator.geolocation, "getCurrentPosition", (callback) => {
+      return callback({ coords: { latitude, longitude } });
+    });
   });
 });
 
