@@ -20,13 +20,14 @@ export const loadProfile = async (user_id: string) => {
 export const loadWidgets = async () => {
   const { data, error } = await supabase
     .from("widgets")
-    .select("*, profiles (username)");
+    .select("*, profiles (username)")
+    .limit(12);
   if (error) {
     if (error.code === "PGRST116") return null;
 
     return null;
   }
-  data;
+  console.log(data);
   return data as Widget[];
 };
 
