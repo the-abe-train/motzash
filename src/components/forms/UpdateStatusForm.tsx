@@ -114,6 +114,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
         class="absolute top-2 right-2 w-fit px-2 border border-black rounded
       bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
         onClick={() => props.setShowScreen(() => "Map")}
+        type="button"
       >
         Back to map
       </button>

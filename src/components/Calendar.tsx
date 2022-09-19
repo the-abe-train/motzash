@@ -9,7 +9,11 @@ import {
 } from "solid-js";
 import { Location } from "@hebcal/core";
 
-import { generateCalendar, findNextEvent } from "../util/datetime";
+import {
+  generateCalendar,
+  findNextEvent,
+  currentEvent,
+} from "../util/datetime";
 
 import HavdalahCandles from "../assets/icons/Havdalah Static.svg";
 import ShabbatCandles from "../assets/icons/Candles Static.svg";
@@ -270,19 +274,29 @@ disabled:drop-shadow-none transition-all mx-auto"
               </tbody>
             </table>
           </div>
-          <Show when={pageLocation()}>
-            <div>
-              <p>
-                For {nextCandleLighting()?.event} starting{" "}
-                {nextCandleLighting()?.day.format("DD/MM/YYYY")}
-              </p>
-              <div class="flex flex-wrap">
-                <span class="mr-3">
-                  Candles: {nextCandleLighting()?.day.format("h:mm A")}
-                </span>
-                <span class="mr-3">
-                  {transitionCandles()}: {nextHavdalah()?.day.format("h:mm A")}
-                </span>
+          <Show when={cal()}>
+            <div class="w-full px-3 space-y-2">
+              <Show when={currentEvent(weeks(), displayDay())} keyed>
+                {(eventDesc) => {
+                  return (
+                    <p>
+                      {displayDay().format("MMM D")} is {eventDesc}.
+                    </p>
+                  );
+                }}
+              </Show>
+              <div>
+                <p>For {nextCandleLighting()?.event},</p>
+                <div class="flex flex-wrap justify-between">
+                  <span class="mr-3">
+                    Candles:{" "}
+                    {nextCandleLighting()?.day.format("h:mm A (MMM D)")}
+                  </span>
+                  <span class="mr-3">
+                    {transitionCandles()}:{" "}
+                    {nextHavdalah()?.day.format("h:mm A (MMM D)")}
+                  </span>
+                </div>
               </div>
             </div>
           </Show>
