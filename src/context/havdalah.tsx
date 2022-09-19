@@ -43,7 +43,7 @@ export const SpaceTimeProvider: ContextProviderComponent<SpaceTimeContext> = (
 
   const calculateHavdalah = async () => {
     const location = await getLocation();
-    const cal = generateCalendar(location);
+    const cal = generateCalendar(location!);
     const havdalahDay = cal.find((event) => {
       const date = dayjs(event.eventTime);
       return date.isAfter(dayjs()) && event.desc === "Havdalah";
