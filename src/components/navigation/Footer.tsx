@@ -48,24 +48,16 @@ export default () => {
           </p>
         </section>
         <section class="space-x-4 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
-          <Link class="hover:font-bold" href="/" data-cy="footer-dashboard">
+          <Link href="/" data-cy="footer-dashboard">
             Dashboard
           </Link>
-          <Link
-            class="hover:font-bold"
-            href="/friends"
-            data-cy="footer-friends"
-          >
+          <Link href="/friends" data-cy="footer-friends">
             Friends
           </Link>
-          <Link class="hover:font-bold" href="/about" data-cy="footer-about">
+          <Link href="/about" data-cy="footer-about">
             About
           </Link>
-          <Link
-            class="hover:font-bold"
-            href="/profile"
-            data-cy="footer-profile"
-          >
+          <Link href="/profile" data-cy="footer-profile">
             Profile
           </Link>
         </section>

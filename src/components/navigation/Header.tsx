@@ -28,21 +28,29 @@ const Header: Component<Props> = (props) => {
           </div>
         </Link>
         <div class="md:flex space-x-10 text-lg hidden" onClick={resetDashboard}>
-          <Link class="hover:font-bold" href="/" data-cy="header-dashboard">
+          <Link
+            class="hover:font-bold min-w-[100px]"
+            href="/"
+            data-cy="header-dashboard"
+          >
             Dashboard
           </Link>
           <Link
-            class="hover:font-bold"
+            class="hover:font-bold min-w-[65px]"
             href="/friends"
             data-cy="header-friends"
           >
             Friends
           </Link>
-          <Link class="hover:font-bold" href="/about" data-cy="header-about">
+          <Link
+            class="hover:font-bold min-w-[60px]"
+            href="/about"
+            data-cy="header-about"
+          >
             About
           </Link>
           <Link
-            class="hover:font-bold"
+            class="hover:font-bold min-w-[60px]"
             href="/profile"
             data-cy="header-profile"
           >
