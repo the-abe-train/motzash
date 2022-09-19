@@ -1,0 +1,10 @@
+{
+  "shabbat": "#FF6B7F",
+  "yontif": "orange",
+  "chol": "yellow",
+  "modern": "lightblue",
+  "fast": "lightgreen",
+  "rosh_chodesh": "orchid",
+  "minor": "beige",
+  "none": "inherit"
+}

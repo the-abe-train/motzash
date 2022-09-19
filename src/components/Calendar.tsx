@@ -1,5 +1,6 @@
 import {
   Component,
+  createEffect,
   createMemo,
   createSignal,
   For,
@@ -17,6 +18,7 @@ import dayjs from "dayjs";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useLocation } from "../context/havdalah";
+import { getColour } from "../util/holidays";
 dayjs.extend(weekdayPlugin);
 dayjs.extend(relativeTime);
 
@@ -40,6 +42,7 @@ const Calendar: Component = () => {
   const cal = createMemo(() => {
     if (pageLocation()) return generateCalendar(pageLocation()!);
   });
+  console.log(cal());
 
   const weeks = createMemo(() => {
     const firstDayOfMonth = displayDay().date(0).weekday() + 1;
@@ -50,13 +53,27 @@ const Calendar: Component = () => {
         markerDay = markerDay.add(1, "day");
         const date = markerDay;
         const holidays = (cal() || []).filter((d) => {
-          if (!d.eventTime) return false;
-          return dayjs(d.eventTime).isSame(date, "date");
+          const eventDate = d.eventTime
+            ? dayjs(d.eventTime)
+            : // @ts-ignore
+              dayjs(d.date.greg());
+          return eventDate.isSame(date, "date");
+          // if (!d.eventTime) {
+          //   return dayjs(d.date.greg())
+          // } else {
+          //   return dayjs(d.eventTime).isSame(date, "date");
+          // }
         });
         return { date, holidays } as CalendarDay;
       });
     });
   });
+
+  createEffect(() => {
+    console.log("WEEKS");
+    console.log(weeks);
+  });
+  console.log(weeks());
 
   const thisCandleLighting = () => {
     if (cal()) return findNextEvent(cal() || [], "Candle lighting");
@@ -68,6 +85,7 @@ const Calendar: Component = () => {
   };
 
   const nextCandleLighting = () => {
+    console.log("Finding next candle lighting");
     if (cal())
       return findNextEvent(cal() || [], "Candle lighting", displayDay());
   };
@@ -77,36 +95,15 @@ const Calendar: Component = () => {
       return findNextEvent(cal() || [], "Havdalah", nextCandleLighting()?.day);
   };
 
+  const transitionCandles = () => {
+    return "Havdalah";
+  };
+
   // Calendar styling
   const dayHeaders = ["S", "M", "T", "W", "T", "F", "S"];
 
   function chooseWeight(day: CalendarDay) {
     return day.date.isSame(displayDay(), "date") ? "bold" : "normal";
-  }
-
-  function chooseBgColour(day: CalendarDay) {
-    const regex = /^[^:]*/;
-    if (!day.holidays) return "white";
-    for (let h of day.holidays) {
-      const holiday = h.desc.match(regex);
-      if (!holiday) return "white";
-      switch (holiday[0]) {
-        case "Candle lighting":
-          return "orange";
-        case "Havdalah":
-          return "rgba(255, 107, 127, 1)";
-        case "Shabbat Chazon":
-          return "rgba(255, 107, 127, 1)";
-        case "Fast begins":
-          return "lightgreen";
-        case "Fast ends":
-          return "lightblue";
-        case "Chanukah":
-          return "pink";
-        default:
-          return "white";
-      }
-    }
   }
 
   function chooseTextColour(day: CalendarDay) {
@@ -118,7 +115,7 @@ const Calendar: Component = () => {
       <button
         class="flex justify-around bg-yellow1 p-3 border-2 border-black 
 rounded drop-shadow-small hover:drop-shadow-none active:drop-shadow-none
-disabled:drop-shadow-none transition-all"
+disabled:drop-shadow-none transition-all mx-auto"
         onClick={getTimes}
         disabled={loading()}
         data-cy="get-times-button"
@@ -133,7 +130,7 @@ disabled:drop-shadow-none transition-all"
           <p>
             <span class="text-center font-bold hidden sm:inline">Click</span>
             <span class="text-center font-bold sm:hidden">Tap</span>{" "}
-            <span class="text-center font-bold">
+            <span class="text-center">
               to get Candle Lighting times using your live location!
             </span>
           </p>
@@ -253,11 +250,11 @@ disabled:drop-shadow-none transition-all"
                             return (
                               <td
                                 style={{
-                                  "background-color": chooseBgColour(day),
+                                  "background-color": getColour(day),
                                   color: chooseTextColour(day),
                                 }}
                                 class={`text-center cursor-pointer w-max
-                                  hover:font-bold 
+                                  hover:font-bold min-w-[30px]
                                   font-${chooseWeight(day)}`}
                                 onClick={() => setDisplayDay(day.date)}
                               >
@@ -276,7 +273,7 @@ disabled:drop-shadow-none transition-all"
           <Show when={pageLocation()}>
             <div>
               <p>
-                For {nextCandleLighting()?.event} on{" "}
+                For {nextCandleLighting()?.event} starting{" "}
                 {nextCandleLighting()?.day.format("DD/MM/YYYY")}
               </p>
               <div class="flex flex-wrap">
@@ -284,7 +281,7 @@ disabled:drop-shadow-none transition-all"
                   Candles: {nextCandleLighting()?.day.format("h:mm A")}
                 </span>
                 <span class="mr-3">
-                  Havdalah: {nextHavdalah()?.day.format("h:mm A")}
+                  {transitionCandles()}: {nextHavdalah()?.day.format("h:mm A")}
                 </span>
               </div>
             </div>

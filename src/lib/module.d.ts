@@ -16,6 +16,16 @@ declare global {
     | "todo"
     | "poll";
 
+  type HolidayCategory =
+    | "shabbat"
+    | "yontif"
+    | "chol"
+    | "modern"
+    | "fast"
+    | "rosh_chodesh"
+    | "minor"
+    | "none";
+
   type Coords = {
     lat: number;
     lng: number;
