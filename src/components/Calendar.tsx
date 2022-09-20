@@ -88,8 +88,6 @@ const Calendar: Component = () => {
   };
 
   // Calendar styling
-  const dayHeaders = ["S", "M", "T", "W", "T", "F", "S"];
-
   function chooseWeight(day: CalendarDay) {
     return day.date.isSame(displayDay(), "date") ? "bold" : "normal";
   }
@@ -206,9 +204,11 @@ disabled:drop-shadow-none transition-all mx-auto"
           drop-shadow-small"
           >
             <div class="bg-blue flex justify-between px-4 pb-1 ">
-              <For each={dayHeaders}>
+              <For each={["S", "M", "T", "W", "T", "F", "S"]}>
                 {(day) => {
-                  return <span class="border-none font-bold">{day}</span>;
+                  return (
+                    <span class="border-none font-bold lg:text-lg">{day}</span>
+                  );
                 }}
               </For>
             </div>
