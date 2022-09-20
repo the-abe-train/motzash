@@ -1,6 +1,5 @@
 import {
   Component,
-  createEffect,
   createMemo,
   createSignal,
   For,
@@ -11,8 +10,8 @@ import { Location } from "@hebcal/core";
 
 import {
   generateCalendar,
-  findNextEvent,
   currentEvent,
+  getEventDetails,
 } from "../util/datetime";
 
 import HavdalahCandles from "../assets/icons/Havdalah Static.svg";
@@ -44,9 +43,8 @@ const Calendar: Component = () => {
   }
 
   const cal = createMemo(() => {
-    if (pageLocation()) return generateCalendar(pageLocation()!);
+    return !!pageLocation() ? generateCalendar(pageLocation()!) : [];
   });
-  console.log(cal());
 
   const weeks = createMemo(() => {
     const firstDayOfMonth = displayDay().date(0).weekday() + 1;
@@ -59,48 +57,34 @@ const Calendar: Component = () => {
         const holidays = (cal() || []).filter((d) => {
           const eventDate = d.eventTime
             ? dayjs(d.eventTime)
-            : // @ts-ignore
+            : // @ts-ignore "date" property in library isn't typed correctly
               dayjs(d.date.greg());
           return eventDate.isSame(date, "date");
-          // if (!d.eventTime) {
-          //   return dayjs(d.date.greg())
-          // } else {
-          //   return dayjs(d.eventTime).isSame(date, "date");
-          // }
         });
         return { date, holidays } as CalendarDay;
       });
     });
   });
 
-  createEffect(() => {
-    console.log("WEEKS");
-    console.log(weeks);
-  });
-  console.log(weeks());
-
-  const thisCandleLighting = () => {
-    if (cal()) return findNextEvent(cal() || [], "Candle lighting");
+  const todayDetails = () => {
+    return getEventDetails(cal());
   };
 
-  const thisHavdalah = () => {
-    if (cal())
-      return findNextEvent(cal() || [], "Havdalah", thisCandleLighting()?.day);
-  };
-
-  const nextCandleLighting = () => {
-    console.log("Finding next candle lighting");
-    if (cal())
-      return findNextEvent(cal() || [], "Candle lighting", displayDay());
-  };
-
-  const nextHavdalah = () => {
-    if (cal())
-      return findNextEvent(cal() || [], "Havdalah", nextCandleLighting()?.day);
-  };
-
-  const transitionCandles = () => {
-    return "Havdalah";
+  const displayDetails = () => {
+    const details = getEventDetails(cal(), displayDay());
+    if (details) {
+      return (
+        <div>
+          <p>For {details.eventName},</p>
+          <p>
+            {details.startDesc}: {details.startTime.format("h:mm A (MMM D)")}
+          </p>
+          <p>
+            {details.endDesc}: {details.endTime.format("h:mm A (MMM D)")}
+          </p>
+        </div>
+      );
+    }
   };
 
   // Calendar styling
@@ -162,8 +146,8 @@ disabled:drop-shadow-none transition-all mx-auto"
         <Show when={pageLocation()} fallback={getLocationButton}>
           <div class="flex flex-col space-y-3">
             <p>
-              Get ready! {thisCandleLighting()?.event} starts on{" "}
-              {thisCandleLighting()?.day.format("dddd [at] h:mm A")}
+              Get ready! {todayDetails()?.eventName} starts on{" "}
+              {todayDetails()?.startTime.format("dddd [at] h:mm A")}
             </p>
             <div class="flex justify-around bg-yellow1 p-3 border-2 border-black">
               <div class="flex items-center space-x-2">
@@ -174,7 +158,7 @@ disabled:drop-shadow-none transition-all mx-auto"
                   height={40}
                 />
                 <span class="font-header text-3xl" data-cy="candles-time">
-                  {thisCandleLighting()?.day.format("h:mm a")}
+                  {todayDetails()?.startTime.format("h:mm a")}
                 </span>
               </div>
               <div class="flex items-center space-x-2">
@@ -185,7 +169,7 @@ disabled:drop-shadow-none transition-all mx-auto"
                   height={40}
                 />
                 <span class="font-header text-3xl" data-cy="havdalah-time">
-                  {thisHavdalah()?.day.format("h:mm a")}
+                  {todayDetails()?.endTime.format("h:mm a")}
                 </span>
               </div>
             </div>
@@ -206,10 +190,7 @@ disabled:drop-shadow-none transition-all mx-auto"
             >
               &#8592;
             </button>
-            <h3
-              class="text-center text-lg font-bold w-36 mt-[2px]"
-              data-cy="month-name"
-            >
+            <h3 class="text-center text-lg w-36 mt-[2px]" data-cy="month-name">
               {displayDay().format("MMMM YYYY")}
             </h3>
             <button
@@ -221,7 +202,7 @@ disabled:drop-shadow-none transition-all mx-auto"
             </button>
           </div>
           <div
-            class="bg-blue p-2 border-2 border-black max-w-[300px] w-full 
+            class="bg-blue p-2 border-2 border-black max-w-[300px] xl:max-w-sm w-full 
           drop-shadow-small"
           >
             <div class="bg-blue flex justify-between px-4 pb-1 ">
@@ -258,8 +239,8 @@ disabled:drop-shadow-none transition-all mx-auto"
                                   color: chooseTextColour(day),
                                 }}
                                 class={`text-center cursor-pointer w-max
-                                  hover:font-bold min-w-[30px]
-                                  font-${chooseWeight(day)}`}
+                                  hover:font-bold min-w-[30px] xl:py-1 xl:text-xl
+                                  font-${chooseWeight(day)} transition-colors`}
                                 onClick={() => setDisplayDay(day.date)}
                               >
                                 {day.date.date()}
@@ -278,26 +259,15 @@ disabled:drop-shadow-none transition-all mx-auto"
             <div class="w-full px-3 space-y-2">
               <Show when={currentEvent(weeks(), displayDay())} keyed>
                 {(eventDesc) => {
-                  return (
-                    <p>
-                      {displayDay().format("MMM D")} is {eventDesc}.
-                    </p>
-                  );
+                  if (eventDesc !== "Candle lighting")
+                    return (
+                      <p>
+                        {displayDay().format("MMM D")} is {eventDesc}.
+                      </p>
+                    );
                 }}
               </Show>
-              <div>
-                <p>For {nextCandleLighting()?.event},</p>
-                <div class="flex flex-wrap justify-between">
-                  <span class="mr-3">
-                    Candles:{" "}
-                    {nextCandleLighting()?.day.format("h:mm A (MMM D)")}
-                  </span>
-                  <span class="mr-3">
-                    {transitionCandles()}:{" "}
-                    {nextHavdalah()?.day.format("h:mm A (MMM D)")}
-                  </span>
-                </div>
-              </div>
+              {displayDetails()}
             </div>
           </Show>
           <button

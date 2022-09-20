@@ -35,7 +35,8 @@ const App: Component = () => {
         <Sidebar sidebarOpen={sidebarOpen()} setSidebarOpen={setSidebarOpen} />
         <main
           class="grid grid-cols-6 md:grid-cols-12 gap-6 lg:gap-y-0 relative
-     bg-yellow2 container w-full px-2 md:px-4 lg:px-6 mx-auto"
+     bg-yellow2 container w-full px-2 md:px-4 lg:px-6 mx-auto 
+     xl:my-4 2xl:my-8 2xl:gap-12"
         >
           <Routes>
             <Route path="/" element={<Dashboard {...dashboardProps} />} />

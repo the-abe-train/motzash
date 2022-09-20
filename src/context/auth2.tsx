@@ -24,7 +24,6 @@ export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
   onMount(async () => {
     const newUser = await supabase.auth.getUser();
     setUser(newUser.data.user || { id: "" });
-    console.log(user);
   });
 
   createEffect(() => {

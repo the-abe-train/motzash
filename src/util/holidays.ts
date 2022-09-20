@@ -40,6 +40,5 @@ export function getHoliday(day: CalendarDay) {
 export function getColour(day: CalendarDay) {
   const holiday = getHoliday(day);
   const colour = colourMap[holiday.category];
-  console.log(day, holiday, colour);
   return colour;
 }

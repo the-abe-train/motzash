@@ -27,9 +27,12 @@ const Header: Component<Props> = (props) => {
             <span class="font-header text-3xl">Motzash</span>
           </div>
         </Link>
-        <div class="md:flex space-x-10 text-lg hidden" onClick={resetDashboard}>
+        <div
+          class="md:flex space-x-6 lg:space-x-10 text-lg hidden"
+          onClick={resetDashboard}
+        >
           <Link
-            class="hover:font-bold min-w-[100px]"
+            class="hover:font-bold min-w-[95px]"
             href="/"
             data-cy="header-dashboard"
           >
