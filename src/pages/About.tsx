@@ -19,9 +19,9 @@ const About: Component = () => {
           arrives.
         </p>
         <p>
-          The name Motzash is a short form of *motzei shabbat*, which refers to
-          the end of Shabbat. The first thing you notice when you open the
-          dashboard is the most important bit of information: when Shabbat
+          The name Motzash is a short form of <i>motzei shabbat</i>, which
+          refers to the end of Shabbat. The first thing you notice when you open
+          the dashboard is the most important bit of information: when Shabbat
           starts (candles) and when it ends (Havdalah). Make sure to allow the
           dashboard access to your location so that it correct information can
           be displayed regardless of where you are!

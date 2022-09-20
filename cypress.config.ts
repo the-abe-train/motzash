@@ -13,5 +13,6 @@ export default defineConfig({
       SUPABASE_ANON_KEY:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZndiZ3h5bmpmaXVpYXNvZ2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjAzMjY3ODksImV4cCI6MTk3NTkwMjc4OX0.qaIlMOfyqVdFmgW6mtS1KVlQt2Q9jHYVAah-VgkYzKU",
     },
+    experimentalStudio: true,
   },
 });

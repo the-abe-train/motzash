@@ -7,22 +7,13 @@ describe("Testing the todo widget", () => {
     cy.contains("Sign-in form").should("exist");
   });
 
-  // before(() => {
-  //   cy.visit("/signInWithPassword");
-  //   cy.get('[data-cy="sign-in-btn"]').click();
-  //   cy.visit("/");
-  //   cy.mockGeolocation();
-  //   cy.get('[data-cy="get-times-button"]').click();
-  //   cy.contains("Get ready").should("exist");
-  // })
-
   it("creates a new todo list", () => {
     // Sign in
     cy.visit("/signInWithPassword");
-    cy.get('[data-cy="email-input"]').clear().type(testUsers["user1"]["email"]);
+    cy.get('[data-cy="email-input"]').clear().type(testUsers["main"]["email"]);
     cy.get('[data-cy="password-input"]')
       .clear()
-      .type(testUsers["user1"]["password"]);
+      .type(testUsers["main"]["password"]);
     cy.get('[data-cy="sign-in-btn"]').click();
     cy.contains("User is currently signed-in").should("exist");
     cy.visit("/");

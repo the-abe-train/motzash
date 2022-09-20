@@ -1,20 +1,16 @@
 import { Location } from "@hebcal/core";
 
 export function getLocation(): Promise<Coords | null> {
-  return new Promise((res, rej) => {
+  return new Promise((res) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // const { latitude: lat, longitude: lng } = position.coords;
           const lat = parseFloat(position.coords.latitude.toFixed(2));
           const lng = parseFloat(position.coords.longitude.toFixed(2));
           res({ lat, lng });
         },
         (error) => {
-          if (error.PERMISSION_DENIED)
-            alert(
-              "Motzash isn't very helpful if you don't allow location sharing."
-            );
+          if (error.PERMISSION_DENIED) alert("Location sharing was denied.");
           console.error(error);
           res(null);
         }
@@ -25,29 +21,15 @@ export function getLocation(): Promise<Coords | null> {
   });
 }
 
-export async function getCity({ lat, lng }: Coords) {
-  const res = await fetch("/api/getCity", {
-    method: "POST",
-    body: JSON.stringify({ lat, lng }),
-  });
-  const { city } = await res.json();
-  return city as string;
-}
-
-async function getTimezone({ lat, lng }: Coords) {
-  const res = await fetch("/api/getTimezone", {
-    method: "POST",
-    body: JSON.stringify({ lat, lng }),
-  });
-  const timezone = (await res.json()) as Timezone;
-  return timezone;
-}
-
 export async function getHebcalLocation() {
   try {
     const coords = await getLocation();
     if (!coords) return null;
-    const tz = await getTimezone(coords);
+    const res = await fetch("/api/getTimezone", {
+      method: "POST",
+      body: JSON.stringify(coords),
+    });
+    const tz = (await res.json()) as Timezone;
     const isIsrael = tz.countryCode === "IL";
     const tzid = tz.timezoneId;
     const location = new Location(coords.lat, coords.lng, isIsrael, tzid);
@@ -123,20 +105,3 @@ export async function getMapCentre(
   }
   return mapCentre;
 }
-
-// async function getShabbosTimes(geonameId: string) {
-//   const url = new URL("https://www.hebcal.com/shabbat");
-//   const queryParams = {
-//     cfg: "json",
-//     geonameId,
-//   };
-//   url.search = new URLSearchParams(queryParams).toString();
-//   const shabbosData = await fetch(url).then((data) => data.json());
-//   const candleLighting = shabbosData.items.find(
-//     (item: any) => item.title_orig === "Candle lighting"
-//   ).title;
-//   const havdalah = shabbosData.items.find(
-//     (item: any) => item.title_orig === "Havdalah"
-//   ).title;
-//   return { candleLighting, havdalah };
-// }

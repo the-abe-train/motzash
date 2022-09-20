@@ -9,7 +9,7 @@ import { createStore } from "solid-js/store";
 import Filter from "bad-words";
 import { AuthContext } from "../../context/auth2";
 import { useHavdalah } from "../../context/havdalah";
-import { getCity, getLocation } from "../../util/location";
+import { getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
 
@@ -51,7 +51,11 @@ const UpdateStatusForm: Component<Props> = (props) => {
         setMsg("Enable geolocation API to use automatic location detection.");
         return;
       }
-      const city = await getCity(coords);
+      const res = await fetch("/api/getCity", {
+        method: "POST",
+        body: JSON.stringify(coords),
+      });
+      const { city } = await res.json();
       setNewStatus("location", coords);
       setNewStatus("city", city);
     } catch (e) {
@@ -79,7 +83,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
 
     const havdalah = await getHavdalah();
     const updates = { ...newStatus, user_id, havdalah };
-    const { data, error } = await supabase.from("statuses").upsert(updates, {
+    const { error } = await supabase.from("statuses").upsert(updates, {
       onConflict: "user_id",
     });
     if (error) {
@@ -118,37 +122,41 @@ const UpdateStatusForm: Component<Props> = (props) => {
       >
         Back to map
       </button>
-      <div class="flex flex-col lg:flex-row lg:space-x-5">
+      <div class="flex flex-col space-y-4 xl:space-y-0 xl:flex-row xl:space-x-5 w-full">
         <div class="flex flex-col space-y-2">
           <label for="text">What are you up to on Shabbat?</label>
           <input
             type="text"
             name="text"
-            class="border border-black w-full md:w-80 px-2"
+            class="border border-black w-full md:max-w-lg xl:w-80 px-2 py-1"
             value={newStatus.text || ""}
             required
             onChange={(e) => setNewStatus("text", e.currentTarget.value)}
           />
         </div>
-        <div class="flex flex-col space-y-2">
+        <div class="space-y-2 flex-grow">
           <label for="city">Where are you going to be on Shabbat?</label>
-          <input
-            name="city"
-            class="border border-black w-full md:w-80 px-2"
-            type="text"
-            value={newStatus.city || ""}
-            required
-            onChange={(e) => setNewStatus("city", e.currentTarget.value)}
-          />
-          <button
-            class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
-                    bg-blue hover:drop-shadow-none transition-all"
-            onClick={updateLocation}
-            type="button"
-            disabled={loading()}
-          >
-            Get GPS location
-          </button>
+          <div class="flex flex-col lg:flex-row lg:space-x-2 w-full">
+            <input
+              name="city"
+              class="border border-black w-full px-2 py-1"
+              type="text"
+              value={newStatus.city || ""}
+              required
+              onChange={(e) => setNewStatus("city", e.currentTarget.value)}
+            />
+            <button
+              class="px-2 py-1 border border-black rounded drop-shadow-small my-2 lg:my-0
+                    bg-blue hover:drop-shadow-none transition-all lg:whitespace-nowrap w-max
+                    cursor-pointer"
+              onClick={updateLocation}
+              type="button"
+              disabled={loading()}
+              data-cy="gps-button"
+            >
+              Get GPS location
+            </button>
+          </div>
         </div>
       </div>
       <p>{msg}</p>

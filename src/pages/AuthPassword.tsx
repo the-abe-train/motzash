@@ -129,28 +129,30 @@ const AuthPassword: Component = () => {
         >
           Sign Out
         </button>
+        <div class="block space-x-3">
+          <button
+            onClick={signUp}
+            class="py-1 px-2  border border-black rounded drop-shadow-small 
+            w-fit bg-ghost hover:drop-shadow-none transition-all"
+          >
+            Sign up
+          </button>
+          <button
+            onClick={resetPassword}
+            class="py-1 px-2  border border-black rounded drop-shadow-small 
+            w-fit bg-ghost hover:drop-shadow-none transition-all"
+          >
+            Reset password
+          </button>
+          <button
+            class="py-1 px-2 border border-black rounded drop-shadow-small 
+          w-fit bg-ghost hover:drop-shadow-none transition-all"
+            onClick={updatePassword}
+          >
+            Update password
+          </button>
+        </div>
       </Show>
-      {/* <button
-        onClick={signUp}
-        class="p-2 border border-black rounded drop-shadow-small 
-            w-fit bg-ghost hover:drop-shadow-none transition-all"
-      >
-        Sign up
-      </button>
-      <button
-        onClick={resetPassword}
-        class="p-2 border border-black rounded drop-shadow-small 
-            w-fit bg-ghost hover:drop-shadow-none transition-all"
-      >
-        Reset password
-      </button>
-      <button
-        class="p-2 border border-black rounded drop-shadow-small 
-                  w-fit bg-ghost hover:drop-shadow-none transition-all"
-        onClick={updatePassword}
-      >
-        Update password
-      </button> */}
     </div>
   );
 };

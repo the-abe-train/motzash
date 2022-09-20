@@ -56,9 +56,11 @@ const Friends: Component = () => {
   const addStatusButton = (
     <button
       class="p-2 h-20 w-full border border-black rounded drop-shadow-small 
-    mx-auto text-xl bg-blue hover:drop-shadow-none transition-all"
+    mx-auto text-xl bg-blue hover:drop-shadow-none transition-all
+    cursor-pointer"
       onClick={() => setShowScreen("UpdateStatus")}
       disabled={showScreen() === "UpdateStatus"}
+      data-cy="add-status-button"
     >
       Add status
     </button>

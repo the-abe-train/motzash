@@ -53,7 +53,7 @@ Cypress.Commands.add("login", (user) => {
   });
 });
 
-Cypress.Commands.add("mockGeolocation", (latitude = 30, longitude = -98) => {
+Cypress.Commands.add("mockGeolocation", (latitude = 42, longitude = -79) => {
   cy.window().then(($window) => {
     cy.stub($window.navigator.geolocation, "getCurrentPosition", (callback) => {
       return callback({ coords: { latitude, longitude } });
