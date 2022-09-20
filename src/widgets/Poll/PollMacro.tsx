@@ -69,7 +69,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
     loadedPolls.state !== "ready" ? <p>Loading...</p> : <p>No polls yet.</p>;
 
   return (
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 max-w-lg">
       <div class="space-y-3">
         <h2 class="font-header text-2xl">My Poll</h2>
         <Show

@@ -16,7 +16,7 @@ const WidgetPreview: ParentComponent<Props> = (props) => {
         style={{ "background-color": props.macro.colour }}
         onClick={() => props.setActiveMacro(props.macro)}
       >
-        <div class="flex flex-col space-y-4">{c()}</div>
+        {c()}
         <p class="mt-6 mb-1">See more...</p>
       </div>
     </div>

@@ -215,6 +215,7 @@ disabled:drop-shadow-none transition-all mx-auto"
             <table
               class="px-2 py-4 w-full text-lg border-2 border-black 
              bg-ghost"
+              data-cy="calendar-table"
             >
               <colgroup>
                 <col class="border border-black" />

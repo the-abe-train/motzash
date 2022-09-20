@@ -60,8 +60,8 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
   }
 
   return (
-    <div class="mx-2 space-y-8">
-      <div class="space-y-4">
+    <div class="mx-2 space-y-8 max-w-lg">
+      <div class="space-y-4" data-cy="list-of-lists">
         <h2 class="font-header text-2xl">Lists</h2>
         <For each={lists} fallback={fallback}>
           {(todoList) => {
@@ -97,6 +97,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
             onChange={(e) => setInputName(e.currentTarget.value)}
             required
             class="px-2 py-1 flex-grow border border-black"
+            data-cy="new-list-input"
           />
           <button
             class="w-fit py-1 px-2 border border-black rounded

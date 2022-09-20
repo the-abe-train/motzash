@@ -35,21 +35,23 @@ const CookbookPreview: WidgetPreviewComponent = (props) => {
   ];
 
   return (
-    <For each={data}>
-      {(category) => {
-        return (
-          <div
-            class="bg-ghost p-2 w-full flex space-x-2
+    <div class="space-y-4" data-cy="cookbook-preview">
+      <For each={data}>
+        {(category) => {
+          return (
+            <div
+              class="bg-ghost p-2 w-full flex space-x-2
       border border-black rounded"
-          >
-            <img src={category.img} alt={category.name} height={24} />
-            <p>
-              {category.name} ({cookbook[category.key]} recipes)
-            </p>
-          </div>
-        );
-      }}
-    </For>
+            >
+              <img src={category.img} alt={category.name} height={24} />
+              <p>
+                {category.name} ({cookbook[category.key]} recipes)
+              </p>
+            </div>
+          );
+        }}
+      </For>
+    </div>
   );
 };
 

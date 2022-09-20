@@ -24,10 +24,8 @@ export const loadWidgets = async () => {
     .limit(12);
   if (error) {
     if (error.code === "PGRST116") return null;
-
     return null;
   }
-  console.log(data);
   return data as Widget[];
 };
 

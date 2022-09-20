@@ -160,7 +160,7 @@ const TodoWidget: WidgetComponent = (props) => {
     >
       <h2 class="text-2xl font-header">{props.widget.name}</h2>
       <Show when={loadedTodos.state === "ready"} fallback={<p>Loading...</p>}>
-        <div class="m-2 flex flex-col space-y-2">
+        <div class="m-2 flex flex-col space-y-2" data-cy="todos-list">
           <For each={todos} fallback={<p>Add a task using the form below!</p>}>
             {(item, idx) => {
               return (
@@ -170,7 +170,7 @@ const TodoWidget: WidgetComponent = (props) => {
                 >
                   <input
                     value={item.task || ""}
-                    class="bg-transparent"
+                    class="bg-transparent min-w-[50%]"
                     style={{
                       "text-decoration-line": item.is_complete
                         ? "line-through"
@@ -180,14 +180,19 @@ const TodoWidget: WidgetComponent = (props) => {
                       setTodos(idx(), "task", e.currentTarget.value)
                     }
                   />
-                  <button type="button" onClick={(e) => deleteTask(e, item)}>
-                    &#10006;
-                  </button>
                   <button
                     type="button"
                     onClick={(e) => toggleComplete(e, item, idx())}
+                    data-cy="complete-button"
                   >
                     &#10004;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => deleteTask(e, item)}
+                    data-cy="task-delete-button"
+                  >
+                    &#10006;
                   </button>
                 </form>
               );
@@ -203,6 +208,7 @@ const TodoWidget: WidgetComponent = (props) => {
           required
           value={inputTodo()}
           onInput={(e) => setInputTodo(e.currentTarget.value)}
+          data-cy="new-todo-input"
         />
         <button
           type="submit"

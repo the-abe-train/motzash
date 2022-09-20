@@ -17,7 +17,7 @@ border border-black rounded"
   );
 
   return (
-    <>
+    <div class="space-y-4" data-cy="todo-preview">
       <For each={props.widgets.slice(0, 3)} fallback={fallback}>
         {(widget) => {
           return (
@@ -31,7 +31,7 @@ border border-black rounded"
           );
         }}
       </For>
-    </>
+    </div>
   );
 };
 

@@ -12,8 +12,6 @@ function parseMonth(monthString: string) {
 
 describe("Testing the calendar widgets", () => {
   it("makes sure candle lighting is earlier than havdalah", () => {
-    cy.visit("/signInWithPassword");
-    cy.get('[data-cy="sign-in-btn"]').click();
     cy.visit("/");
     cy.mockGeolocation();
     cy.get('[data-cy="get-times-button"]').click();
@@ -61,10 +59,12 @@ describe("Testing the calendar widgets", () => {
           });
       });
 
-    cy.contains(dayjs().date()).should("have.css", "font-weight", "700");
-    cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "400");
-    cy.contains(dayjs().date() + 1).click();
-    cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "700");
+    cy.get('[data-cy="calendar-table"]').within(() => {
+      cy.contains(dayjs().date()).should("have.css", "font-weight", "700");
+      cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "400");
+      cy.contains(dayjs().date() + 1).click();
+      cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "700");
+    });
   });
 });
 
