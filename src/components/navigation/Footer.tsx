@@ -47,7 +47,7 @@ export default () => {
             </a>
           </p>
         </section>
-        <section class="space-x-4 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
+        <section class="space-x-4 md:space-x-0 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
           <Link href="/" data-cy="footer-dashboard">
             Dashboard
           </Link>
@@ -59,6 +59,9 @@ export default () => {
           </Link>
           <Link href="/profile" data-cy="footer-profile">
             Profile
+          </Link>
+          <Link href="/privacy-policy" data-cy="footer-profile">
+            Privacy policy
           </Link>
         </section>
       </div>

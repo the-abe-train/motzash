@@ -8,7 +8,7 @@ const About: Component = () => {
         <object data={Logo}></object>
       </div>
       <div class="col-span-6 md:col-span-12 lg:col-span-8 space-y-3 my-4">
-        <h1 class="font-header text-2xl">What is Motzash?</h1>
+        <h1 class="font-header text-3xl">What is Motzash?</h1>
         <p>Motzash is a dashboard to help you keep shabbat!</p>
         <p>
           Every Saturday, Jews around the world observe a day of rest called
@@ -44,6 +44,10 @@ const About: Component = () => {
           or via the form on my{" "}
           <a class="underline" href="https://the-abe-train.com">
             personal website
+          </a>
+          . The privacy policy is available{" "}
+          <a class="underline" href="/privacy-policy">
+            here
           </a>
           .
         </p>
