@@ -1,3 +1,5 @@
+import testUsers from "../fixtures/test_users.json";
+
 describe("Explore all navigation links", () => {
   it("Visits every nav link while not authenticated", () => {
     cy.visit("/");
@@ -32,11 +34,13 @@ describe("Explore all navigation links", () => {
   });
 
   it("Visits links while authenticated", () => {
-    cy.visit("/");
-    cy.contains("Candle Lighting").should("exist");
-
     cy.visit("/signInWithPassword");
+    cy.get('[data-cy="email-input"]').clear().type(testUsers["main"]["email"]);
+    cy.get('[data-cy="password-input"]')
+      .clear()
+      .type(testUsers["main"]["password"]);
     cy.get('[data-cy="sign-in-btn"]').click();
+    cy.contains("User is currently signed-in").should("exist");
 
     cy.get('[data-cy="header-friends"]').click();
     cy.contains("Your Status").should("exist");

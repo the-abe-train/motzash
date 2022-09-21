@@ -12,6 +12,7 @@ import { useHavdalah } from "../../context/havdalah";
 import { getLocation } from "../../util/location";
 import { supabase } from "../../util/supabase";
 import StatusMap from "../maps/StatusMap";
+import { getUserProfile } from "../../util/queries";
 
 type Props = {
   myStatus: FriendStatus | null;
@@ -68,8 +69,21 @@ const UpdateStatusForm: Component<Props> = (props) => {
     e.preventDefault();
     setLoading2(true);
     setMsg("");
+
     if (!user_id) return;
+
+    // User doesn't have a username
+    const userProfile = await getUserProfile({ id: user_id });
+    if (!userProfile?.username) {
+      setMsg(
+        `You need a username to send a friend request.
+            You can set your username in the Profile page.`
+      );
+      setLoading(false);
+      return;
+    }
     const filter = new Filter();
+
     if (filter.isProfane(newStatus?.city || "")) {
       setMsg("Please remove the profanity from the city name.");
       setLoading2(false);
@@ -110,80 +124,82 @@ const UpdateStatusForm: Component<Props> = (props) => {
   };
 
   return (
-    <form
-      onSubmit={upsertStatus}
-      class="col-span-6 lg:col-span-8 flex flex-col space-y-4 p-4 relative pt-8"
-    >
+    <div class="col-span-6 lg:col-span-8 md:p-4 relative md:pt-10">
       <button
-        class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+        class="absolute top-0 right-2 w-fit px-2 border border-black rounded
       bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
         onClick={() => props.setShowScreen(() => "Map")}
         type="button"
       >
         Back to map
       </button>
-      <div class="flex flex-col space-y-4 xl:space-y-0 xl:flex-row xl:space-x-5 w-full">
-        <div class="flex flex-col space-y-2">
-          <label for="text">What are you up to on Shabbat?</label>
-          <input
-            type="text"
-            name="text"
-            class="border border-black w-full md:max-w-lg xl:w-80 px-2 py-1"
-            value={newStatus.text || ""}
-            required
-            onChange={(e) => setNewStatus("text", e.currentTarget.value)}
-          />
-        </div>
-        <div class="space-y-2 flex-grow">
-          <label for="city">Where are you going to be on Shabbat?</label>
-          <div class="flex flex-col lg:flex-row lg:space-x-2 w-full">
+      <form onSubmit={upsertStatus} class="flex flex-col space-y-4 ">
+        <h2 class="text-2xl font-header">Update your status</h2>
+        <div class="flex flex-col space-y-4 xl:space-y-0 xl:flex-row xl:space-x-5 w-full">
+          <div class="flex flex-col space-y-2">
+            <label for="text">What are you up to on Shabbat?</label>
             <input
-              name="city"
-              class="border border-black w-full px-2 py-1"
               type="text"
-              value={newStatus.city || ""}
+              name="text"
+              class="border border-black w-full md:max-w-lg xl:w-80 px-2 py-1"
+              value={newStatus.text || ""}
               required
-              onChange={(e) => setNewStatus("city", e.currentTarget.value)}
+              onChange={(e) => setNewStatus("text", e.currentTarget.value)}
             />
-            <button
-              class="px-2 py-1 border border-black rounded drop-shadow-small my-2 lg:my-0
+          </div>
+          <div class="space-y-2 flex-grow">
+            <label for="city">Where are you going to be on Shabbat?</label>
+            <div class="flex flex-col lg:flex-row lg:space-x-2 w-full">
+              <input
+                name="city"
+                class="border border-black w-full px-2 py-1"
+                type="text"
+                value={newStatus.city || ""}
+                required
+                onChange={(e) => setNewStatus("city", e.currentTarget.value)}
+              />
+              <button
+                class="px-2 py-1 border border-black rounded drop-shadow-small my-2 lg:my-0
                     bg-blue hover:drop-shadow-none transition-all lg:whitespace-nowrap w-max
                     cursor-pointer"
-              onClick={updateLocation}
-              type="button"
-              disabled={loading()}
-              data-cy="gps-button"
-            >
-              Get GPS location
-            </button>
+                onClick={updateLocation}
+                type="button"
+                disabled={loading()}
+                data-cy="gps-button"
+              >
+                Get GPS location
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <p>{msg}</p>
-      <p>Drag the marker below to show where you're going to be on Shabbat!</p>
-      <StatusMap newStatus={newStatus} setNewStatus={setNewStatus} />
-      <div class="flex space-x-4">
-        <button
-          type="submit"
-          class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+        <p class="text-coral2">{msg()}</p>
+        <p>
+          Drag the marker below to show where you're going to be on Shabbat!
+        </p>
+        <StatusMap newStatus={newStatus} setNewStatus={setNewStatus} />
+        <div class="flex space-x-4">
+          <button
+            type="submit"
+            class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
           bg-blue hover:drop-shadow-none disabled:drop-shadow-none transition-all"
-          disabled={loading2()}
-          data-cy="update-status-button"
-        >
-          Update status
-        </button>
-        <button
-          type="button"
-          class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
+            disabled={loading2()}
+            data-cy="update-status-button"
+          >
+            Update status
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
                 bg-yellow2 hover:drop-shadow-none disabled:drop-shadow-none  transition-all"
-          onClick={deleteStatus}
-          disabled={loading2()}
-          data-cy="delete-status-button"
-        >
-          Delete status
-        </button>
-      </div>
-    </form>
+            onClick={deleteStatus}
+            disabled={loading2()}
+            data-cy="delete-status-button"
+          >
+            Delete status
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

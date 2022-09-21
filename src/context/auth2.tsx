@@ -17,7 +17,6 @@ export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
   listener = supabase.auth.onAuthStateChange(async (event, session) => {
     console.log("Auth state change");
     console.log(event);
-    console.log(session?.user);
     setUser(session?.user || { id: "" });
   }).subscription;
 

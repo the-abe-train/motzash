@@ -36,7 +36,7 @@ export default () => {
                 alt="Twitter"
               />
             </a>
-            <a href="https://github.com/the-abe-train/Motzash">
+            <a href="https://github.com/the-abe-train/motzash-solid">
               <img
                 class="inline mx-1"
                 src={Github}
@@ -60,7 +60,7 @@ export default () => {
           <Link href="/profile" data-cy="footer-profile">
             Profile
           </Link>
-          <Link href="/privacy-policy" data-cy="footer-profile">
+          <Link href="/privacy-policy" data-cy="footer-privacy-policy">
             Privacy policy
           </Link>
         </section>

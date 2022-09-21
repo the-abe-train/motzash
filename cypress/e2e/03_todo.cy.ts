@@ -51,7 +51,9 @@ describe("Testing the todo widget", () => {
 
     // Delete list
     cy.contains("Delete list").click();
-    cy.contains("No lists yet.").should("exist");
+    cy.get('[data-cy="list-of-lists"]').within(() => {
+      cy.contains("Fake new list").should("not.exist");
+    });
   });
 });
 

@@ -12,7 +12,7 @@ type Props = {
   refetchStatuses: () => any | Promise<any> | undefined | null;
 };
 
-const FriendRequestComponent: Component<Props> = (props) => {
+const FriendRequest: Component<Props> = (props) => {
   const [loading2, setLoading2] = createSignal(false);
 
   async function acceptRequest(idx: number, requester_id: string) {
@@ -50,6 +50,7 @@ const FriendRequestComponent: Component<Props> = (props) => {
       class="flex justify-between items-center p-5
       border-2 drop-shadow-small border-black bg-yellow1"
       onSubmit={(e) => e.preventDefault()}
+      data-cy={props.friendRequest.requester.username}
     >
       <p class="">{props.friendRequest.requester.username}</p>
       <Switch>
@@ -65,6 +66,7 @@ const FriendRequestComponent: Component<Props> = (props) => {
               onClick={() =>
                 acceptRequest(props.idx, props.friendRequest.requester.id)
               }
+              data-cy="accept-button"
             >
               Accept
             </button>
@@ -85,4 +87,4 @@ const FriendRequestComponent: Component<Props> = (props) => {
   );
 };
 
-export default FriendRequestComponent;
+export default FriendRequest;

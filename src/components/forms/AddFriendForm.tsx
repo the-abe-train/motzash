@@ -17,10 +17,10 @@ import {
   createRequest,
   deleteRequest,
   findFriendship,
-  getUser as getUserProfile,
+  getUserProfile,
   loadRequestsToMe,
 } from "../../util/queries";
-import FriendRequestComponent from "../FriendRequest";
+import FriendRequest from "../FriendRequest";
 
 type Props = {
   refetchStatuses: () => any | Promise<any> | undefined | null;
@@ -143,102 +143,99 @@ const AddFriendForm: Component<Props> = (props) => {
   }
 
   return (
-    <div
-      class="col-span-6 lg:col-span-8 p-4 relative pt-8 lg:pt-0
-    flex flex-col space-y-10 justify-between max-w-lg"
-    >
+    <div class="col-span-6 lg:col-span-8 md:p-4 relative md:pt-10">
       <button
-        class="absolute top-2 right-2 w-fit px-2 border border-black rounded
+        class="absolute top-0 right-2 w-fit px-2 border border-black rounded
         bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
         onClick={() => props.setShowScreen(() => "Map")}
         type="button"
       >
         Back to map
       </button>
-      <form
-        onSubmit={sendRequest}
-        class="flex flex-col space-y-3 relative max-w-lg"
-      >
-        <h1 class="text-2xl font-header">Add a Friend</h1>
-        <div class="flex flex-col space-y-2 ">
-          <label for="text">Enter your friend's email</label>
-          <input
-            type="email"
-            name="text"
-            class="border border-black w-full px-2"
-            value={friendEmail()}
-            onChange={(e) => setFriendEmail(e.currentTarget.value)}
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading()}
-          class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
+      <div class="space-y-10">
+        <form onSubmit={sendRequest} class="space-y-2 relative max-w-lg">
+          <h1 class="text-2xl font-header">Add a Friend</h1>
+          <div class="space-y-2">
+            <label for="friend">Enter your friend's email</label>
+            <input
+              type="email"
+              name="friend"
+              class="border border-black w-full px-2"
+              value={friendEmail()}
+              onChange={(e) => setFriendEmail(e.currentTarget.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading()}
+            class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
           bg-blue hover:drop-shadow-none disabled:drop-shadow-none transition-all"
-        >
-          Send request
-        </button>
-        <Show when={msg()}>
-          <p>{msg()}</p>
-        </Show>
-      </form>
-      <div class="space-y-4">
-        <h1 class="text-2xl font-header">Friend requests</h1>
-        <Switch fallback={<p>Loading...</p>}>
-          <Match when={loadedRequests.state !== "ready"}>
-            <p>Loading...</p>
-          </Match>
-          <Match when={friendRequests.length === 0}>
-            <p>No friend requests at the moment!</p>
-          </Match>
-          <Match when={friendRequests.length > 0}>
-            <For each={friendRequests}>
-              {(friendRequest, idx) => {
-                const reqProps = {
-                  idx: idx(),
-                  friendRequest,
-                  allRequests: friendRequests,
-                  setFriendRequests,
-                  user_id: user_id(),
-                  refetchStatuses: props.refetchStatuses,
-                };
-                return <FriendRequestComponent {...reqProps} />;
-              }}
-            </For>
-          </Match>
-        </Switch>
-      </div>
-      <form
-        class="flex flex-col space-y-3"
-        action=""
-        onSubmit={removeFriendship}
-      >
-        <h1 class="text-2xl font-header">Remove a Friendship</h1>
-        <div class="space-y-2">
-          <label for="remove">
-            Enter the email of the friend who's connection you'd like to remove.
-          </label>
-          <input
-            type="email"
-            name="text"
-            class="border border-black w-full px-2"
-            value={deleteEmail()}
-            onChange={(e) => setDeleteEmail(e.currentTarget.value)}
-            required
-            placeholder="Friend's email"
-          />
+          >
+            Send request
+          </button>
+          <Show when={msg()}>
+            <p class="text-coral2">{msg()}</p>
+          </Show>
+        </form>
+        <div class="space-y-4" data-cy="friend-requests">
+          <h1 class="text-2xl font-header">Friend requests</h1>
+          <Switch fallback={<p>Loading...</p>}>
+            <Match when={loadedRequests.state !== "ready"}>
+              <p>Loading...</p>
+            </Match>
+            <Match when={friendRequests.length === 0}>
+              <p>No friend requests at the moment!</p>
+            </Match>
+            <Match when={friendRequests.length > 0}>
+              <For each={friendRequests}>
+                {(friendRequest, idx) => {
+                  const reqProps = {
+                    idx: idx(),
+                    friendRequest,
+                    allRequests: friendRequests,
+                    setFriendRequests,
+                    user_id: user_id(),
+                    refetchStatuses: props.refetchStatuses,
+                  };
+                  return <FriendRequest {...reqProps} />;
+                }}
+              </For>
+            </Match>
+          </Switch>
         </div>
-        <button
-          type="submit"
-          class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
-          bg-yellow2 hover:drop-shadow-none  disabled:drop-shadow-none transition-all"
-          disabled={loading3()}
+        <form
+          class="flex flex-col space-y-2 max-w-lg"
+          action=""
+          onSubmit={removeFriendship}
         >
-          Remove
-        </button>
-        <p>{msg2()}</p>
-      </form>
+          <h1 class="text-2xl font-header">Remove a Friendship</h1>
+          <div class="space-y-2">
+            <label for="remove">
+              Enter the email of the friend who's connection you'd like to
+              remove.
+            </label>
+            <input
+              type="email"
+              name="remove"
+              class="border border-black w-full px-2"
+              value={deleteEmail()}
+              onChange={(e) => setDeleteEmail(e.currentTarget.value)}
+              required
+              placeholder="Friend's email"
+            />
+          </div>
+          <button
+            type="submit"
+            class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 
+          bg-yellow2 hover:drop-shadow-none  disabled:drop-shadow-none transition-all"
+            disabled={loading3()}
+          >
+            Remove
+          </button>
+          <p>{msg2()}</p>
+        </form>
+      </div>
     </div>
   );
 };

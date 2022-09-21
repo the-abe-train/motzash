@@ -153,7 +153,7 @@ export const loadRequestsToMe = async (user_id: string) => {
   return data as FriendRequest[];
 };
 
-export async function getUser(info: Profile) {
+export async function getUserProfile(info: Profile) {
   const key = Object.keys(info)[0] as keyof Profile;
   const { data, error } = await supabase
     .from("profiles")
@@ -189,7 +189,7 @@ export const findFriendship = async (user_id: string, friend_id: string) => {
 export async function createRequest(friendInfo: Profile, user_id: string) {
   let friend_id = friendInfo["id"];
   if (!friend_id) {
-    const friend = await getUser(friendInfo);
+    const friend = await getUserProfile(friendInfo);
     friend_id = friend?.id;
   }
   if (!friend_id) {
@@ -210,7 +210,7 @@ export async function createRequest(friendInfo: Profile, user_id: string) {
 export const deleteRequest = async (user_id: string, info: Profile) => {
   let friend_id = info["id"];
   if (!friend_id) {
-    const friend = await getUser(info);
+    const friend = await getUserProfile(info);
     friend_id = friend?.id;
   }
   const { error, count } = await supabase

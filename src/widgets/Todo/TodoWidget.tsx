@@ -218,9 +218,10 @@ const TodoWidget: WidgetComponent = (props) => {
           Submit
         </button>
       </form>
+      <p class="my-8" />
       <button
-        class="mt-16 w-fit px-2 border border-black rounded
-      bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        class="w-max py-1 px-2 border rounded my-6
+        bg-none text-coral2 border-coral2"
         onClick={deleteTodoList}
       >
         Delete list

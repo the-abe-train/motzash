@@ -171,16 +171,16 @@ const PollWidget: WidgetComponent = (props) => {
           </div>
         </form>
       </div>
+      <p class="my-8">{msg()}</p>
       <Show when={props.widget.user_id === user_id}>
         <button
           onClick={deletePoll}
-          class="w-fit py-1 px-2 border border-black rounded
-          mt-8 bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+          class="w-max py-1 px-2 border rounded my-6
+          bg-none text-black border-black"
         >
           Delete poll
         </button>
       </Show>
-      <p>{msg()}</p>
     </div>
   );
 };

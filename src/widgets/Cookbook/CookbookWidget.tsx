@@ -378,39 +378,41 @@ const CookbookWidget: WidgetComponent = (props) => {
             );
           }}
         </For>
-        <form onSubmit={addInstruction} class="flex space-x-2 max-w-lg">
-          <input
-            class="border border-black w-14 px-1"
-            type="number"
-            name="step"
-            min={1}
-            required
-            value={newInstruction.step}
-            onInput={(e) =>
-              setNewInstruction("step", parseInt(e.currentTarget.value))
-            }
-          />
-          <textarea
-            class="border border-black flex-grow px-1"
-            name="text"
-            required
-            value={newInstruction.text}
-            onChange={(e) => setNewInstruction("text", e.currentTarget.value)}
-            minLength="10"
-          />
+        <form onSubmit={addInstruction} class="w-full max-w-lg my-2">
+          <div class="flex w-full justify-between space-x-2">
+            <input
+              class="border border-black w-14 px-1"
+              type="number"
+              name="step"
+              min={1}
+              required
+              value={newInstruction.step}
+              onInput={(e) =>
+                setNewInstruction("step", parseInt(e.currentTarget.value))
+              }
+            />
+            <textarea
+              class="border border-black flex-grow px-1"
+              name="text"
+              required
+              value={newInstruction.text}
+              onChange={(e) => setNewInstruction("text", e.currentTarget.value)}
+              minLength="10"
+            />
+          </div>
           <button
             type="submit"
-            class="w-fit py-1 px-2 border border-black rounded
+            class="w-fit py-1 px-2 border border-black rounded my-2
           bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
           >
             Add new
           </button>
         </form>
       </div>
-      <p class="my-8">{msg}</p>
+      <p class="my-8">{msg()}</p>
       <button
-        class="w-fit py-1 px-2 border border-black rounded
-          bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+        class="w-max py-1 px-2 border rounded my-6
+          bg-none text-coral2 border-coral2"
         onClick={deleteRecipe}
       >
         Delete recipe

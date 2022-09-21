@@ -233,6 +233,11 @@ disabled:drop-shadow-none transition-all mx-auto"
                       <tr class="border border-black">
                         <For each={week}>
                           {(day) => {
+                            const { date } = day;
+                            const text = date.date();
+                            const testLabel = date.isSame(dayjs(), "month")
+                              ? text
+                              : "";
                             return (
                               <td
                                 style={{
@@ -242,9 +247,10 @@ disabled:drop-shadow-none transition-all mx-auto"
                                 class={`text-center cursor-pointer w-max
                                   hover:font-bold min-w-[30px] xl:py-1 xl:text-xl
                                   font-${chooseWeight(day)} transition-colors`}
-                                onClick={() => setDisplayDay(day.date)}
+                                onClick={() => setDisplayDay(date)}
+                                data-cy={testLabel}
                               >
-                                {day.date.date()}
+                                {text}
                               </td>
                             );
                           }}

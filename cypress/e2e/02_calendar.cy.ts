@@ -60,10 +60,22 @@ describe("Testing the calendar widgets", () => {
       });
 
     cy.get('[data-cy="calendar-table"]').within(() => {
-      cy.contains(dayjs().date()).should("have.css", "font-weight", "700");
-      cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "400");
-      cy.contains(dayjs().date() + 1).click();
-      cy.contains(dayjs().date() + 1).should("have.css", "font-weight", "700");
+      cy.get(`[data-cy="${dayjs().date()}"]`).should(
+        "have.css",
+        "font-weight",
+        "700"
+      );
+      cy.get(`[data-cy="${dayjs().date() + 1}"]`).should(
+        "have.css",
+        "font-weight",
+        "400"
+      );
+      cy.get(`[data-cy="${dayjs().date() + 1}"]`).click();
+      cy.get(`[data-cy="${dayjs().date() + 1}"]`).should(
+        "have.css",
+        "font-weight",
+        "700"
+      );
     });
   });
 });
