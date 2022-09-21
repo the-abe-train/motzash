@@ -10,7 +10,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run"
   },
-  "license": "MIT",
+  "license": "CC BY-NC-SA 4.0",
   "devDependencies": {
     "@types/bad-words": "^3.0.1",
     "@types/mapbox-gl": "^1.13.4",
