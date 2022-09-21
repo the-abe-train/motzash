@@ -17,10 +17,11 @@ export const loadProfile = async (user_id: string) => {
   return data;
 };
 
-export const loadWidgets = async () => {
+export const loadWidgets = async (user_id: string) => {
   const { data, error } = await supabase
     .from("widgets")
     .select("*, profiles (username)")
+    .eq("user_id", user_id)
     .limit(12);
   if (error) {
     if (error.code === "PGRST116") return null;
@@ -29,11 +30,11 @@ export const loadWidgets = async () => {
   return data as Widget[];
 };
 
-export const loadTodoLists = async () => {
+export const loadTodoLists = async (user_id: string) => {
   const { data, error } = await supabase
     .from("widgets")
     .select("*, todos (*)")
-    .eq("type", "todo");
+    .match({ type: "todo", user_id });
   if (error) {
     if (error.code === "PGRST116") return null;
 

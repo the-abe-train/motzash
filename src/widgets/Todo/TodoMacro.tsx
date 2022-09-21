@@ -15,7 +15,7 @@ import Checkbox from "../../assets/icons/Checkbox.svg";
 const TodoMacro: WidgetPreviewComponent = (props) => {
   const user = useContext(AuthContext);
   const user_id = user?.id;
-  const [loadedLists, { refetch }] = createResource(loadTodoLists);
+  const [loadedLists, { refetch }] = createResource(user_id, loadTodoLists);
   const [lists, setLists] = createStore<TodoList[]>([]);
   const [inputName, setInputName] = createSignal("");
   const [loading, setLoading] = createSignal(false);
@@ -68,20 +68,21 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
             const tasksLeft = todoList.todos.filter(
               (todo) => !todo.is_complete
             ).length;
-            const tasksLeftString = `(${tasksLeft} task${
-              tasksLeft !== 1 ? "s" : ""
-            } left)`;
+            const suffix = tasksLeft !== 1 ? "s" : "";
+            const word =
+              (todoList.name?.length || 0) > 15 ? "" : ` task${suffix} left`;
+            const tasksLeftString = `(${tasksLeft}${word})`;
             return (
               <div
-                class="cursor-pointer bg-ghost flex justify-between
-                  border border-black drop-shadow-small px-3 py-1
-                  hover:drop-shadow-none transition-all my-2"
+                class="cursor-pointer bg-ghost flex space-x-2
+              border border-black drop-shadow-small px-3 py-1
+              hover:drop-shadow-none transition-all my-2 "
                 onClick={() => props.setActiveWidget(todoList)}
               >
-                <div class="space-x-2">
-                  <img src={Checkbox} class="inline" alt="checkbox" />
-                  <span>{todoList.name}</span>
-                </div>
+                <img src={Checkbox} class="inline" alt="checkbox" />
+                <span class="flex-grow overflow-ellipsis overflow-hidden">
+                  {todoList.name}
+                </span>
                 <span>{tasksLeftString}</span>
               </div>
             );
@@ -93,6 +94,7 @@ const TodoMacro: WidgetPreviewComponent = (props) => {
         <div class="flex max-w-md space-x-4">
           <input
             type="text"
+            maxLength={50}
             value={inputName()}
             onChange={(e) => setInputName(e.currentTarget.value)}
             required

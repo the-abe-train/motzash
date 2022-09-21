@@ -26,7 +26,9 @@ border border-black rounded"
             border border-black rounded"
             >
               <img src={Checkbox} alt="Checkbox" height={24} />
-              <p>{widget.name}</p>
+              <p class="flex-grow overflow-ellipsis overflow-hidden">
+                {widget.name}
+              </p>
             </div>
           );
         }}

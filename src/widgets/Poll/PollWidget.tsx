@@ -105,7 +105,6 @@ const PollWidget: WidgetComponent = (props) => {
       return;
     }
     setNewVote("text", "");
-    setNewVote("id", 0);
     refetch();
   }
 
@@ -145,6 +144,7 @@ const PollWidget: WidgetComponent = (props) => {
         <form onSubmit={upsertVote}>
           <input
             name="vote"
+            maxLength={20}
             class="px-2 py-1 border border-black w-full"
             value={votes.myVote?.text || ""}
             onChange={(e) => setNewVote("text", e.currentTarget.value)}

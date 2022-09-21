@@ -142,6 +142,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
               type="text"
               name="text"
               class="border border-black w-full md:max-w-lg xl:w-80 px-2 py-1"
+              maxLength={50}
               value={newStatus.text || ""}
               required
               onChange={(e) => setNewStatus("text", e.currentTarget.value)}
@@ -154,6 +155,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
                 name="city"
                 class="border border-black w-full px-2 py-1"
                 type="text"
+                maxLength={50}
                 value={newStatus.city || ""}
                 required
                 onChange={(e) => setNewStatus("city", e.currentTarget.value)}

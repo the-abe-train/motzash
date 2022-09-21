@@ -42,7 +42,7 @@ type Props = {
 const Dashboard: Component<Props> = (props) => {
   const user = useContext(AuthContext);
   const user_id = user?.id;
-  const [widgets, { refetch }] = createResource(loadWidgets);
+  const [widgets, { refetch }] = createResource(user_id, loadWidgets);
   const [myStatus] = createResource(user_id, loadMyStatus);
 
   createEffect(

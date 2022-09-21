@@ -24,9 +24,14 @@ const TodoWidget: WidgetComponent = (props) => {
     on(loadedTodos, async () => {
       const returnedValue = loadedTodos();
       if (returnedValue) {
+        const havdalah = await getHavdalah();
         const updatedValues = returnedValue.map((todo) => {
-          const expired = (todo.havdalah || 0) < greg.greg2abs(new Date());
-          return { ...todo, is_complete: expired ? false : todo.is_complete };
+          const expired = (todo.havdalah || 0) <= greg.greg2abs(new Date());
+          return {
+            ...todo,
+            is_complete: expired ? false : todo.is_complete,
+            havdalah,
+          };
         });
         sortTodos({ replacement: updatedValues });
       }
@@ -170,6 +175,7 @@ const TodoWidget: WidgetComponent = (props) => {
                 >
                   <input
                     value={item.task || ""}
+                    maxLength={50}
                     class="bg-transparent min-w-[50%]"
                     style={{
                       "text-decoration-line": item.is_complete
@@ -205,6 +211,7 @@ const TodoWidget: WidgetComponent = (props) => {
           class="px-2 py-1 flex-grow border border-black"
           type="text"
           name="todo"
+          maxLength={50}
           required
           value={inputTodo()}
           onInput={(e) => setInputTodo(e.currentTarget.value)}

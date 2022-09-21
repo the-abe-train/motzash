@@ -100,6 +100,7 @@ const Friends: Component = () => {
                   class="border border-black px-2 w-full"
                   placeholder="Filter by name"
                   value={friendFilter()}
+                  maxLength={50}
                   onChange={(e) => setFriendFilter(e.currentTarget.value)}
                 />
                 <button

@@ -87,6 +87,7 @@ const AuthPassword: Component = () => {
           value={email()}
           onChange={(e) => setEmail(e.currentTarget.value)}
           data-cy="email-input"
+          maxLength={50}
         />
         <input
           class="px-2 py-1 flex-grow border border-black max-w-md"
@@ -95,6 +96,7 @@ const AuthPassword: Component = () => {
           value={password()}
           onChange={(e) => setPassword(e.currentTarget.value)}
           data-cy="password-input"
+          maxLength={50}
         />
         <div class="flex justify-center space-x-4 items-center">
           <button

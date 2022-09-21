@@ -32,7 +32,7 @@ export const SpaceTimeProvider: ContextProviderComponent<SpaceTimeContext> = (
   const [location, setLocation] = createSignal<Location | null>(null);
   const [havdalah, setHavdalah] = createSignal<number | null>(null);
 
-  const getLocation = async () => {
+  const getAndSetLocation = async () => {
     if (!location()) {
       const newLocation = await getHebcalLocation();
       setLocation(newLocation);
@@ -42,7 +42,7 @@ export const SpaceTimeProvider: ContextProviderComponent<SpaceTimeContext> = (
   };
 
   const calculateHavdalah = async () => {
-    const location = await getLocation();
+    const location = await getAndSetLocation();
     const cal = generateCalendar(location!);
     const havdalahDay = cal.find((event) => {
       const date = dayjs(event.eventTime);
@@ -61,7 +61,9 @@ export const SpaceTimeProvider: ContextProviderComponent<SpaceTimeContext> = (
   };
 
   return (
-    <LocationContext.Provider value={{ location, getLocation }}>
+    <LocationContext.Provider
+      value={{ location, getLocation: getAndSetLocation }}
+    >
       <HavdalahContext.Provider value={getHavdalah}>
         {props.children}
       </HavdalahContext.Provider>

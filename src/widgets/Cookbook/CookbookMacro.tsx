@@ -141,7 +141,9 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
                           hover:drop-shadow-none transition-all my-2"
                       onClick={() => props.setActiveWidget(recipe)}
                     >
-                      <span>{recipe.name}</span>
+                      <span class=" overflow-ellipsis overflow-hidden">
+                        {recipe.name}
+                      </span>
                       <span class="hidden lg:inline">{metaString}</span>
                       <img
                         src={isFavourite ? StarSolid : StarEmpty}
@@ -169,6 +171,7 @@ const CookbookMacro: WidgetPreviewComponent = (props) => {
             class="px-2 py-1 flex-grow border border-black"
             required
             minLength={6}
+            maxLength={50}
           />
           <select
             class="border border-black"

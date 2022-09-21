@@ -93,6 +93,7 @@ const Profile: Component = () => {
               class="px-2 py-1 flex-grow border border-black"
               type="text"
               required
+              maxLength={50}
               value={newProfile.username || ""}
               onChange={(e) => setNewProfile("username", e.currentTarget.value)}
             />

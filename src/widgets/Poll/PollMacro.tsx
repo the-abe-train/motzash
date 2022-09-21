@@ -80,6 +80,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
               <input
                 type="text"
                 name="new-poll"
+                maxLength={50}
                 required
                 value={newPoll()}
                 onChange={(e) => setNewPoll(e.currentTarget.value)}
@@ -96,16 +97,24 @@ const PollMacro: WidgetPreviewComponent = (props) => {
           }
         >
           {(myPoll) => {
+            const numVotes = myPoll.poll_votes.length;
+            const suffix = numVotes !== 1 ? "s" : "";
+            const voteWord =
+              (myPoll.name?.length || 0) > 15 ? "" : ` vote${suffix}`;
+            const votesString = `(${numVotes}${voteWord})`;
+
             return (
               <div
                 class="cursor-pointer bg-ghost flex space-x-2
               border border-black drop-shadow-small px-3 py-1
-              hover:drop-shadow-none transition-all my-2"
+              hover:drop-shadow-none transition-all my-2 "
                 onClick={() => props.setActiveWidget(myPoll)}
               >
                 <img src={Poll} alt="Poll" />
-                <span class="flex-grow">{myPoll.name}</span>
-                <span>({myPoll.poll_votes.length} votes)</span>
+                <p class="flex-grow overflow-ellipsis overflow-hidden">
+                  {myPoll.name}
+                </p>
+                <span class="w-max">{votesString}</span>
               </div>
             );
           }}

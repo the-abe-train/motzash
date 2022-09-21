@@ -220,7 +220,7 @@ const CookbookWidget: WidgetComponent = (props) => {
 
   return (
     <div class="w-full">
-      <h2 class="text-2xl font-header">{props.widget.name}</h2>
+      <h2 class="text-2xl font-header break-words">{props.widget.name}</h2>
       <form
         class="flex space-x-1"
         onSubmit={(e) => updateMetadata(e, metadata)}
@@ -232,6 +232,7 @@ const CookbookWidget: WidgetComponent = (props) => {
           onChange={(e) =>
             setMetadata("servings", parseInt(e.currentTarget.value))
           }
+          maxLength={2}
         />
         <span class="mx-1">servings,</span>
         <input
@@ -241,6 +242,7 @@ const CookbookWidget: WidgetComponent = (props) => {
           onChange={(e) =>
             setMetadata("prep_time", parseInt(e.currentTarget.value))
           }
+          maxLength={2}
         />
         <span class="mx-1">min</span>
         <button type="submit">&#8593;</button>
@@ -276,6 +278,7 @@ const CookbookWidget: WidgetComponent = (props) => {
                 <input
                   name="unit"
                   class="bg-transparent w-14"
+                  maxLength={10}
                   value={ing.unit || ""}
                   onChange={(e) =>
                     setIngredients(idx(), "unit", e.currentTarget.value)
@@ -283,6 +286,7 @@ const CookbookWidget: WidgetComponent = (props) => {
                 />
                 <input
                   name="ingredient"
+                  maxLength={50}
                   class="bg-transparent w-40 flex-grow"
                   value={ing.ingredient || ""}
                   onChange={(e) =>
@@ -313,6 +317,7 @@ const CookbookWidget: WidgetComponent = (props) => {
               class="border w-14 border-black px-1"
               type="text"
               name="unit"
+              maxLength={10}
               required
               value={newIngredient.unit}
               onInput={(e) => setNewIngredient("unit", e.currentTarget.value)}
@@ -321,6 +326,7 @@ const CookbookWidget: WidgetComponent = (props) => {
               class="border border-black w-40 px-1 flex-grow"
               type="text"
               name="ingredient"
+              maxLength={50}
               required
               value={newIngredient.ingredient}
               onInput={(e) =>
@@ -398,6 +404,7 @@ const CookbookWidget: WidgetComponent = (props) => {
               value={newInstruction.text}
               onChange={(e) => setNewInstruction("text", e.currentTarget.value)}
               minLength="10"
+              maxLength={100}
             />
           </div>
           <button

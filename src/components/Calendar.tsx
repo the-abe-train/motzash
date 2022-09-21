@@ -76,12 +76,14 @@ const Calendar: Component = () => {
       return (
         <div>
           <p>For {details.eventName},</p>
-          <p>
-            {details.startDesc}: {details.startTime.format("h:mm A (MMM D)")}
-          </p>
-          <p>
-            {details.endDesc}: {details.endTime.format("h:mm A (MMM D)")}
-          </p>
+          <div class="flex flex-wrap justify-between">
+            <p>
+              {details.startDesc}: {details.startTime.format("h:mm A (MMM D)")}
+            </p>
+            <p>
+              {details.endDesc}: {details.endTime.format("h:mm A (MMM D)")}
+            </p>
+          </div>
         </div>
       );
     }

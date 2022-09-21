@@ -161,6 +161,7 @@ const AddFriendForm: Component<Props> = (props) => {
               type="email"
               name="friend"
               class="border border-black w-full px-2"
+              maxLength={50}
               value={friendEmail()}
               onChange={(e) => setFriendEmail(e.currentTarget.value)}
               required
@@ -219,6 +220,7 @@ const AddFriendForm: Component<Props> = (props) => {
               type="email"
               name="remove"
               class="border border-black w-full px-2"
+              maxLength={50}
               value={deleteEmail()}
               onChange={(e) => setDeleteEmail(e.currentTarget.value)}
               required

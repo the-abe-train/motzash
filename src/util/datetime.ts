@@ -6,7 +6,7 @@ export const generateCalendar = (location: Location) => {
   const calOptions: CalOptions = {
     isHebrewYear: false,
     candlelighting: true,
-    numYears: 1,
+    numYears: 2,
     location,
   };
   const cal = HebrewCalendar.calendar(calOptions) as TimedEvent[];

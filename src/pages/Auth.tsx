@@ -60,6 +60,7 @@ const Auth: Component<Props> = (props) => {
             class="px-2 py-1 flex-grow border border-black max-w-md"
             type="email"
             placeholder="Your email"
+            maxLength={50}
             required
             value={email()}
             onChange={(e) => setEmail(e.currentTarget.value)}
