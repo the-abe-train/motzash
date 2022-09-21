@@ -89,14 +89,14 @@ export const loadRecipe = async (widget_id: number) => {
 export const loadPolls = async () => {
   const { data, error } = await supabase
     .from("widgets")
-    .select("*, poll_votes (id)")
+    .select("*, poll_votes (*), profiles (username)")
     .gte("poll_votes.havdalah", greg.greg2abs(new Date()))
     .eq("type", "poll");
   if (error) {
     if (error.code === "PGRST116") return null;
-
     return null;
   }
+  console.log(data);
   return data as Poll[];
 };
 
@@ -109,9 +109,6 @@ export const loadVotes = async (widget_id: number) => {
   if (error) {
     return null;
   }
-  // for (let vote of data) {
-  //   havdalahTimestamp(vote.havdalah || 0);
-  // }
   return data as Vote[];
 };
 

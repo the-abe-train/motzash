@@ -12,7 +12,7 @@ border border-black rounded"
     </div>
   );
   return (
-    <div class="space-y-4" data-cy="cookbook-preview">
+    <div class="space-y-4" data-cy="poll-preview">
       <For each={props.widgets.slice(0, 3)} fallback={fallback}>
         {(widget) => {
           return (

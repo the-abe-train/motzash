@@ -63,7 +63,7 @@ describe("Testing the statuses", () => {
   });
 
   it("main looks at friends' statuses", () => {
-    // Sign in friend
+    // Sign in main
     cy.visit("/signInWithPassword");
     cy.get('[data-cy="email-input"]').clear().type(testUsers["main"]["email"]);
     cy.get('[data-cy="password-input"]')
@@ -95,6 +95,21 @@ describe("Testing the statuses", () => {
     cy.contains(testUsers["friend2"]["username"]).should("not.exist");
     cy.get('[type="reset"]').click();
     cy.contains(testUsers["friend2"]["username"]).should("exist");
+  });
+
+  it("Updates status", () => {
+    // Sign in main
+    cy.visit("/signInWithPassword");
+    cy.get('[data-cy="email-input"]').clear().type(testUsers["main"]["email"]);
+    cy.get('[data-cy="password-input"]')
+      .clear()
+      .type(testUsers["main"]["password"]);
+    cy.get('[data-cy="sign-in-btn"]').click();
+    cy.contains("User is currently signed-in").should("exist");
+
+    // Go to Friends page
+    cy.visit("/friends");
+    cy.contains("Your Status").should("exist");
 
     // Update status
     cy.mockGeolocation(43.6775, -79.4175);
@@ -103,9 +118,23 @@ describe("Testing the statuses", () => {
     cy.get('[name="city"]').clear().type("Xanadu");
     cy.get('[data-cy="update-status-button"]').click();
     cy.contains(testUsers["main"]["status"]).should("exist");
+  });
+
+  it("Deletes status", () => {
+    // Sign in main
+    cy.visit("/signInWithPassword");
+    cy.get('[data-cy="email-input"]').clear().type(testUsers["main"]["email"]);
+    cy.get('[data-cy="password-input"]')
+      .clear()
+      .type(testUsers["main"]["password"]);
+    cy.get('[data-cy="sign-in-btn"]').click();
+    cy.contains("User is currently signed-in").should("exist");
+
+    // Go to Friends page
+    cy.visit("/friends");
+    cy.contains("Your Status").should("exist");
 
     // Delete status
-    cy.wait(2000);
     cy.get('[data-cy="add-status-button"]').click();
     cy.get('[data-cy="delete-status-button"]').click();
     cy.contains(testUsers["main"]["status"]).should("not.exist");

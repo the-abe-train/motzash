@@ -79,6 +79,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
             <form onSubmit={addPoll} class="flex w-full space-x-3">
               <input
                 type="text"
+                name="new-poll"
                 required
                 value={newPoll()}
                 onChange={(e) => setNewPoll(e.currentTarget.value)}
@@ -87,6 +88,7 @@ const PollMacro: WidgetPreviewComponent = (props) => {
               <button
                 class="w-fit py-1 px-2 border border-black rounded
         bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
+                type="submit"
               >
                 Create poll
               </button>
@@ -113,19 +115,18 @@ const PollMacro: WidgetPreviewComponent = (props) => {
         <h2 class="font-header text-2xl">Friends' Polls</h2>
         <For each={polls.othersPolls} fallback={fallback}>
           {(poll) => {
-            if (poll.id !== props.widgets[0]?.id)
-              return (
-                <div
-                  class="cursor-pointer bg-ghost flex space-x-2
+            return (
+              <div
+                class="cursor-pointer bg-ghost flex space-x-2
               border border-black drop-shadow-small px-3 py-1
               hover:drop-shadow-none transition-all my-2"
-                  onClick={() => props.setActiveWidget(poll)}
-                >
-                  <img src={Poll} alt="Poll" />
-                  <span class="flex-grow">{poll.name}</span>
-                  <span>({poll.poll_votes.length} votes)</span>
-                </div>
-              );
+                onClick={() => props.setActiveWidget(poll)}
+              >
+                <img src={Poll} alt="Poll" />
+                <span class="flex-grow">{poll.name}</span>
+                <span>({poll.poll_votes.length} votes)</span>
+              </div>
+            );
           }}
         </For>
       </div>

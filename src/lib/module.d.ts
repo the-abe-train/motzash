@@ -153,5 +153,6 @@ declare global {
   type Vote = Database["public"]["Tables"]["poll_votes"]["Update"];
   interface Poll extends Widget {
     poll_votes: Vote[];
+    profiles: Profile[];
   }
 }

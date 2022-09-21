@@ -157,6 +157,7 @@ const PollWidget: WidgetComponent = (props) => {
            bg-ghost drop-shadow-small hover:drop-shadow-none transition-all"
                 type="button"
                 onClick={deleteVote}
+                data-cy="remove-vote-button"
               >
                 Remove
               </button>
@@ -177,6 +178,7 @@ const PollWidget: WidgetComponent = (props) => {
           onClick={deletePoll}
           class="w-max py-1 px-2 border rounded my-6
           bg-none text-black border-black"
+          data-cy="delete-button"
         >
           Delete poll
         </button>
