@@ -10,8 +10,8 @@ import { supabase } from "../util/supabase";
 
 const AuthPassword: Component = () => {
   const [loading, setLoading] = createSignal(false);
-  const [email, setEmail] = createSignal("test@example.com");
-  const [password, setPassword] = createSignal("password");
+  const [email, setEmail] = createSignal("");
+  const [password, setPassword] = createSignal("");
 
   const user = useContext(AuthContext);
 
@@ -29,15 +29,6 @@ const AuthPassword: Component = () => {
         password: password(),
       });
       if (error) {
-        // if (error.message === "Invalid login credentials") {
-        //   const { error } = await supabase.auth.signUp({
-        //     email: email(),
-        //     password: password(),
-        //   });
-        // }
-        // if (!error) {
-        //   return;
-        // }
         console.error(error);
         throw error;
       }
@@ -105,19 +96,27 @@ const AuthPassword: Component = () => {
           onChange={(e) => setPassword(e.currentTarget.value)}
           data-cy="password-input"
         />
-        <div class="flex justify-around items-center">
+        <div class="flex justify-center space-x-4 items-center">
           <button
             type="submit"
             disabled={loading()}
-            class="p-2 border border-black rounded drop-shadow-small 
+            class="py-1 px-2 border border-black rounded drop-shadow-small 
             w-fit bg-ghost hover:drop-shadow-none disabled:drop-shadow-none transition-all"
             aria-live="polite"
             data-cy="sign-in-btn"
           >
             Sign in
           </button>
+          <button
+            onClick={signUp}
+            class="py-1 px-2 border border-black rounded drop-shadow-small 
+            w-fit bg-ghost hover:drop-shadow-none transition-all"
+          >
+            Sign up
+          </button>
         </div>
       </form>
+
       <Show when={user.id} fallback={<p>User is not signed in.</p>}>
         <p>User is currently signed-in</p>
         <button
@@ -130,13 +129,6 @@ const AuthPassword: Component = () => {
           Sign Out
         </button>
         <div class="block space-x-3">
-          <button
-            onClick={signUp}
-            class="py-1 px-2  border border-black rounded drop-shadow-small 
-            w-fit bg-ghost hover:drop-shadow-none transition-all"
-          >
-            Sign up
-          </button>
           <button
             onClick={resetPassword}
             class="py-1 px-2  border border-black rounded drop-shadow-small 

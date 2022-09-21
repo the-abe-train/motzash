@@ -81,6 +81,7 @@ const Friends: Component = () => {
                       class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
                          bg-blue hover:drop-shadow-none transition-all"
                       onClick={() => setShowScreen("UpdateStatus")}
+                      data-cy="add-status-button"
                     >
                       Edit status
                     </button>

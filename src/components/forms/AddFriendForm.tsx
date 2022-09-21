@@ -7,6 +7,7 @@ import {
   For,
   Match,
   Setter,
+  Show,
   Switch,
   useContext,
 } from "solid-js";
@@ -143,8 +144,8 @@ const AddFriendForm: Component<Props> = (props) => {
 
   return (
     <div
-      class="col-span-6 lg:col-span-8 p-4 relative pt-8
-    flex flex-col space-y-4 justify-between max-w-lg"
+      class="col-span-6 lg:col-span-8 p-4 relative pt-8 lg:pt-0
+    flex flex-col space-y-10 justify-between max-w-lg"
     >
       <button
         class="absolute top-2 right-2 w-fit px-2 border border-black rounded
@@ -156,7 +157,7 @@ const AddFriendForm: Component<Props> = (props) => {
       </button>
       <form
         onSubmit={sendRequest}
-        class="flex flex-col space-y-4 relative max-w-lg"
+        class="flex flex-col space-y-3 relative max-w-lg"
       >
         <h1 class="text-2xl font-header">Add a Friend</h1>
         <div class="flex flex-col space-y-2 ">
@@ -178,9 +179,11 @@ const AddFriendForm: Component<Props> = (props) => {
         >
           Send request
         </button>
-        <p>{msg()}</p>
+        <Show when={msg()}>
+          <p>{msg()}</p>
+        </Show>
       </form>
-      <div class="my-8">
+      <div class="space-y-4">
         <h1 class="text-2xl font-header">Friend requests</h1>
         <Switch fallback={<p>Loading...</p>}>
           <Match when={loadedRequests.state !== "ready"}>
@@ -207,23 +210,25 @@ const AddFriendForm: Component<Props> = (props) => {
         </Switch>
       </div>
       <form
-        class="flex flex-col space-y-2"
+        class="flex flex-col space-y-3"
         action=""
         onSubmit={removeFriendship}
       >
         <h1 class="text-2xl font-header">Remove a Friendship</h1>
-        <label for="remove">
-          Enter the email of the friend who's connection you'd like to remove.
-        </label>
-        <input
-          type="email"
-          name="text"
-          class="border border-black w-full px-2"
-          value={deleteEmail()}
-          onChange={(e) => setDeleteEmail(e.currentTarget.value)}
-          required
-          placeholder="Friend's email"
-        />
+        <div class="space-y-2">
+          <label for="remove">
+            Enter the email of the friend who's connection you'd like to remove.
+          </label>
+          <input
+            type="email"
+            name="text"
+            class="border border-black w-full px-2"
+            value={deleteEmail()}
+            onChange={(e) => setDeleteEmail(e.currentTarget.value)}
+            required
+            placeholder="Friend's email"
+          />
+        </div>
         <button
           type="submit"
           class="px-2 py-1 w-fit text-coral2 border border-coral2 rounded drop-shadow-small 

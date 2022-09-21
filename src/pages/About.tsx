@@ -4,8 +4,11 @@ import Logo from "../assets/icons/Havdalah Dynamic.svg";
 const About: Component = () => {
   return (
     <>
-      <div class="col-span-6 lg:col-span-4 p-12 lg:p-16 row-start-2 lg:row-start-1">
-        <object data={Logo}></object>
+      <div
+        class="row-start-2 col-span-6 p-12 mx-auto
+        md:col-span-12 lg:row-start-1 lg:col-span-4 lg:p-16"
+      >
+        <object class="w-full" data={Logo}></object>
       </div>
       <div class="col-span-6 md:col-span-12 lg:col-span-8 space-y-3 my-4">
         <h1 class="font-header text-3xl">What is Motzash?</h1>

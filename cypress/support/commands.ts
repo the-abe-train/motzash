@@ -29,7 +29,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       login(user: string): Chainable<void>;
-      mockGeolocation(): Chainable<void>;
+      mockGeolocation(lat?: number, lng?: number): Chainable<void>;
       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>;
       dismiss(
         subject: string,

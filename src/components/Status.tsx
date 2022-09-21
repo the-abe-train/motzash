@@ -19,6 +19,7 @@ const Status: Component<Props> = (props) => {
     <div
       class="p-2 flex flex-col space-y-3 
       border-2 border-black"
+      data-cy="status"
       style={{ background: isFocused() ? "#FFBC42" : "#FFFF66" }}
       onClick={() => props.setFocus(status)}
     >

@@ -168,6 +168,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
           class="px-2 py-1 w-fit border border-black rounded drop-shadow-small 
           bg-blue hover:drop-shadow-none disabled:drop-shadow-none transition-all"
           disabled={loading2()}
+          data-cy="update-status-button"
         >
           Update status
         </button>
@@ -177,6 +178,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
                 bg-yellow2 hover:drop-shadow-none disabled:drop-shadow-none  transition-all"
           onClick={deleteStatus}
           disabled={loading2()}
+          data-cy="delete-status-button"
         >
           Delete status
         </button>
