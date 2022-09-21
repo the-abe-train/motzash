@@ -1,7 +1,7 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "motzash",
+  "version": "1.0.0",
+  "description": "Motzash is your dashboard companion for Jewish holidays.",
   "scripts": {
     "start": "vite",
     "dev": "vite",
