@@ -1,34 +1,31 @@
-## Usage
+![Motzash Banner](https://motzash.app/motzash-preview.png)
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+# Motzash
+Motzash is your dashboard companion for Jewish holidays. Use Motzash to get time for candle lighting and havdalah for Shabbat and Chag, and plan your Holy days with friends!
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+Motzash is an open-source project built with [Solid](https://www.solidjs.com/). Contributions are welcome! To contribute, take a look at the steps below. Feel free to raise issues and discussions as well, or reach out to me directly by [Twitter](https://twitter.com/theAbeTrain/) or [my personal website](https://www.the-abe-train.com/).
 
-```bash
-$ npm install # or pnpm install or yarn install
+## Technologies
+| Purpose                     | Technology |
+|-----------------------------|------------|
+| Programming language        | Typescript |
+| Front-end framework         | Solid      |
+| Serverless functions        | Netlify    |
+| Database and authentication | Supabase   |
+| Bundler                     | Vite       |
+| Testing framework           | Cypress    |
+| CSS Framework               | Tailwind   |
+
+## Contributions
+Local development is not very accessible at the moment due to the serverless functions that are core to the app's functionality. Localhost developers will only be able to see your live changes for when not signed-in, and with no location data. If you would like to contribute to this repository, follow the steps below:
+1. Clone this repo to your computer.
+2. Install dependencies with `npm i`.
+3. Create a file called `.env` and paste the following lines into it:
 ```
+VITE_MAPBOX_TOKEN=pk.eyJ1IjoiYWJldHJhaW4iLCJhIjoiY2tyaXN4NGVkMDAwYzJvbzllM2luZmFodSJ9.gS4syZW65fWJ0jwoIk8t_g
+VITE_SUPABASE_URL=https://wnfwbgxynjfiuiasogfj.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduZndiZ3h5bmpmaXVpYXNvZ2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjAzMjY3ODksImV4cCI6MTk3NTkwMjc4OX0.qaIlMOfyqVdFmgW6mtS1KVlQt2Q9jHYVAah-VgkYzKU
+```
+4. Start the local server with `npm run dev`.
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
 
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm dev` or `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
