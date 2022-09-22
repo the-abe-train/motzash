@@ -36,7 +36,7 @@ export default () => {
                 alt="Twitter"
               />
             </a>
-            <a href="https://github.com/the-abe-train/motzash-solid">
+            <a href="https://github.com/the-abe-train/motzash">
               <img
                 class="inline mx-1"
                 src={Github}
