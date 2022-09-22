@@ -15,20 +15,21 @@ export const AuthProvider: ContextProviderComponent<User | null> = (props) => {
   let listener: Subscription | null;
 
   onMount(async () => {
-    const newUser = await supabase.auth.getUser();
-    setUser(newUser.data.user || { id: "" });
+    // const newUser = await supabase.auth.getUser();
+    // setUser(newUser.data.user || { id: "" });
     listener = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state change");
       console.log(event);
-      // setUser(session?.user || { id: "" });
       if (event === "SIGNED_IN" && session) {
         setUser(session.user);
-        // SupabaseAuthService.user.next(session.user); // if using observables
-      } else if (session === null) {
-        setUser({});
+        console.log(user);
+      } else if (event === "SIGNED_OUT") {
+        console.log("signing user out");
+        setUser({ id: "" });
+        // } else if (!session) {
+        //   setUser({ id: "" });
         // SupabaseAuthService.user.next(null); // if using observables
       }
-      window.location.reload();
       // this.loadProfile(); // etc.
     }).subscription;
   });
