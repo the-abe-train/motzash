@@ -1,7 +1,7 @@
 ![Motzash Banner](https://motzash.app/motzash-preview.png)
 
 # Motzash
-Motzash is your dashboard companion for Jewish holidays. Use Motzash to get time for candle lighting and havdalah for Shabbat and Chag, and plan your Holy days with friends!
+Motzash is your dashboard companion for Jewish holidays. Use Motzash to get time for candle lighting and havdalah for Shabbat and Chaggim, and plan your Holy days with friends!
 
 Motzash is an open-source project built with [Solid](https://www.solidjs.com/). Contributions are welcome! To contribute, take a look at the steps below. Feel free to raise issues and discussions as well, or reach out to me directly by [Twitter](https://twitter.com/theAbeTrain/) or [my personal website](https://www.the-abe-train.com/).
 

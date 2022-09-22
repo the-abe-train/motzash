@@ -37,7 +37,7 @@ export default defineConfig({
         display: "standalone",
         start_url: ".",
         description:
-          "Motzash is your dashboard companion for Jewish holidays. Use Motzash to get time for candle lighting and havdalah for Shabbat and Chag, and plan your Holy days with friends!",
+          "Motzash is your dashboard companion for Jewish holidays. Use Motzash to get time for candle lighting and havdalah for Shabbat and Chaggim, and plan your Holy days with friends!",
       },
     }),
   ],
