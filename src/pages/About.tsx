@@ -24,9 +24,7 @@ const About: Component = () => {
           </p>
         </section>
         <section>
-          <h2 class="font-header text-2xl">
-            What does <i>Motzash</i> mean?
-          </h2>
+          <h2 class="font-header text-2xl">What does "Motzash" mean?</h2>
           <p>
             The name Motzash is a short form of <i>motzei shabbat</i>, which
             refers to the end of Shabbat. The first thing you notice when you

@@ -127,7 +127,7 @@ const UpdateStatusForm: Component<Props> = (props) => {
     <div class="col-span-6 lg:col-span-8 md:p-4 relative md:pt-10">
       <button
         class="absolute top-0 right-2 w-fit px-2 border border-black rounded
-      bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
+      bg-coral drop-shadow-small hover:drop-shadow-none transition-all z-10"
         onClick={() => props.setShowScreen(() => "Map")}
         type="button"
       >

@@ -74,7 +74,7 @@ const Calendar: Component = () => {
     const details = getEventDetails(cal(), displayDay());
     if (details) {
       return (
-        <div>
+        <div class="space-y-1">
           <p>For {details.eventName},</p>
           <div class="flex flex-wrap justify-between">
             <p>
@@ -270,8 +270,8 @@ disabled:drop-shadow-none transition-all mx-auto"
                 {(eventDesc) => {
                   if (eventDesc !== "Candle lighting")
                     return (
-                      <p>
-                        {displayDay().format("MMM D")} is {eventDesc}.
+                      <p class="font-bold">
+                        {displayDay().format("MMM D")} is {eventDesc}
                       </p>
                     );
                 }}

@@ -1,4 +1,4 @@
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl, { Map, Marker } from "mapbox-gl";
 import { Component, createEffect, onMount, Setter } from "solid-js";
 import { getMapCentre } from "../../util/location";
 
@@ -26,13 +26,16 @@ const FriendMap: Component<Props> = (props) => {
     // User marker
     if (props.user?.location) {
       const marker = new mapboxgl.Marker({
-        color: "red",
+        color: "#A80016",
         draggable: false,
       })
         .setLngLat([props.user.location.lng, props.user.location.lat])
         .setPopup(
           new mapboxgl.Popup().setHTML(
-            `<p>${props.user?.profiles.username}!</p>`
+            `
+          <b>${props.user?.profiles.username}</b>
+          <p>${props.user?.text}!</p>
+        `
           )
         )
         .addTo(map);
@@ -47,18 +50,19 @@ const FriendMap: Component<Props> = (props) => {
     props.friends.forEach((friendStatus) => {
       if (!friendStatus.location) return;
 
+      const popup = new mapboxgl.Popup().setHTML(
+        `
+      <b>${friendStatus.profiles.username}</b>
+      <p>${friendStatus.text}!</p>
+    `
+      );
+
       const marker = new mapboxgl.Marker({
-        color: "blue",
+        color: "#00668F",
         draggable: false,
       })
         .setLngLat([friendStatus.location.lng, friendStatus.location.lat])
-
-        .setPopup(
-          new mapboxgl.Popup().setHTML(`
-          <b>${friendStatus.profiles.username}</b>
-          <p>${friendStatus.text}!</p>
-        `)
-        )
+        .setPopup(popup)
         .addTo(map);
 
       // Add click event handler

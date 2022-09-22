@@ -146,7 +146,7 @@ const AddFriendForm: Component<Props> = (props) => {
     <div class="col-span-6 lg:col-span-8 md:p-4 relative md:pt-10">
       <button
         class="absolute top-0 right-2 w-fit px-2 border border-black rounded
-        bg-coral drop-shadow-small hover:drop-shadow-none transition-all"
+        bg-coral drop-shadow-small hover:drop-shadow-none transition-all z-10"
         onClick={() => props.setShowScreen(() => "Map")}
         type="button"
       >
@@ -154,7 +154,7 @@ const AddFriendForm: Component<Props> = (props) => {
       </button>
       <div class="space-y-10">
         <form onSubmit={sendRequest} class="space-y-2 relative max-w-lg">
-          <h1 class="text-2xl font-header">Add a Friend</h1>
+          <h1 class="text-2xl font-header w-fit">Add a Friend</h1>
           <div class="space-y-2">
             <label for="friend">Enter your friend's email</label>
             <input

@@ -92,7 +92,7 @@ const Friends: Component = () => {
           </div>
           <div class="space-y-4">
             <h1 class="text-2xl font-header">Your Friends</h1>
-            <div class="flex flex-col space-y-3 max-h-[60vh]">
+            <div class="flex flex-col space-y-5 max-h-[60vh]">
               <form class="flex space-x-4" onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="text"
@@ -119,16 +119,22 @@ const Friends: Component = () => {
                   Clear
                 </button>
               </form>
-              <For
-                each={statuses.filteredStatuses}
-                fallback={<p>No friend statuses to show.</p>}
-              >
-                {(status) => {
-                  return (
-                    <Status status={status} focus={focus} setFocus={setFocus} />
-                  );
-                }}
-              </For>
+              <div class="space-y-3 max-h-96 overflow-auto">
+                <For
+                  each={statuses.filteredStatuses}
+                  fallback={<p>No friend statuses to show.</p>}
+                >
+                  {(status) => {
+                    return (
+                      <Status
+                        status={status}
+                        focus={focus}
+                        setFocus={setFocus}
+                      />
+                    );
+                  }}
+                </For>
+              </div>
             </div>
             <button
               class="p-2 h-20 w-full border border-black rounded drop-shadow-small 

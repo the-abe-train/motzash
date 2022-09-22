@@ -27,14 +27,14 @@ const FriendMap: Component<Props> = (props) => {
 
     // User marker
     marker = new mapboxgl.Marker({
-      color: "red",
+      color: "#A80016",
       draggable: true,
     })
       .setLngLat([mapCentre.lng, mapCentre.lat])
       .addTo(map)
       .on("dragend", async (e: EventData) => {
-        const lat = parseFloat(e.target._lngLat.lat.toFixed(2));
-        const lng = parseFloat(e.target._lngLat.lng.toFixed(2));
+        const lat = parseFloat(e.target._lngLat.lat.toFixed(3));
+        const lng = parseFloat(e.target._lngLat.lng.toFixed(3));
         const res = await fetch("/api/getCity", {
           method: "POST",
           body: JSON.stringify({ lat, lng }),

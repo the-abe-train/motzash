@@ -141,14 +141,15 @@ const Dashboard: Component<Props> = (props) => {
               }}
             </For>
             <div
-              class="w-full flex flex-col items-center space-y-4 
-            py-4 md:px-8 col-span-6 lg:col-span-4"
+              class="w-full flex flex-col items-center justify-center
+               space-y-4 
+            py-4 md:px-8 col-span-6 lg:col-span-4 "
             >
               <h1 class="text-2xl font-header self-start">Status</h1>
-              <Link href="/friends" class="w-full">
+              <Link href="/friends" class="w-full flex-grow">
                 <div
-                  class="bg-ghost text-center border-2 border-black px-2 
-                  py-4 flex flex-col space-y-4 w-full"
+                  class="bg-ghost text-center border-2 border-black px-2 h-full
+                  py-4 flex flex-col justify-center space-y-4 w-full min-h-[150px]"
                 >
                   <Show
                     when={myStatus()}

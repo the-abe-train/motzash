@@ -35,7 +35,7 @@ const CookbookPreview: WidgetPreviewComponent = (props) => {
   ];
 
   return (
-    <div class="space-y-4" data-cy="cookbook-preview">
+    <div class="space-y-4 min-h-[160px]" data-cy="cookbook-preview">
       <For each={data}>
         {(category) => {
           return (

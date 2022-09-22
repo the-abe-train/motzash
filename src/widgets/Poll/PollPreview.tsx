@@ -12,7 +12,10 @@ border border-black rounded"
     </div>
   );
   return (
-    <div class="space-y-4" data-cy="poll-preview">
+    <div
+      class="space-y-4 min-h-[100px] md:min-h-[160px]"
+      data-cy="poll-preview"
+    >
       <For each={props.widgets.slice(0, 3)} fallback={fallback}>
         {(widget) => {
           return (

@@ -5,8 +5,8 @@ export function getLocation(): Promise<Coords | null> {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const lat = parseFloat(position.coords.latitude.toFixed(2));
-          const lng = parseFloat(position.coords.longitude.toFixed(2));
+          const lat = parseFloat(position.coords.latitude.toFixed(3));
+          const lng = parseFloat(position.coords.longitude.toFixed(3));
           res({ lat, lng });
         },
         (error) => {
