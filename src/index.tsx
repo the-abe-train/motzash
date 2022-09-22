@@ -7,26 +7,15 @@ import "./styles/index.css";
 import App from "./App";
 import { SpaceTimeProvider } from "./context/havdalah";
 import { AuthProvider } from "./context/auth2";
-import { supabase } from "./util/supabase";
-import { UserResponse } from "@supabase/supabase-js";
 
-// No clue how top level await works here. Vite???
-let user: UserResponse;
-try {
-  user = await supabase.auth.getUser();
-} catch (e) {
-  console.log("User not authenticated.");
-}
-
-render(
-  () => (
+render(() => {
+  return (
     <Router>
-      <AuthProvider value={user.data.user}>
+      <AuthProvider value={null}>
         <SpaceTimeProvider value={{ location: null, havdalah: null }}>
           <App />
         </SpaceTimeProvider>
       </AuthProvider>
     </Router>
-  ),
-  document.getElementById("root") as HTMLElement
-);
+  );
+}, document.getElementById("root") as HTMLElement);

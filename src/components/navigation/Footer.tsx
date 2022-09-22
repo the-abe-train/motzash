@@ -47,7 +47,7 @@ export default () => {
             </a>
           </p>
         </section>
-        <section class="space-x-4 md:space-x-0 md:grid md:grid-cols-2 md:gap-x-8 lg:flex">
+        <section class="grid grid-cols-3 gap-x-2 md:grid-cols-2 md:gap-x-8 lg:grid-cols-3">
           <Link href="/" data-cy="footer-dashboard">
             Dashboard
           </Link>

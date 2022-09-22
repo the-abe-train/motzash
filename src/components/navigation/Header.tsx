@@ -39,7 +39,7 @@ const Header: Component<Props> = (props) => {
             Dashboard
           </Link>
           <Link
-            class="hover:font-bold min-w-[65px]"
+            class="hover:font-bold min-w-[70px]"
             href="/friends"
             data-cy="header-friends"
           >
