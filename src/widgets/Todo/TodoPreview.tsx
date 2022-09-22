@@ -23,7 +23,7 @@ const TodoPreview: WidgetPreviewComponent = (props) => {
       class="space-y-4 min-h-[100px] md:min-h-[160px]"
       data-cy="todo-preview"
     >
-      <For each={props.widgets.slice(0, 3)} fallback={fallback}>
+      <For each={props.widgets.slice(0, 3)}>
         {(widget) => {
           return (
             <div
